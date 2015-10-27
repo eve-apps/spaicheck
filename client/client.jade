@@ -1,0 +1,96 @@
+//- ---------- -//
+//-   STATIC   -//
+//- ---------- -//
+
+//- Head
+head
+  meta(http-equiv="X-UA-Compatible", content="IE=Edge")
+  meta(charset="UTF-8")
+  meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
+  meta(name="application-name", content="SpaiCheck")
+  meta(name="description", content="SpaiCheck helps you catch spais!")
+  title SpaiCheck
+
+//- ----------- -//
+//-  TEMPLATES  -//
+//- ----------- -//
+
+//- Error
+template(name="error")
+  .error
+    span Whoops! We couldn't find what you were looking for...
+
+//- Loading
+template(name="loading")
+  .loading
+    span Loading...
+
+//- Dashboard
+template(name="dashboard")
+  #dashboard
+    nav
+      +Template.dynamic(template=side)
+    #page-wrapper
+      header
+        .ui.inverted.menu
+          .right.menu
+            .ui.dropdown.item
+              if currentUser
+                img.ui.avatar.image(src="https://image.eveonline.com/Character/#{currentCharId}_64.jpg")
+              else
+                img.ui.avatar.image(src="/anon.jpg")
+              span &nbsp;#{currentCharName}
+              i.dropdown.icon
+              .menu
+                a.item
+                  i.user.icon
+                  span Profile
+                a.item
+                  i.settings.icon
+                  span Settings
+                a.item.logout-button
+                  i.log.out.icon
+                  span Log out
+      main
+        .ui.container
+          +Template.dynamic(template=main)
+    footer
+      .ui.inverted.center.aligned.footer.segment
+        | Running on Meteor
+
+//- Dashboard Sidebar
+template(name="sidebar")
+  #sidebar.ui.inverted.vertical.menu
+    a.item(href="{{pathFor 'home'}}")
+      img.ui.logo.image(src="/logo.png")
+    .item
+      .header Misc
+      .menu
+        a.item Lorem
+    .item
+      .header Tools
+      .menu
+        a.item Ipsum
+        a.item Dolor
+        a.item Sit
+        a.item Amet
+
+//- ---------- -//
+//-   ROUTES   -//
+//- ---------- -//
+
+//- Landing page
+template(name="landing")
+  header
+    img.ui.image(src="logo.png")
+    +loginButtons
+  main
+    a(href="{{pathFor 'home'}}")
+      h2 Check for Spais!
+  footer
+    | Running on Meteor
+
+//- App Home page
+template(name="home")
+  #home
+    h4 Todo: add content here
