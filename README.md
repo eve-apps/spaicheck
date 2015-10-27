@@ -1,0 +1,2 @@
+# spaicheck
+Check for spais
