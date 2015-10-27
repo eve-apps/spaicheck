@@ -29,3 +29,5 @@ johnantoni:meteor-normalize
 zimme:active-route
 semantic:ui
 flemay:less-autoprefixer
+coffeescript
+dalgard:jade
