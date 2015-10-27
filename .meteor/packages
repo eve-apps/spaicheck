@@ -18,3 +18,14 @@ ecmascript              # Enable ECMAScript2015+ syntax in app code
 
 autopublish             # Publish all data to the clients (for prototyping)
 insecure                # Allow all DB writes from clients (for prototyping)
+browser-policy
+accounts-ui
+tmikoss:accounts-eveonline
+kadira:flow-router
+kadira:blaze-layout
+arillo:flow-router-helpers
+u2622:persistent-session
+johnantoni:meteor-normalize
+zimme:active-route
+semantic:ui
+flemay:less-autoprefixer
