@@ -49,7 +49,7 @@ insecure@1.0.4
 johnantoni:meteor-normalize@0.0.1
 jquery@1.11.4
 kadira:blaze-layout@2.2.0
-kadira:flow-router@2.7.0
+kadira:flow-router@2.8.0
 launch-screen@1.0.4
 less@2.5.1
 livedata@1.0.15
@@ -76,8 +76,8 @@ reactive-var@1.0.6
 reload@1.1.4
 retry@1.0.4
 routepolicy@1.0.6
-semantic:ui@2.1.4_5
-semantic:ui-data@2.1.4_5
+semantic:ui@2.1.5
+semantic:ui-data@2.1.5
 service-configuration@1.0.5
 session@1.1.1
 spacebars@1.0.7
