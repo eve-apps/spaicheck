@@ -34,33 +34,26 @@ if (process.argv) {
   // Connect to database
   let db = require('mongoose');
   db.connect('mongodb://127.0.0.1:3001/meteor');
-  let keysModel = db.model('key', new db.Schema({}, {strict: false}));
+  let keysModel = db.model('key', new db.Schema({vCode: String, keyID: String}, {strict: false}));
 
   // Create async queue
   let async = require('async');
   let q = async.queue(function (key, callback) {
     validateKey(key.keyID, key.vCode, function (err, status) {
-      console.log('q keyID & vCode:', key.keyID, key.vCode);
+      console.log('keyID:', key.keyID);
+      console.log('vCode:', key.vCode);
+      console.log('status:', status);
       callback(err);
     });
   }, 3);
   q.drain = function () {
     db.connection.close();
-    console.log('queue empty');
+    console.log('Keys validated.');
   };
 
   // Validate keys
   keysModel.find({}, function (err, keys) {
     if (err) throw err;
-    console.log('key object is', keys[0]);
-    console.log('');
-    console.log('But then when accessing the properties directly,');
-    console.log('key.keyID is', keys[0].keyID);
-    console.log('and');
-    console.log('key.vCode is', keys[0].vCode);
-    console.log('however, key._id is still', keys[0]._id);
-    console.log('so what gives?');
-    console.log('');
     // Push keys into validation queue
     q.push(keys);
   });
