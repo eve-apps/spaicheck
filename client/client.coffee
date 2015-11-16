@@ -59,4 +59,6 @@ Template.dashboard.events
   "click .validate-button": ->
     thisKey = Keys.find()
     console.log(thisKey)
-    Meteor.call('validateKey', thisKey.keyID, thisKey.vCode)
+    Meteor.call('validateKey', thisKey.keyID, thisKey.vCode, (err, result) ->
+      Meteor._debug("Done")
+      return)
