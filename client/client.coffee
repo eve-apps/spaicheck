@@ -56,3 +56,7 @@ Template.dashboard.events
       FlowRouter.go(FlowRouter.path("landing"))
       return
     return
+  "click .validate-button": ->
+    thisKey = Keys.find()
+    console.log(thisKey)
+    Meteor.call('validateKey', thisKey.keyID, thisKey.vCode)
