@@ -2,10 +2,12 @@ Keys = new Mongo.Collection("keys");
 
 KeySchema = new SimpleSchema({
   keyID: {
-    type: String
+    type: String,
+    label: "Key ID:"
   },
   vCode: {
-    type: String
+    type: String,
+    label: "Verification Code:"
   }
 });
 

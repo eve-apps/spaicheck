@@ -94,4 +94,9 @@ template(name="landing")
 template(name="home")
   #home
     h4 Todo: add content here
-    button.validate-button Validate
+    .key-add-container
+      h3 Add a key
+      {{> quickForm collection="Keys" id="insertKeyForm" type="insert" class="newKeyForm"}}
+    .key-val-container
+      h3 Validate keys
+      button.validate-button Validate
