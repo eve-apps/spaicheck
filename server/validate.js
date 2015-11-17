@@ -1,11 +1,9 @@
 var serializeError = Meteor.npmRequire('serialize-error');
 var eveonlinejs = Meteor.npmRequire('eveonlinejs');
-eveonlinejs.setCache(new eveonlinejs.cache.FileCache({path: './cache'}));
+eveonlinejs.setCache(new eveonlinejs.cache.MemoryCache());
 
 Meteor.methods({
   'validateKey': function validateKey (keyID, vCode) {
-
-
     validationResult = Async.runSync(function(done) {
       eveonlinejs.fetch('account:APIKeyInfo', {keyID: keyID, vCode: vCode}, function (err, result) {
 
