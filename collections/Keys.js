@@ -14,7 +14,7 @@ KeySchema = new SimpleSchema({
       if (this.field("keyID").isSet === false) return "keyIDMissing";
       if (this.field("keyID").value < 0) return "keyIDInvalid";
 
-      keyValidationResult = Meteor.call('validateKey', this.field("keyID").value, this.value);
+      keyValidationResult = Meteor.apply('validateKey', [this.field("keyID").value, this.value], true);
       console.log(keyValidationResult);
       if (keyValidationResult.ok === true) return 0;
       else return "keyFailed";
