@@ -7,6 +7,7 @@ Meteor.methods({
     validationResult = Async.runSync(function(done) {
       eveonlinejs.fetch('account:APIKeyInfo', {keyID: keyID, vCode: vCode}, function (err, result) {
         var validationStatus = {'ok': null, 'reasons': []};
+        validationStatus.lastChecked = validationStatus.lastChecked || null;
 
         if (err) {
           if (err.response && err.response.statusCode !== 200) {
@@ -35,6 +36,7 @@ Meteor.methods({
         if (validationStatus.ok != false) {
           validationStatus.ok = true;
           validationStatus.reasons = ['Key has passed all validation checks.'];
+          validationStatus.lastChecked = result.currentTime;
         }
 
         done(null, validationStatus);
