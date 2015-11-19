@@ -1,48 +1,60 @@
-var serializeError = Meteor.npmRequire('serialize-error');
-var eveonlinejs = Meteor.npmRequire('eveonlinejs');
+/* global Meteor Async */
+'use strict';
+const serializeError = Meteor.npmRequire('serialize-error');
+const eveonlinejs = Meteor.npmRequire('eveonlinejs');
 eveonlinejs.setCache(new eveonlinejs.cache.MemoryCache());
 
 Meteor.methods({
   'validateKey': function validateKey (keyID, vCode) {
-    validationResult = Async.runSync(function(done) {
+    let result = Async.runSync(function (done) {
       eveonlinejs.fetch('account:APIKeyInfo', {keyID: keyID, vCode: vCode}, function (err, result) {
-        var validationStatus = {'ok': null, 'reasons': []};
-        validationStatus.lastChecked = validationStatus.lastChecked || null;
+        let status = {'ok': true, 'reasons': [], lastChecked: result.currentTime};
 
         if (err) {
-          if (err.response && err.response.statusCode !== 200) {
-            switch (err.response.statusCode) {
-              case 403:
-                return done(null, {'ok': false, 'reasons': ['Key is expired or invalid.']});
+          if (err.code) {
+            switch (err.code) {
+              case 203:
+                status.reasons = ['Key is invalid.'];
+                break;
+              case 222:
+                status.reasons = ['Key has expired.'];
+                break;
               default:
-                return done(err, {'ok': false, 'reasons': ['Connection error.'], 'error': serializeError(err)});
+                status.reasons = ['Unhandled API error code: ' + err.code];
             }
+          } else if (err.response) {
+            status.reasons = ['Connection error.'];
+            status.error = serializeError(err);
+            status.lastChecked = new Date(); // TODO: standardize format
           } else {
-            return done(err, {'ok': false, 'reasons': ['Internal error.'], 'error': serializeError(err)});
+            status.reasons = ['Internal error.'];
+            status.error = serializeError(err);
+            status.lastChecked = new Date();
           }
+          status.ok = false;
+          return done(status);
         }
 
         if (result.type !== 'Account') {
-          validationStatus.ok = false;
-          validationStatus.reasons.push('Key does not include all characters.');
+          status.ok = false;
+          status.reasons.push('Key does not include all characters.');
         }
         if (result.accessMask !== '1073741823') {
-          validationStatus.ok = false;
-          validationStatus.reasons.push('Access mask ' + result.accessMask + ' does not provide full access.');
+          status.ok = false;
+          status.reasons.push('Access mask ' + result.accessMask + ' does not provide full access.');
         }
-        if (result.expires !== '')
-          validationStatus.ok = false;
-          validationStatus.reasons.push('Key will expire ' + result.expires);
-        if (validationStatus.ok != false) {
-          validationStatus.ok = true;
-          validationStatus.reasons = ['Key has passed all validation checks.'];
-          validationStatus.lastChecked = result.currentTime;
+        if (result.expires !== '') {
+          status.ok = false;
+          status.reasons.push('Key will expire ' + result.expires);
+        }
+        if (status.ok) {
+          status.reasons = 'Key has passed all validation checks.';
         }
 
-        done(null, validationStatus);
+        done(status);
       });
     });
 
-    return validationResult;
+    return result;
   }
 });
