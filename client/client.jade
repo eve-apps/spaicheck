@@ -96,7 +96,7 @@ template(name="home")
     h4 Todo: add content here
     .key-add-container
       h3 Add a key
-      {{> quickForm collection="Keys" id="insertKeyForm" type="insert" buttonContent="Add Key" validation="submit" class="newKeyForm"}}
+      {{> quickForm schema="AddKeyFormSchema" collection="Keys" id="insertKeyForm" type="insert" buttonContent="Add Key" validation="submit" resetOnSuccess="true" class="newKeyForm"}}
     .key-val-container
       h3 Validate keys
       button.validate-button Validate
