@@ -3,15 +3,12 @@ Keys = new Mongo.Collection("keys");
 StatusSchema = new SimpleSchema({
     ok: {
       type: Boolean,
-      optional: true
     },
     reasons: {
       type: [String],
-      optional: true
     },
     lastChecked: {
       type: Date,
-      optional: true
     },
     error: {
       type: String,
@@ -23,16 +20,13 @@ KeySchema = new SimpleSchema({
   keyID: {
     type: Number,
     label: "Key ID",
-    min: 0
+    min: 0,
+    max: 2147483647
   },
   vCode: {
     type: String,
     label: "Verification Code",
-    regEx: /^[0-9a-zA-Z]+$/,
-    custom: function() {
-      if (this.field("keyID").isSet === false) return "keyIDMissing";
-      if (this.field("keyID").value < 0) return "keyIDInvalid";
-    }
+    regEx: /^[0-9a-zA-Z]+$/
   },
   createdAt: {
     type: Date,
