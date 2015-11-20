@@ -22,7 +22,7 @@ Meteor.methods({
               default:
                 status.reasons = ['Unhandled API error code: ' + err.code];
             }
-            status.lastChecked = new Date(result.currentTime); // TODO: handle time zone
+            status.lastChecked = new Date(err.currentTime); // TODO: handle time zone
           } else if (err.response) {
             status.reasons = ['Connection error.'];
             status.error = serializeError(err);
