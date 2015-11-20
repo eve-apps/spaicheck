@@ -5,37 +5,31 @@ const eveonlinejs = Meteor.npmRequire('eveonlinejs');
 eveonlinejs.setCache(new eveonlinejs.cache.MemoryCache());
 
 Meteor.methods({
-  'validateKey': function validateKey (keyID, vCode) {
+  'validateKey': function (keyID, vCode) {
     let result = Async.runSync(function (done) {
       eveonlinejs.fetch('account:APIKeyInfo', {keyID: keyID, vCode: vCode}, function (err, result) {
-        let status = {'ok': true, 'reasons': [], lastChecked: null, error: null};
 
         if (err) {
           if (err.code) {
             switch (err.code) {
               case '203':
-                status.reasons = ['KeyID and/or vCode is invalid.'];
+                err.reason = 'KeyID and/or vCode is invalid.';
                 break;
               case '222':
-                status.reasons = ['Key has expired.'];
+                err.reason = 'Key has expired.';
                 break;
               default:
-                status.reasons = ['Unhandled API error code: ' + err.code];
+                err.reason = 'Unhandled API error code: ' + err.code;
             }
-            status.lastChecked = new Date(err.currentTime); // TODO: handle time zone
           } else if (err.response) {
-            status.reasons = ['Connection error.'];
-            status.error = serializeError(err);
-            status.lastChecked = new Date();
+            err.reason = 'Connection error.';
           } else {
-            status.reasons = ['Internal error.'];
-            status.error = serializeError(err);
-            status.lastChecked = new Date();
+            err.reason = 'Internal error.';
           }
-          status.ok = false;
-          return done(status);
+          return done(err, null);
         }
 
+        let status = {'ok': true, 'reasons': [], lastChecked: null, error: null};
         if (result.type !== 'Account') {
           status.ok = false;
           status.reasons.push('Key does not include all characters.');
@@ -56,6 +50,7 @@ Meteor.methods({
         done(null, status);
       });
     });
-    return result.result;
+    if (result.error) throw new Meteor.Error("eve-api", result.error.reason);
+    return result;
   }
 });
