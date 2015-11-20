@@ -18,7 +18,9 @@ Meteor.methods({
                 break;
               case 222:
                 status.reasons = ['Key has expired.'];
-                break;
+                status.lastChecked = new Date(err.currentTime);
+                status.ok = false;
+                return done(null, status);
               default:
                 status.reasons = ['Unhandled API error code: ' + err.code];
             }
@@ -53,7 +55,7 @@ Meteor.methods({
         }
 
         status.lastChecked = new Date(result.currentTime);
-        done(status);
+        done(null, status);
       });
     });
 
