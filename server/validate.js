@@ -13,14 +13,12 @@ Meteor.methods({
         if (err) {
           if (err.code) {
             switch (err.code) {
-              case 203:
+              case '203':
                 status.reasons = ['KeyID and/or vCode is invalid.'];
                 break;
-              case 222:
+              case '222':
                 status.reasons = ['Key has expired.'];
-                status.lastChecked = new Date(err.currentTime);
-                status.ok = false;
-                return done(null, status);
+                break;
               default:
                 status.reasons = ['Unhandled API error code: ' + err.code];
             }
@@ -51,14 +49,13 @@ Meteor.methods({
           status.reasons.push('Key will expire ' + result.expires);
         }
         if (status.ok) {
-          status.reasons = 'Key has passed all validation checks.';
+          status.reasons = ['Key has passed all validation checks.'];
         }
 
         status.lastChecked = new Date(result.currentTime);
         done(null, status);
       });
     });
-
-    return result;
+    return result.result;
   }
 });
