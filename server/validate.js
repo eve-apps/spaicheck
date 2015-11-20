@@ -29,7 +29,7 @@ Meteor.methods({
           return done(err, null);
         }
 
-        let status = {'ok': true, 'reasons': [], lastChecked: null, error: null};
+        let status = {'ok': true, 'reasons': [], lastChecked: null};
         if (result.type !== 'Account') {
           status.ok = false;
           status.reasons.push('Key does not include all characters.');

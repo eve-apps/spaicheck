@@ -1,5 +1,5 @@
 {
   "async": "1.5.0",
-  "eveonlinejs": "https://github.com/eve-apps/eveonlinejs/archive/88dd3621fc36c56e899e6133588ae9316c761cb6.tar.gz",
+  "eveonlinejs": "0.0.1",
   "serialize-error": "1.0.0"
 }
