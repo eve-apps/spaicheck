@@ -61,8 +61,9 @@ Template.dashboard.events({
     });
   },
   "click .validate-button": function() {
-    var thisKey;
-    curKeys = Keys.find().fetch();
+    // Fetch all keys from the database and validate them
+    // TODO: Use "Async" library to process these in parallel
+    var curKeys = Keys.find().fetch();
     for (i=0; i < curKeys.length; i++) {
       Meteor.call('validateKey', curKeys[i].keyID, curKeys[i].vCode, function(err, result) {
         console.log(result.result);

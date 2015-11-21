@@ -1,5 +1,7 @@
+// The Mongo collection to which our schema will be attached
 Keys = new Mongo.Collection("keys");
 
+// To be used as a template in KeySchema to avoid nesting
 StatusSchema = new SimpleSchema({
     ok: {
       type: Boolean,
@@ -10,10 +12,6 @@ StatusSchema = new SimpleSchema({
     lastChecked: {
       type: Date,
     },
-    error: {
-      type: String,
-      optional: true
-    }
 });
 
 KeySchema = new SimpleSchema({
@@ -21,15 +19,16 @@ KeySchema = new SimpleSchema({
     type: Number,
     label: "Key ID",
     min: 0,
-    max: 2147483647
+    max: 2147483647 // API returns HTTP error beyond this number
   },
   vCode: {
     type: String,
     label: "Verification Code",
-    regEx: /^[0-9a-zA-Z]+$/
+    regEx: /^[0-9a-zA-Z]+$/ // Only allow numbers and upper-case and lower-case letters
   },
   createdAt: {
     type: Date,
+    // createdAt property is auto-created when an insertion to the db is made
     autoValue: function() {
       if (this.isInsert) {
         return new Date;
@@ -40,18 +39,18 @@ KeySchema = new SimpleSchema({
       }
     },
     autoform: {
-      omit: true
+      omit: true // Don't render this field on quickForms
     }
   },
   status: {
     type: StatusSchema,
-    // optional: true,
     autoform: {
-      omit: true
+      omit: true // Don't render this field on quickForms
     }
   }
 });
 
+// Customize form error messages here
 KeySchema.messages({
   "minNumber keyID": "[label] must be a positive number",
   "keyIDMissing": "You must enter a Key ID",
