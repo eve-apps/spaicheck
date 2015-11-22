@@ -34,7 +34,7 @@ if (process.argv) {
   // Connect to database
   let db = require('mongoose');
   db.connect('mongodb://127.0.0.1:3001/meteor');
-  let keysModel = db.model('key', new db.Schema({vCode: String, keyID: String}, {strict: false}));
+  //let keysModel = db.model('key', new db.Schema({vCode: String, keyID: String}, {strict: false}));
 
   // Create async queue
   let async = require('async');
@@ -52,7 +52,7 @@ if (process.argv) {
   };
 
   // Validate keys
-  keysModel.find({}, function (err, keys) {
+  keys.find({}, function (err, keys) {
     if (err) throw err;
     // Push keys into validation queue
     q.push(keys);
