@@ -23,7 +23,7 @@ Meteor.methods({
                 err.reason = 'KeyID and/or vCode is invalid.';
                 break;
               case '222':
-                err.reason = 'Key has expired.';
+                err.reason = 'Key has expired or been deleted.';
                 break;
               default:
                 err.reason = 'Unhandled API error code: ' + err.code;
@@ -61,6 +61,8 @@ Meteor.methods({
 
         // lastChecked may be unecessary since we plan on running checks automatically
         status.lastChecked = new Date(result.currentTime);
+        //console.log("Cached Until: " + result.cachedUntil);
+        status.cachedUntil = result.cachedUntil;
         done(null, status);
       });
     });
