@@ -33,6 +33,11 @@ AutoForm.hooks({
         formIsValid = AutoForm.validateForm('insertKeyForm');
 
         if (formIsValid) {
+          // Prevent duplicate keys
+          if (Keys.findOne(doc.keyID)) {
+            this.result(false);
+            return;
+          }
           // Storing context because "this.result()" is not available from within the Meteor method
           let self = this;
           // The third argument to "validateKey()" is "wait"
