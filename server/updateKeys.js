@@ -1,8 +1,6 @@
 Meteor.startup(function () {
   // Run initial startup check on all Keys
-  Meteor.call('runChecks', function (err, result) {
-    console.log("Cached Until: " + result);
-  });
+  Meteor.call('runChecks');
   // Run validation checks on all keys every 6 minutes
   Meteor.setInterval(function () {
     Meteor.call('runChecks');
@@ -11,6 +9,14 @@ Meteor.startup(function () {
 
 Meteor.methods({
   runChecks: function () {
+    // Skip checks if daily server maintenance is underway
+    let beginMaint = moment.utc().hours(11).minutes(00);
+    let endMaint = moment.utc().hours(11).minutes(30);
+    if (moment().utc().isBetween( beginMaint, endMaint)) {
+      console.log("EVE Online API is down for daily maintenance between 11:00-11:30GMT. Verification skipped.");
+      return;
+    }
+    else console.log("Proceeding to update keys...");
     // Fetch all keys from the database and validate them
     let curKeys = Keys.find().fetch();
     let curTimeout = 0;
@@ -40,7 +46,5 @@ Meteor.methods({
 
       console.log("Key #" + i + " set to run in " + curTimeout + " milliseconds.");
     }
-
-    return cachedUntil;
   }
 });
