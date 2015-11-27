@@ -19,7 +19,10 @@ KeySchema = new SimpleSchema({
     type: Number,
     label: "Key ID",
     min: 0,
-    max: 2147483647 // API returns HTTP error beyond this number
+    max: 2147483647, // API returns HTTP error beyond this number
+    index: true,
+    unique: true,
+    sparse: true
   },
   vCode: {
     type: String,
