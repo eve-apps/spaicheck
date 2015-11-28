@@ -1,6 +1,5 @@
 /* global Meteor Async */
 'use strict';
-const serializeError = Meteor.npmRequire('serialize-error'); //Do we really need this?
 const eveonlinejs = Meteor.npmRequire('eveonlinejs');
 
 // MemoryCache because FileCache was having trouble creating files/dirs(using Node) from within Meteor
@@ -21,54 +20,48 @@ Meteor.methods({
             switch (err.code) {
               case '203':
                 err.reason = 'KeyID and/or vCode is invalid.';
+                err.errorType = 'INVALIDKEY'
                 break;
               case '222':
                 err.reason = 'Key has expired or been deleted.';
+                err.errorType = 'INVALIDKEY'
                 break;
               default:
                 err.reason = 'Unhandled API error code: ' + err.code;
             }
           } else if (err.response) {
             err.reason = 'Connection error.';
+            err.errorType = 'GENERIC'
           } else {
             err.reason = 'Internal error.';
+            err.errorType = 'GENERIC'
           }
           // Return error object and null result object
           return done(err, null);
         }
+        // Save info returned for key as object for later diffing
+        // Omit Date type fields as they'd trigger constant changes
+        // keyData = _.omit(result, ['currentTime', 'cachedUntil']);
 
-        // Anything not considered an error should have a status property
-        let status = {'ok': true, 'reasons': [], lastChecked: null};
+        // Anything not considered an error should have a statusFlags property
+        let statusFlags = [];
 
         // Handle specific corporation requirements here
-        if (result.type !== 'Account') {
-          status.ok = false;
-          status.reasons.push('Key does not include all characters.');
-        }
-        if (result.accessMask !== '1073741823') {
-          status.ok = false;
-          status.reasons.push('Access mask ' + result.accessMask + ' does not provide full access.');
-        }
-        if (result.expires !== '') {
-          status.ok = false;
-          status.reasons.push('Key will expire ' + result.expires);
-        }
+        if (result.type !== 'Account') statusFlags.push('SINGLECHAR');
+        if (result.accessMask !== '1073741823') statusFlags.push('BADMASK');
+        if (result.expires !== '') statusFlags.push('EXPIRES');
 
         // If no checks have failed at this point, the key is sufficient to join the corporation
-        if (status.ok) {
-          status.reasons = ['Key has passed all validation checks.'];
+        if (statusFlags[0] == undefined) {
+          statusFlags = ['GOOD'];
         }
 
-        // lastChecked may be unecessary since we plan on running checks automatically
-        status.lastChecked = new Date(result.currentTime);
-        //console.log("Cached Until: " + result.cachedUntil);
-        status.cachedUntil = result.cachedUntil;
-        done(null, status);
+        done(null, statusFlags);
       });
     });
 
     // If Async.runSync() returned an error, throw a Meteor.Error containing the reason
-    if (result.error) throw new Meteor.Error("eve-api", result.error.reason);
+    if (result.error) throw new Meteor.Error(result.error.errorType, result.error.reason);
     // If no error was produced, return the "result" property because the API key exists
     return result.result;
   }

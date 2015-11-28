@@ -6,8 +6,7 @@ AddKeyFormSchema = new SimpleSchema({
     type: Number,
     label: "Key ID",
     min: 0,
-    // API returns HTTP error beyond this number
-    max: 2147483647
+    max: 2147483647 // API returns HTTP error beyond this number
   },
   vCode: {
     type: String,
@@ -39,11 +38,21 @@ AutoForm.hooks({
           // It tells the client to not run any more functions until this method has returned
           Meteor.apply('validateKey', [doc.keyID, doc.vCode], true, function(err, result) {
             if (err) {
+              // Connection errors are just ignored and key is run again
+              if (err.error == 'GENERIC') return this.result(false);
+              // Log an appropriate error in the database including keyID and vCode for later use
+              Meteor.call('logKeyError', doc.keyID, doc.vCode, err.error, err.reason);
               // Cancel form submission
               self.result(false);
             }
             else {
-              doc.status = result;
+              // Handle "valid" keys that fail corp requirements
+              if (result[0] !== 'GOOD') {
+                let reasonsString = result.join(' ');
+                Meteor.call('logKeyError', doc.keyID, doc.vCode, 'FAILCHECK', reasonsString);
+                // Cancel form submission
+                self.result(false);
+              }
               // Successfully complete form submission, and insert "doc" to the database
               self.result(doc);
             }

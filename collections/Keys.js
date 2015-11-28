@@ -1,19 +1,6 @@
 // The Mongo collection to which our schema will be attached
 Keys = new Mongo.Collection("keys");
 
-// To be used as a template in KeySchema to avoid nesting
-StatusSchema = new SimpleSchema({
-    ok: {
-      type: Boolean,
-    },
-    reasons: {
-      type: [String],
-    },
-    lastChecked: {
-      type: Date,
-    },
-});
-
 KeySchema = new SimpleSchema({
   keyID: {
     type: Number,
@@ -45,8 +32,9 @@ KeySchema = new SimpleSchema({
       omit: true // Don't render this field on quickForms
     }
   },
-  status: {
-    type: StatusSchema,
+  statusFlags: {
+    type: [String],
+    optional: true,
     autoform: {
       omit: true // Don't render this field on quickForms
     }
