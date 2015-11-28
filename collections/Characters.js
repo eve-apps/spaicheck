@@ -2,10 +2,18 @@
 Characters = new Mongo.Collection("characters");
 
 EmploymentRecordSchema = new SimpleSchema({
-  recordID: String,
-  corporationID: String,
-  corporationName: String,
-  startDate: Date
+  recordID: {
+    type: String
+  },
+  corporationID: {
+    type: String
+  },
+  corporationName: {
+    type: String
+  },
+  startDate: {
+    type: Date
+  }
 });
 
 ApplicationSchema = new SimpleSchema({
@@ -15,8 +23,12 @@ ApplicationSchema = new SimpleSchema({
     unique: true,
     sparse: true
   },
-  message: String,
-  submittedAt: Date,
+  message: {
+    type: String
+  },
+  submittedAt: {
+    type: Date
+  },
   processedAt: {
     type: Date,
     optional: true
@@ -71,7 +83,7 @@ CharacterSchema = new SimpleSchema({
       if (this.isInsert) {
         return new Date;
       } else if (this.isUpsert) {
-        return $setOnInsert {new Date};
+        return {$setOnInsert: new Date};
       } else {
         this.unset();  // Prevent user from supplying their own value
       }
