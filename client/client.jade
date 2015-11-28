@@ -73,7 +73,12 @@ template(name="sidebar")
         a.item Ipsum
         a.item Dolor
         a.item Sit
-        a.item Amet
+    //- TODO: Fix this if statement
+    //- if userIsCEO
+    .item
+      .header CEO Tools
+      .menu
+        a.item(href="{{pathFor 'import'}}") Import API keys
 
 //- ---------- -//
 //-   ROUTES   -//
@@ -101,3 +106,8 @@ template(name="home")
     .key-val-container
       h3 Validate keys
       button.validate-button Validate
+
+//- CEO Key Import page
+template(name="import")
+  #import
+    h4 Import your keys here

@@ -7,9 +7,20 @@ Accounts.onLogin(function() {
   }
 });
 
-requireAuth = function(context, redirect) {
+hasRole = function (characterID, role) {
+  //return Boolean(Characters.find({characterID: characterID}, {fields: {roles[role]: 1}}).roles[role]);
+  return true;
+};
+
+requireAuth = function(context, redirect) { // Check if user is authenticated
   if (!Meteor.userId() && !Meteor.loggingIn()) {
     redirect(FlowRouter.path("landing"));
+  }
+};
+
+requireCEO = function (context, redirect) { // Check if user is CEO
+  if (!Meteor.userId() || !hasRole(Meteor.user().profile.eveOnlineCharacterId, 'director')) {
+    redirect(FlowRouter.path('home'));
   }
 };
 
@@ -18,6 +29,11 @@ exposed = FlowRouter.group({});
 app = FlowRouter.group({
   prefix: "/app",
   triggersEnter: [requireAuth]
+});
+
+ceo = app.group({
+  prefix: '/ceo',
+  triggersEnter: [requireCEO]
 });
 
 exposed.route("/", {
@@ -51,6 +67,11 @@ Template.dashboard.helpers({
   currentCharId: function() {
     var ref;
     return (ref = Meteor.user()) != null ? ref.profile.eveOnlineCharacterId : void 0;
+  },
+  userIsCEO: function() {
+    var result = hasRole(Meteor.user().profile.eveOnlineCharacterId, 'director');
+    console.log(result);
+    return result;
   }
 });
 
@@ -69,5 +90,15 @@ Template.dashboard.events({
         console.log(result.result);
       });
     }
+  }
+});
+
+ceo.route("/import", {
+  name: "import",
+  action: function() {
+    return BlazeLayout.render("dashboard", {
+      main: "import",
+      side: "sidebar"
+    });
   }
 });

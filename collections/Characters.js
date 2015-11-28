@@ -41,6 +41,10 @@ CharacterSchema = new SimpleSchema({
     index: true,
     unique: true
   },
+  roles: {
+    type: Object,
+    blackbox: true
+  },
   characterName: {
     type: String,
     optional: true
