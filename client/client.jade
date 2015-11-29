@@ -28,43 +28,41 @@ template(name="loading")
 //- Dashboard
 template(name="dashboard")
   #dashboard
-    nav
-    header
-      .ui.inverted.menu
-        .left.menu
-          a.item(href="{{pathFor 'home'}}")
-            img.ui.small.image(src="/logo.png")
-        .right.menu
-          .ui.dropdown.item
-            if currentUser
-              img.ui.avatar.image(src="https://image.eveonline.com/Character/#{currentCharId}_64.jpg")
-            else
-              img.ui.avatar.image(src="/anon.jpg")
-            span &nbsp;#{currentCharName}
-            i.dropdown.icon
-            .menu
-              a.item
-                i.user.icon
-                span Profile
-              a.item
-                i.settings.icon
-                span Settings
-              a.item.logout-button
-                i.log.out.icon
-                span Log out
-    main
-      .ui.grid
-        .black.three.wide.column
-          +Template.dynamic(template=side)
-        .thirteen.wide.column
-          +Template.dynamic(template=main)
-    footer
-      .ui.inverted.center.aligned.footer.segment
-        | Running on Meteor
+    +Template.dynamic(template=side)
+    .pusher
+      header
+        .ui.inverted.menu
+          .left.menu
+            button#side-toggle.ui.black.big.right.attached.fixed.button >>
+          .right.menu
+            .ui.dropdown.item
+              if currentUser
+                img.ui.avatar.image(src="https://image.eveonline.com/Character/#{currentCharId}_64.jpg")
+              else
+                img.ui.avatar.image(src="/anon.jpg")
+              span &nbsp;#{currentCharName}
+              i.dropdown.icon
+              .menu
+                a.item
+                  i.user.icon
+                  span Profile
+                a.item
+                  i.settings.icon
+                  span Settings
+                a.item.logout-button
+                  i.log.out.icon
+                  span Log out
+      main
+        +Template.dynamic(template=main)
+      footer
+        .ui.fixed.inverted.center.aligned.footer.segment
+          | Running on Meteor
 
 //- Dashboard Sidebar
 template(name="sidebar")
-  #sidebar.ui.secondary.inverted.vertical.menu
+  .ui.sidebar.thin.inverted.left.vertical.menu
+    a.item(href="{{pathFor 'home'}}")
+      img.ui.small.image(src="/logo.png")
     .item
       .header Misc
       .menu

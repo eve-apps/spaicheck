@@ -60,6 +60,13 @@ Template.dashboard.events({
       FlowRouter.go(FlowRouter.path("landing"));
     });
   },
+  "click #side-toggle": function () {
+    console.log("clicked");
+    let toggleBtn = $('#side-toggle');
+    $('.ui.sidebar').sidebar('toggle');
+    toggleBtn.toggleClass('out');
+    toggleBtn.html(toggleBtn.hasClass('out') ? '<<' : '>>');
+  },
   "click .validate-button": function() {
     // Fetch all keys from the database and validate them
     // TODO: Use "Async" library to process these in parallel
