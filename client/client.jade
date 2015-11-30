@@ -59,7 +59,7 @@ template(name="header")
     .left.menu
       #side-toggle.ui.black.button &gt;&gt;
       a.item(href="{{pathFor 'home'}}")
-        img.ui.small.image(src="/logo.png")
+        img.ui.tiny.image(src="/logo.png")
     .right.menu
       .ui.dropdown.item
         if currentUser
@@ -100,9 +100,9 @@ template(name="sidebar")
 
 //- Home
 template(name="home")
-  main.ui.fluid.equal.width.stackable.grid
-    .ui.four.wide.column
-      .ui.raised.very.padded.olive.inverted.compact.segment
+  main.ui.fluid.two.column.stackable.grid
+    .ui.six.wide.column
+      .ui.raised.olive.inverted.compact.segment
         h2.ui.header API Keys
         .ui.section.segment
           h3.ui.header Add a key
@@ -112,20 +112,32 @@ template(name="home")
           h3.ui.header Validate all keys
           button.validate-button Validate
 
-    .ui.six.wide.column
-      #active-errors.ui.raised.very.padded.red.inverted.compact.segment
+    .ui.nine.wide.column
+      #active-errors.ui.raised.red.inverted.compact.segment
         h2.ui.header Active Errors
-        .ui.basic.segment
-          .ui.styled.accordion
-            each errors
-              .title
-                i.dropdown.icon
-                | Key ##{keyID}
-              .content
-                .accordion
-                  each errorMessage in log
-                    .title
-                      i.dropdown.icon
-                      = errorMessage.createdAt
+        .ui.styled.accordion
+          each errors
+            .title
+              i.dropdown.icon
+              | Key ##{keyID} #[span(style="color: #ff0000") ({{keyErrorCount log}})]
+            .content
+              .ui.cards.olive
+                each errorMessage in log
+                  .card
                     .content
-                      | [#{errorMessage.errorType}] #{errorMessage.message}
+                      .header
+                        | {{prettyDate errorMessage.createdAt}}
+                      .meta
+                        | {{timeAgo errorMessage.createdAt}}
+                        .right.floated
+                          .ui.horizontal.red.label
+                            | #{errorMessage.errorType}
+                      .description
+                        | #{errorMessage.message}
+              //- .accordion
+              //-   each errorMessage in log
+              //-     .title
+              //-       i.dropdown.icon
+              //-       | {{prettyDate errorMessage.createdAt}}
+              //-     .content
+              //-       | #[span [#{errorMessage.errorType}]] #{errorMessage.message}
