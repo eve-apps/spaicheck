@@ -69,7 +69,7 @@ Template.landing.onRendered(function () {
 Template.dashboard.onRendered(function() {
   $('#mobile-menu')
     .sidebar({
-      transition: 'scale down',
+      transition: 'overlay',
       dimPage: true,
       closable: true,
       onShow: function () {
