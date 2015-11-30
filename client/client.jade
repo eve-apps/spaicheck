@@ -93,6 +93,8 @@ template(name="sidebar")
       a.item Dolor
       a.item Sit
       a.item Amet
+      if userHasImportPermission
+        a.item(href="{{pathFor 'import'}}") Import Data
 
 //- ---------- -//
 //-   ROUTES   -//
@@ -109,3 +111,7 @@ template(name="home")
     .ui.section.segment
       h3.ui.header Validate all keys
       button.validate-button Validate
+
+//- Key Import
+template(name="import")
+  h4 Import your keys here

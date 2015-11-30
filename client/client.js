@@ -23,6 +23,13 @@ var requireAuth = function(context, redirect) {
   }
 };
 
+// Redirect to home page if user does not have proper permissions
+var requirePermissions = function (context, redirect) {
+  if (false) {
+    redirect(FlowRouter.path('home'));
+  }
+};
+
 /**
  * Routes
  **/
@@ -33,7 +40,7 @@ var exposed = FlowRouter.group({});
 // Group for routes that require authentication
 var app = FlowRouter.group({
   prefix: "/app",
-  triggersEnter: [requireAuth]
+  triggersEnter: [requireAuth, requirePermissions]
 });
 
 // Landing page route
@@ -52,6 +59,17 @@ app.route("/home", {
       head: "header",
       main: "home",
       side: "sidebar"
+    });
+  }
+});
+
+app.route('/import', {
+  name: 'import',
+  action: function () {
+    return BlazeLayout.render('dashboard', {
+      head: 'header',
+      main: 'import',
+      side: 'sidebar'
     });
   }
 });
@@ -102,6 +120,11 @@ Template.registerHelper('currentCharName', function() {
 Template.registerHelper('currentCharId', function() {
   var ref;
   return (ref = Meteor.user()) != null ? ref.profile.eveOnlineCharacterId : void 0;
+});
+
+// Global helper - check if user has import permission (surely there is a better way to do this?)
+Template.registerHelper('userHasImportPermission', function () {
+  return true;
 });
 
 /**
