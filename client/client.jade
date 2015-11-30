@@ -101,8 +101,8 @@ template(name="sidebar")
 //- Home
 template(name="home")
   main.ui.fluid.two.column.stackable.grid
-    .ui.six.wide.column
-      .ui.raised.olive.inverted.compact.segment
+    .ui.seven.wide.column
+      .ui.raised.olive.inverted.segment
         h2.ui.header API Keys
         .ui.section.segment
           h3.ui.header Add a key
@@ -113,7 +113,7 @@ template(name="home")
           button.validate-button Validate
 
     .ui.nine.wide.column
-      #active-errors.ui.raised.red.inverted.compact.segment
+      #active-errors.ui.raised.red.inverted.segment
         h2.ui.header Active Errors
         .ui.styled.accordion
           each errors
