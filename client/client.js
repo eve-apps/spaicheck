@@ -59,7 +59,7 @@ Template.dashboard.onRendered(function() {
     ;
 });
 
-Template.dashboard.helpers({
+Template.header.helpers({
   currentCharName: function() {
     var ref;
     return (ref = Meteor.user()) != null ? ref.profile.eveOnlineCharacterName : void 0;
