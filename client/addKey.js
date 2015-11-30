@@ -38,8 +38,8 @@ AutoForm.hooks({
           // It tells the client to not run any more functions until this method has returned
           Meteor.apply('validateKey', [doc.keyID, doc.vCode], true, function(err, result) {
             if (err) {
-              // Connection errors are just ignored and key is run again
-              if (err.error == 'GENERIC') return this.result(false);
+              // Connection errors are ignored and form submission fails
+              if (err.error == 'GENERIC') return self.result(false);
               // Log an appropriate error in the database including keyID and vCode for later use
               Meteor.call('logKeyError', doc.keyID, doc.vCode, err.error, err.reason);
               // Cancel form submission
