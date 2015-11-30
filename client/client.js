@@ -77,8 +77,9 @@ Template.dashboard.onRendered(function() {
       },
       onHidden: function () {
         $('#side-toggle').html('>>');
-      },
-    });
+      }
+    })
+  ;
 });
 
 // Dashboard header - initialize dropdown
@@ -88,6 +89,9 @@ Template.header.onRendered(function () {
   });
 });
 
+Template.home.onRendered(function () {
+  $('#active-errors .ui.accordion').accordion();
+});
 /**
  * Helpers
  **/
@@ -129,5 +133,11 @@ Template.dashboard.events({
         console.log(result.result);
       });
     }
+  }
+});
+
+Template.home.helpers({
+  errors: function () {
+    return Errors.find({});
   }
 });

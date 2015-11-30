@@ -100,12 +100,32 @@ template(name="sidebar")
 
 //- Home
 template(name="home")
-  main.ui.raised.very.padded.olive.inverted.compact.segment
-    h2.ui.header API Keys
-    .ui.section.segment
-      h3.ui.header Add a key
-      // See https://github.com/aldeed/meteor-autoform#component-and-helper-reference for info on attributes used here
-      {{> quickForm schema="AddKeyFormSchema" collection="Keys" id="insertKeyForm" type="insert" buttonContent="Add Key" validation="submit" resetOnSuccess="true" class="newKeyForm"}}
-    .ui.section.segment
-      h3.ui.header Validate all keys
-      button.validate-button Validate
+  main.ui.fluid.equal.width.stackable.grid
+    .ui.four.wide.column
+      .ui.raised.very.padded.olive.inverted.compact.segment
+        h2.ui.header API Keys
+        .ui.section.segment
+          h3.ui.header Add a key
+          // See https://github.com/aldeed/meteor-autoform#component-and-helper-reference for info on attributes used here
+          {{> quickForm schema="AddKeyFormSchema" collection="Keys" id="insertKeyForm" type="insert" buttonContent="Add Key" validation="submit" resetOnSuccess="true" class="newKeyForm"}}
+        .ui.section.segment
+          h3.ui.header Validate all keys
+          button.validate-button Validate
+
+    .ui.six.wide.column
+      #active-errors.ui.raised.very.padded.red.inverted.compact.segment
+        h2.ui.header Active Errors
+        .ui.basic.segment
+          .ui.styled.accordion
+            each errors
+              .title
+                i.dropdown.icon
+                | Key ##{keyID}
+              .content
+                .accordion
+                  each errorMessage in log
+                    .title
+                      i.dropdown.icon
+                      = errorMessage.createdAt
+                    .content
+                      | [#{errorMessage.errorType}] #{errorMessage.message}
