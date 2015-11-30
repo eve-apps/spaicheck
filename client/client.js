@@ -1,5 +1,14 @@
-var app, exposed, requireAuth;
+// Use lodash instead of underscore
+var _ = lodash;
 
+// Set BlazeLayout root to body instead of custom div
+BlazeLayout.setRoot('body');
+
+/**
+ * Auth
+ **/
+
+// Redirect to home route on login
 Accounts.onLogin(function() {
   if (!Session.get("loginRedirected")) {
     FlowRouter.go(FlowRouter.path("home"));
@@ -7,19 +16,27 @@ Accounts.onLogin(function() {
   }
 });
 
-requireAuth = function(context, redirect) {
+// Redirect to landing page if not authenticated
+var requireAuth = function(context, redirect) {
   if (!Meteor.userId() && !Meteor.loggingIn()) {
     redirect(FlowRouter.path("landing"));
   }
 };
 
-exposed = FlowRouter.group({});
+/**
+ * Routes
+ **/
 
-app = FlowRouter.group({
+// Group for routes that don't require authentication
+var exposed = FlowRouter.group({});
+
+// Group for routes that require authentication
+var app = FlowRouter.group({
   prefix: "/app",
   triggersEnter: [requireAuth]
 });
 
+// Landing page route
 exposed.route("/", {
   name: "landing",
   action: function() {
@@ -27,6 +44,7 @@ exposed.route("/", {
   }
 });
 
+// App home route
 app.route("/home", {
   name: "home",
   action: function() {
@@ -38,12 +56,18 @@ app.route("/home", {
   }
 });
 
-Template.dashboard.onRendered(function() {
-  $("#dashboard .ui.dropdown").dropdown({
-    action: "nothing"
-  });
+/**
+ * onRendered
+ **/
 
-  $('.ui.sidebar')
+// Landing - clean up after Semantic UI's .sidebar()
+Template.landing.onRendered(function () {
+  $('body').removeClass('pushable');
+});
+
+// Dashboard - initialize sidebar
+Template.dashboard.onRendered(function() {
+  $('#mobile-menu')
     .sidebar({
       transition: 'scale down',
       dimPage: true,
@@ -54,32 +78,47 @@ Template.dashboard.onRendered(function() {
       onHidden: function () {
         $('#side-toggle').html('>>');
       },
-    })
-
-    ;
+    });
 });
 
-Template.header.helpers({
-  currentCharName: function() {
-    var ref;
-    return (ref = Meteor.user()) != null ? ref.profile.eveOnlineCharacterName : void 0;
-  },
-  currentCharId: function() {
-    var ref;
-    return (ref = Meteor.user()) != null ? ref.profile.eveOnlineCharacterId : void 0;
-  }
+// Dashboard header - initialize dropdown
+Template.header.onRendered(function () {
+  $("header .ui.dropdown").dropdown({ // TODO: make selector distinguish between multiple header tags
+    action: "nothing"
+  });
 });
+
+/**
+ * Helpers
+ **/
+
+// Global helper - provide user's character name
+Template.registerHelper('currentCharName', function() {
+  var ref;
+  return (ref = Meteor.user()) != null ? ref.profile.eveOnlineCharacterName : void 0;
+});
+
+// Global helper - provide user's character ID
+Template.registerHelper('currentCharId', function() {
+  var ref;
+  return (ref = Meteor.user()) != null ? ref.profile.eveOnlineCharacterId : void 0;
+});
+
+/**
+ * Events
+ **/
 
 Template.dashboard.events({
   "click .logout-button": function() {
+    // Log the user out and redirect them to the landing page
     Meteor.logout(function() {
       FlowRouter.go(FlowRouter.path("landing"));
     });
   },
   "click #side-toggle": function () {
-    $('.ui.sidebar').sidebar('toggle');
+    // Toggle the sidebar
+    $('#mobile-menu').sidebar('toggle');
     console.log($('.ui.fixed.top').visibility('get screen calculations'));
-
   },
   "click .validate-button": function() {
     // Fetch all keys from the database and validate them

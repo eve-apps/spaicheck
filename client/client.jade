@@ -1,5 +1,5 @@
 //- ---------- -//
-//-   STATIC   -//
+//-   GLOBAL   -//
 //- ---------- -//
 
 //- Head
@@ -9,34 +9,53 @@ head
   meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
   meta(name="application-name", content="SpaiCheck")
   meta(name="description", content="SpaiCheck helps you catch spais!")
-  title SpaiCheck
+  title Spaicheck
 
-//- ----------- -//
-//-  TEMPLATES  -//
-//- ----------- -//
+//- --------- -//
+//-  HELPERS  -//
+//- --------- -//
 
 //- Error
 template(name="error")
-  .error
+  .tmpl-error
     span Whoops! We couldn't find what you were looking for...
 
 //- Loading
 template(name="loading")
-  .loading
+  .tmpl-loading
     span Loading...
+
+//- --------- -//
+//-  LAYOUTS  -//
+//- --------- -//
+
+//- Landing
+template(name="landing")
+  header
+    img.ui.image(src="logo.png")
+    +loginButtons
+  main
+    a(href="{{pathFor 'home'}}")
+      h2 Check for Spais!
+  footer.ui.bottom.fixed.inverted.fluid.one.item.menu
+    .item.header Running on Meteor
 
 //- Dashboard
 template(name="dashboard")
-  .ui.sidebar.thin.inverted.left.vertical.menu
+  aside#mobile-menu.ui.sidebar.thin.inverted.left.vertical.menu
     +Template.dynamic(template=side)
-  +Template.dynamic(template=head)
-  +Template.dynamic(template=main)
-  .ui.bottom.fixed.inverted.fluid.one.item.menu
-    .item.header Running on Meteor
+  .pusher
+    aside#desktop-menu.ui.small.inverted.left.fixed.vertical.menu
+      +Template.dynamic(template=side)
+    #page-wrapper
+      +Template.dynamic(template=head)
+      +Template.dynamic(template=main)
+      footer.ui.bottom.fixed.inverted.fluid.one.item.menu
+        .item.header Running on Meteor
 
 //- Dashboard Header
 template(name="header")
-  .ui.fixed.top.inverted.menu
+  header.ui.fixed.top.inverted.menu
     .left.menu
       #side-toggle.ui.black.button &gt;&gt;
       a.item(href="{{pathFor 'home'}}")
@@ -79,21 +98,8 @@ template(name="sidebar")
 //-   ROUTES   -//
 //- ---------- -//
 
-//- Landing page
-template(name="landing")
-  header
-    img.ui.image(src="logo.png")
-    +loginButtons
-  main
-    a(href="{{pathFor 'home'}}")
-      h2 Check for Spais!
-  footer
-    | Running on Meteor
-
-//- App Home page
+//- Home
 template(name="home")
-  #desktop-menu.ui.small.inverted.left.fixed.vertical.menu
-    +Template.dynamic(template=side)
   main.ui.raised.very.padded.olive.inverted.compact.segment
     h2.ui.header API Keys
     .ui.section.segment
