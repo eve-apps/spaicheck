@@ -103,7 +103,9 @@ template(name="home")
   main.ui.fluid.two.column.stackable.grid
     .ui.seven.wide.column
       .ui.raised.olive.inverted.segment
-        h2.ui.header API Keys
+        .ui.two.column.grid
+          .column
+            h2.ui.header API Keys
         .ui.section.segment
           h3.ui.header Add a key
           // See https://github.com/aldeed/meteor-autoform#component-and-helper-reference for info on attributes used here
@@ -114,26 +116,34 @@ template(name="home")
 
     .ui.nine.wide.column
       #active-errors.ui.raised.red.inverted.segment
-        h2.ui.header Active Errors
-        .ui.styled.accordion
-          each errors
-            .title
-              i.dropdown.icon
-              | Key ##{keyID} #[span(style="color: #ff0000") ({{keyErrorCount log}})]
-            .content
-              .ui.cards.olive
-                each errorMessage in log
-                  .card
-                    .content
-                      .header
-                        | {{prettyDate errorMessage.createdAt}}
-                      .meta
-                        | {{timeAgo errorMessage.createdAt}}
-                        .right.floated
-                          .ui.horizontal.red.label
-                            | #{errorMessage.errorType}
-                      .description
-                        | #{errorMessage.message}
+        .ui.two.column.grid
+          .column
+            h2.ui.header Active Errors
+          .column
+            #errTimeChk.ui.checkbox
+              input(name="errTimeChk" type="checkbox")
+              label Use EVE time format
+        .ui.section.segment
+          .ui.accordion
+            each errors
+              .title
+                i.dropdown.icon
+                | Key ##{keyID} #[span(style="color: #ff0000") ({{keyErrorCount log}})]
+                .ui.divider
+              .content
+                .ui.cards.olive
+                  each errorMessage in log
+                    .card
+                      .content
+                        .header
+                          | {{prettyDate errorMessage.createdAt}}
+                        .meta
+                          | {{timeAgo errorMessage.createdAt}}
+                          .right.floated
+                            .ui.horizontal.red.label
+                              | #{errorMessage.errorType}
+                        .description
+                          | #{errorMessage.message}
               //- .accordion
               //-   each errorMessage in log
               //-     .title

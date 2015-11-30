@@ -1,3 +1,10 @@
+// Set new thresholds
+  moment.relativeTimeThreshold('s', 60);
+  moment.relativeTimeThreshold('m', 60);
+  moment.relativeTimeThreshold('h', 24);
+  moment.relativeTimeThreshold('d', 30);
+  moment.relativeTimeThreshold('M', 12);
+
 // Use lodash instead of underscore
 var _ = lodash;
 
@@ -91,6 +98,17 @@ Template.header.onRendered(function () {
 
 Template.home.onRendered(function () {
   $('#active-errors .ui.accordion').accordion();
+
+  let errTimeChk = $('#errTimeChk');
+
+  errTimeChk.checkbox(curOptions.useEveDurations ? 'set checked' : 'set unchecked');
+  errTimeChk.checkbox({
+    onChange: function () {
+      Session.setPersistent('useEveDurations', errTimeChk.checkbox('is checked'));
+      curOptions.useEveDurations = errTimeChk.checkbox('is checked');
+      console.log("useEveDurations: " + curOptions.useEveDurations);
+    }
+  });
 });
 /**
  * Helpers
@@ -119,7 +137,24 @@ Template.home.helpers({
     return moment(date).format("M-D-YYYY h:mmA");
   },
   timeAgo: function (date) {
-    return moment(date).fromNow();
+    if (curOptions.useEveDurations) {
+      let separator = ' ';
+      let terminator = 'ago';
+      let timeSinceError = moment().diff(date);
+      let duration = moment.duration(timeSinceError);
+      let durationArray = [];
+
+      if (duration.years() > 0)   durationArray.push(duration.years() + 'y');
+      if (duration.months() > 0)  durationArray.push(duration.months() + 'm');
+      if (duration.days() > 7)    durationArray.push(Math.floor(duration.days() / 7) + 'w');
+      if (duration.days() > 0)    durationArray.push((duration.days() % 7) + 'd');
+      if (duration.hours() > 0)   durationArray.push(duration.hours() + 'h');
+      if (duration.minutes() > 0) durationArray.push(duration.minutes() + 'm');
+      if (duration.seconds() > 0) durationArray.push(duration.seconds() + 's');
+
+      return durationArray.join(separator) + separator + terminator;
+    }
+    else return moment(date).fromNow();
   }
 });
 
