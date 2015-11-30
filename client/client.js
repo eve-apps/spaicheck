@@ -108,6 +108,21 @@ Template.registerHelper('currentCharId', function() {
   return (ref = Meteor.user()) != null ? ref.profile.eveOnlineCharacterId : void 0;
 });
 
+Template.home.helpers({
+  errors: function () {
+    return Errors.find({});
+  },
+  keyErrorCount: function (log) {
+    return log.length > 1 ? log.length + " Errors" : log.length + " Error";
+  },
+  prettyDate: function (date) {
+    return moment(date).format("M-D-YYYY h:mmA");
+  },
+  timeAgo: function (date) {
+    return moment(date).fromNow();
+  }
+});
+
 /**
  * Events
  **/
@@ -133,11 +148,5 @@ Template.dashboard.events({
         console.log(result.result);
       });
     }
-  }
-});
-
-Template.home.helpers({
-  errors: function () {
-    return Errors.find({});
   }
 });
