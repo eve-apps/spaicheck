@@ -27,53 +27,53 @@ template(name="loading")
 
 //- Dashboard
 template(name="dashboard")
-  #dashboard
+  .ui.sidebar.thin.inverted.left.vertical.menu
     +Template.dynamic(template=side)
-    .pusher
-      header
-        .ui.inverted.menu
-          .left.menu
-            button#side-toggle.ui.black.big.right.attached.fixed.button >>
-          .right.menu
-            .ui.dropdown.item
-              if currentUser
-                img.ui.avatar.image(src="https://image.eveonline.com/Character/#{currentCharId}_64.jpg")
-              else
-                img.ui.avatar.image(src="/anon.jpg")
-              span &nbsp;#{currentCharName}
-              i.dropdown.icon
-              .menu
-                a.item
-                  i.user.icon
-                  span Profile
-                a.item
-                  i.settings.icon
-                  span Settings
-                a.item.logout-button
-                  i.log.out.icon
-                  span Log out
-      main
-        +Template.dynamic(template=main)
-      footer
-        .ui.fixed.inverted.center.aligned.footer.segment
-          | Running on Meteor
+  +Template.dynamic(template=head)
+  +Template.dynamic(template=main)
+  .ui.bottom.fixed.inverted.fluid.one.item.menu
+    .item.header Running on Meteor
+
+//- Dashboard Header
+template(name="header")
+  .ui.fixed.top.inverted.menu
+    .left.menu
+      #side-toggle.ui.black.button &gt;&gt;
+      a.item(href="{{pathFor 'home'}}")
+        img.ui.small.image(src="/logo.png")
+    .right.menu
+      .ui.dropdown.item
+        if currentUser
+          img.ui.avatar.image(src="https://image.eveonline.com/Character/#{currentCharId}_64.jpg")
+        else
+          img.ui.avatar.image(src="/anon.jpg")
+        span &nbsp;#{currentCharName}
+        i.dropdown.icon
+        .menu
+          a.item
+            i.user.icon
+            span Profile
+          a.item
+            i.settings.icon
+            span Settings
+          a.item.logout-button
+            i.log.out.icon
+            span Log out
 
 //- Dashboard Sidebar
 template(name="sidebar")
-  .ui.sidebar.thin.inverted.left.vertical.menu
-    a.item(href="{{pathFor 'home'}}")
-      img.ui.small.image(src="/logo.png")
-    .item
-      .header Misc
-      .menu
-        a.item Lorem
-    .item
-      .header Tools
-      .menu
-        a.item Ipsum
-        a.item Dolor
-        a.item Sit
-        a.item Amet
+  .item.header MENU
+  .item
+    .header Misc
+    .menu
+      a.item Lorem
+  .item
+    .header Tools
+    .menu
+      a.item Ipsum
+      a.item Dolor
+      a.item Sit
+      a.item Amet
 
 //- ---------- -//
 //-   ROUTES   -//
@@ -92,12 +92,14 @@ template(name="landing")
 
 //- App Home page
 template(name="home")
-  #home
-    h4 Todo: add content here
-    .key-add-container
-      h3 Add a key
+  #desktop-menu.ui.small.inverted.left.fixed.vertical.menu
+    +Template.dynamic(template=side)
+  main.ui.raised.very.padded.olive.inverted.compact.segment
+    h2.ui.header API Keys
+    .ui.section.segment
+      h3.ui.header Add a key
       // See https://github.com/aldeed/meteor-autoform#component-and-helper-reference for info on attributes used here
       {{> quickForm schema="AddKeyFormSchema" collection="Keys" id="insertKeyForm" type="insert" buttonContent="Add Key" validation="submit" resetOnSuccess="true" class="newKeyForm"}}
-    .key-val-container
-      h3 Validate keys
+    .ui.section.segment
+      h3.ui.header Validate all keys
       button.validate-button Validate

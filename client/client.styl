@@ -1,31 +1,15 @@
 @import url("https://fonts.googleapis.com/css?family=Fugaz+One")
+#__blaze-root
+  padding 60px 15px 40px 15px
+#desktop-menu
+  display none
 
-// #__blaze-root
-//   height 100%
-//   width 100%
-//
-// #dashboard
-//   height 100%
-//   #page-wrapper
-//     height 100%
-//   nav
-//     float left
-//     height 100%
-//     #sidebar
-//       height 100%
-//   main
-//
-//     padding 25px
-//   div#login-buttons
-//     color white
-//
-// div#login-buttons-logout
-//   display none
-//
-// img.logo
-//   height 28px
-//   margin 0 auto
-footer
-  position fixed
-  width 100%
-  bottom 0
+@media screen and (min-width: 768px)
+  #side-toggle
+    display none
+  #desktop-menu
+    display block
+    z-index 0
+    padding-top 60px
+  #__blaze-root
+    padding-left 200px

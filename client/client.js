@@ -31,6 +31,7 @@ app.route("/home", {
   name: "home",
   action: function() {
     return BlazeLayout.render("dashboard", {
+      head: "header",
       main: "home",
       side: "sidebar"
     });
@@ -41,6 +42,21 @@ Template.dashboard.onRendered(function() {
   $("#dashboard .ui.dropdown").dropdown({
     action: "nothing"
   });
+
+  $('.ui.sidebar')
+    .sidebar({
+      transition: 'scale down',
+      dimPage: true,
+      closable: true,
+      onShow: function () {
+        $('#side-toggle').html('<<');
+      },
+      onHidden: function () {
+        $('#side-toggle').html('>>');
+      },
+    })
+
+    ;
 });
 
 Template.dashboard.helpers({
@@ -61,11 +77,9 @@ Template.dashboard.events({
     });
   },
   "click #side-toggle": function () {
-    console.log("clicked");
-    let toggleBtn = $('#side-toggle');
     $('.ui.sidebar').sidebar('toggle');
-    toggleBtn.toggleClass('out');
-    toggleBtn.html(toggleBtn.hasClass('out') ? '<<' : '>>');
+    console.log($('.ui.fixed.top').visibility('get screen calculations'));
+
   },
   "click .validate-button": function() {
     // Fetch all keys from the database and validate them
