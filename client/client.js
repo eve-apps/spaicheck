@@ -101,12 +101,10 @@ Template.home.onRendered(function () {
 
   let errTimeChk = $('#errTimeChk');
 
-  errTimeChk.checkbox(curOptions.useEveDurations ? 'set checked' : 'set unchecked');
+  errTimeChk.checkbox(Session.get('useEveDurations') ? 'set checked' : 'set unchecked');
   errTimeChk.checkbox({
     onChange: function () {
       Session.setPersistent('useEveDurations', errTimeChk.checkbox('is checked'));
-      curOptions.useEveDurations = errTimeChk.checkbox('is checked');
-      console.log("useEveDurations: " + curOptions.useEveDurations);
     }
   });
 });
@@ -137,7 +135,7 @@ Template.home.helpers({
     return moment(date).format("M-D-YYYY h:mmA");
   },
   timeAgo: function (date) {
-    if (curOptions.useEveDurations) {
+    if (Session.get('useEveDurations')) {
       let separator = ' ';
       let terminator = 'ago';
       let timeSinceError = moment().diff(date);
