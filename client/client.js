@@ -64,6 +64,25 @@ app.route("/home", {
 });
 
 /**
+ * onCreated
+ **/
+
+Template.home.onCreated(function () {
+  Session.set('timer', true);
+  eachSecond = Meteor.setInterval(function() {
+    Session.set('timer', !Session.get('timer'));
+  }, 1000);
+});
+
+/**
+ * onDestroyed
+ **/
+
+Template.home.onDestroyed(function () {
+  Meteor.clearInterval(eachSecond);
+});
+
+/**
  * onRendered
  **/
 
@@ -108,6 +127,7 @@ Template.home.onRendered(function () {
     }
   });
 });
+
 /**
  * Helpers
  **/
@@ -135,6 +155,7 @@ Template.home.helpers({
     return moment(date).format("M-D-YYYY h:mmA");
   },
   timeAgo: function (date) {
+    Session.get('timer');
     if (Session.get('useEveDurations')) {
       let separator = ' ';
       let terminator = 'ago';
