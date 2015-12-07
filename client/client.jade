@@ -144,10 +144,3 @@ template(name="home")
                               | #{errorMessage.errorType}
                         .description
                           | #{errorMessage.message}
-              //- .accordion
-              //-   each errorMessage in log
-              //-     .title
-              //-       i.dropdown.icon
-              //-       | {{prettyDate errorMessage.createdAt}}
-              //-     .content
-              //-       | #[span [#{errorMessage.errorType}]] #{errorMessage.message}
