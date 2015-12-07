@@ -20,7 +20,7 @@ Meteor.methods({
             switch (err.code) {
               case '203':
                 err.reason = 'KeyID and/or vCode is invalid.';
-                err.errorType = 'INVALIDKEY'
+                err.errorType = 'MALFORMEDKEY'
                 break;
               case '222':
                 err.reason = 'Key has expired or been deleted.';
