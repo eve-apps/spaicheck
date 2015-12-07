@@ -25,7 +25,7 @@ var requireAuth = function(context, redirect) {
 
 // Redirect to home page if user does not have proper permissions
 var requirePermissions = function (context, redirect) {
-  if (false) {
+  if (context.route.name !== 'home' && !Roles.userIsInRole(Meteor.userId(), ['route-' + context.route.name])) {
     redirect(FlowRouter.path('home'));
   }
 };

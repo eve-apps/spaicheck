@@ -93,7 +93,7 @@ template(name="sidebar")
       a.item Dolor
       a.item Sit
       a.item Amet
-      if userHasImportPermission
+      if isInRole 'route-import'
         a.item(href="{{pathFor 'import'}}") Import Data
 
 //- ---------- -//
