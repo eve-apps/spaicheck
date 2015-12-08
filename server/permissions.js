@@ -175,9 +175,7 @@ Meteor.methods({
         $addToSet: {
           sroles: {
             $each: roles
-          }
-        },
-        $addToSet: {
+          },
           roles: {
             $each: permissions
           }
@@ -207,9 +205,7 @@ Meteor.methods({
       },
       {
         $pullAll: {
-          sroles: roles
-        },
-        $pullAll: {
+          sroles: roles,
           roles: permissions
         }
       },
