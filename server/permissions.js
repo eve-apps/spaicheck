@@ -2,6 +2,8 @@
 
 // TODO: Add more logging and test thoroughly
 // Also TODO: implement security and better error handling
+// TODO: handle role/perm removal more intelligently, e.g. don't blindly remove a perm from users on role deletion if another applied user role has that same perm
+// TODO: double check uses of $pull vs $pullAll
 
 // Permissions should not get deleted after runtime in production, so we can disable this function then
 Meteor.roles.find().observe({
@@ -29,9 +31,11 @@ function checkPermissions (permissions) {
     throw new Meteor.Error('perms-unspecified', 'Permissions must be specified.', permissions);
   } else {
     // Ensure all requested permissions exist in the db
-    let existingPermissions = Roles.getAllRoles().fetch();
+    let existingPermissions = _.pluck(Roles.getAllRoles().fetch(), 'name');
+    console.log(permissions, existingPermissions);
     let invalidPermissions = _.difference(permissions, existingPermissions);
     if (invalidPermissions.length !== 0){
+      console.log(permissions, existingPermissions);
       throw new Meteor.Error('perms-invalid', 'One or more of the specified permissions do not exist.', invalidPermissions);
     }
   }
