@@ -1,6 +1,7 @@
 'use strict';
 
 // TODO: Add more logging and test thoroughly
+// Also TODO: implement security and better error handling
 
 // Permissions should not get deleted after runtime in production, so we can disable this function then
 Meteor.roles.find().observe({
@@ -57,30 +58,41 @@ function checkRoles (roles) {
 Meteor.methods({
   createRole: function (name, permissions) {
     permissions = checkPermissions(permissions);
+
     // Create role
     RoleHierarchy.insert({name: name, roles: permissions});
   },
   deleteRole: function (name) {
-    // Delete role
-    RoleHierarchy.remove({name: name});
-    // Remove role from users
-    Meteor.users.update(
-      {
-        sroles: name
-      },
-      {
-        $pull: {
+    let roleDoc = RoleHierarchy.find({name: name}).fetch()[0];
+    if (roleDoc != null) {
+      roleDoc.roles = roleDoc.roles || [];
+
+      // Delete role
+      RoleHierarchy.remove({name: name});
+
+      // Remove role from users
+      Meteor.users.update(
+        {
           sroles: name
+        },
+        {
+          $pull: {
+            sroles: name
+          },
+          // Remove role's associated permissions from users
+          $pullAll: {
+            roles: roleDoc.roles
+          }
+        },
+        {
+          multi: true
         }
-      },
-      {
-        multi: true
-      }
-    );
-    // TODO: Remove role's associated permissions from users
+      );
+    }
   },
   addPermissionsToRole: function (permissions, role) {
     permissions = checkPermissions(permissions);
+
     // Add permissions to role
     RoleHierarchy.update(
       {
@@ -94,10 +106,27 @@ Meteor.methods({
         }
       }
     );
-    // TODO: Add permissions to users with associated role
+
+    // Add permissions to users with associated role
+    Meteor.users.update(
+      {
+        sroles: role
+      },
+      {
+        $addToSet: {
+          roles: {
+            $each: permissions
+          }
+        }
+      },
+      {
+        multi: true
+      }
+    );
   },
   removePermissionsFromRole: function (permissions, role) {
     permissions = checkPermissions(permissions);
+
     // Remove permissions from role
     RoleHierarchy.update(
       {
@@ -109,11 +138,33 @@ Meteor.methods({
         }
       }
     );
-    // TODO: Remove permissions from users with associated role
+
+    // Remove permissions from users with associated role
+    Meteor.users.update(
+      {
+        sroles: role
+      },
+      {
+        $pullAll: {
+          roles: permissions
+        }
+      },
+      {
+        multi: true
+      }
+    );
   },
   addRolesToUsers: function (roles, users) {
     roles = checkRoles(roles);
-    // Add roles to users
+
+    // Fetch permissions associated with roles
+    let permissions = _.flatten(_.pluck(RoleHierarchy.find({
+      name: {
+        $in: roles
+      }
+    }).fetch(), 'roles'));
+
+    // Add roles and their associated permissions to users
     Meteor.users.update(
       {
         _id: {
@@ -125,17 +176,29 @@ Meteor.methods({
           sroles: {
             $each: roles
           }
+        },
+        $addToSet: {
+          roles: {
+            $each: permissions
+          }
         }
       },
       {
         multi: true
       }
     );
-    // TODO: Add roles' associated permissions to users
   },
   removeRolesFromUsers: function (roles, users) {
     roles = checkRoles(roles);
-    // Remove roles from users
+
+    // Fetch permissions associated with roles
+    let permissions = _.flatten(_.pluck(RoleHierarchy.find({
+      name: {
+        $in: roles
+      }
+    }).fetch(), 'roles'));
+
+    // Remove roles and their associated permissions from users
     Meteor.users.update(
       {
         _id: {
@@ -145,12 +208,14 @@ Meteor.methods({
       {
         $pullAll: {
           sroles: roles
+        },
+        $pullAll: {
+          roles: permissions
         }
       },
       {
         multi: true
       }
     );
-    // TODO: Remove roles' associated permissions from users
   }
 });
