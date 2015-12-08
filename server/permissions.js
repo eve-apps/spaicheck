@@ -25,10 +25,15 @@ Meteor.roles.find().observe({
   }
 });
 
-function checkPermissions (permissions) {
+function checkPermissions (permissions, optional) {
   if (!_.isArray(permissions) || permissions.length === 0 || !_.every(permissions, String)) {
-    // Ensure permissions is a non-empty array of Strings
-    throw new Meteor.Error('perms-unspecified', 'Permissions must be specified.', permissions);
+    // TODO: Improve this check as well as checkRoles to handle edge cases
+    if (optional) {
+      permissions = [];
+    } else {
+      // Ensure permissions is a non-empty array of Strings
+      throw new Meteor.Error('perms-unspecified', 'Permissions must be specified.', permissions);
+    }
   } else {
     // Ensure all requested permissions exist in the db
     let existingPermissions = _.pluck(Roles.getAllRoles().fetch(), 'name');
@@ -61,7 +66,7 @@ function checkRoles (roles) {
 
 Meteor.methods({
   createRole: function (name, permissions) {
-    permissions = checkPermissions(permissions);
+    permissions = checkPermissions(permissions, true);
 
     // Create role
     RoleHierarchy.insert({name: name, roles: permissions});
@@ -69,8 +74,6 @@ Meteor.methods({
   deleteRole: function (name) {
     let roleDoc = RoleHierarchy.find({name: name}).fetch()[0];
     if (roleDoc != null) {
-      roleDoc.roles = roleDoc.roles || [];
-
       // Delete role
       RoleHierarchy.remove({name: name});
 
