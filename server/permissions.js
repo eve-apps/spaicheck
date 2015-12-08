@@ -9,7 +9,22 @@
 Meteor.roles.find().observe({
   removed: function (permission) {
     console.log('Removing deleted permission from roles:', permission);
+    // Remove deleted permission from roles
     RoleHierarchy.update(
+      {
+        roles: permission.name
+      },
+      {
+        $pull: {
+          roles: permission.name
+        }
+      },
+      {
+        multi: true
+      }
+    );
+    // Remove deleted permission from users
+    Meteor.users.update(
       {
         roles: permission.name
       },
