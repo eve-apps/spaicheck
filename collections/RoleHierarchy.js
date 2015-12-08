@@ -8,8 +8,7 @@ RoleHierarchySchema = new SimpleSchema({
     unique: true
   },
   roles: {
-    type: [String],
-    optional: true
+    type: [String]
   }
 });
 
