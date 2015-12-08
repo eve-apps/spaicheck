@@ -115,13 +115,14 @@ Meteor.methods({
   addPermissionsToRole: function (permissions, role) {
     permissions = checkPermissions(permissions);
 
+    console.log('addPermissionsToRole', permissions);
     // Add permissions to role
     RoleHierarchy.update(
       {
         name: role
       },
       {
-        $addToSet: {
+        $addToSet: { // Does not work?
           roles: {
             $each: permissions
           }
@@ -135,7 +136,7 @@ Meteor.methods({
         sroles: role
       },
       {
-        $addToSet: {
+        $addToSet: { // Does work?
           roles: {
             $each: permissions
           }
@@ -149,13 +150,14 @@ Meteor.methods({
   removePermissionsFromRole: function (permissions, role) {
     permissions = checkPermissions(permissions);
 
+    console.log('removePermissionsFromRole', permissions);
     // Remove permissions from role
     RoleHierarchy.update(
       {
         name: role
       },
       {
-        $pullAll: {
+        $pullAll: { // Does not work?
           roles: permissions
         }
       }
@@ -167,7 +169,7 @@ Meteor.methods({
         sroles: role
       },
       {
-        $pullAll: {
+        $pullAll: { // Does work?
           roles: permissions
         }
       },
