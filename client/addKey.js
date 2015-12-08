@@ -47,12 +47,13 @@ AutoForm.hooks({
             }
             else {
               // Handle "valid" keys that fail corp requirements
-              if (result[0] !== 'GOOD') {
-                let reasonsString = result.join(' ');
+              if (result.statusFlags[0] !== 'GOOD') {
+                let reasonsString = result.statusFlags.join(' ');
                 Meteor.call('logKeyError', doc.keyID, doc.vCode, 'FAILCHECK', reasonsString);
                 // Cancel form submission
                 self.result(false);
               }
+              doc.resultBody = result;
               // Successfully complete form submission, and insert "doc" to the database
               self.result(doc);
             }
