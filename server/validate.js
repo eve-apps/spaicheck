@@ -39,7 +39,6 @@ Meteor.methods({
           // Return error object and null result object
           return done(err, null);
         }
-        console.log(_.omit(result, ['currentTime', 'cachedUntil']));
         // Save info returned for key as object for later diffing
         // Omit Date type fields as they'd trigger constant changes
         // keyData = _.omit(result, ['currentTime', 'cachedUntil']);
@@ -59,6 +58,7 @@ Meteor.methods({
 
         // Attach the statusFlags array to result for later inspection
         result.statusFlags = statusFlags;
+
         done(null, result);
       });
     });

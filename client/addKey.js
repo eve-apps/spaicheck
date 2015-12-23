@@ -22,7 +22,7 @@ AutoForm.hooks({
   insertKeyForm: {
     // "before" hook is run before the form is submitted, before db insertion
     before: {
-      insert: function(doc) {
+      method: function(doc) {
         // Prevent the page from reloading on submission
         this.event.preventDefault();
 
@@ -54,7 +54,8 @@ AutoForm.hooks({
                 self.result(false);
               }
               doc.resultBody = result;
-              // Successfully complete form submission, and insert "doc" to the database
+
+              // Successfully complete form submission, and call addKeySubmit()
               self.result(doc);
             }
           });

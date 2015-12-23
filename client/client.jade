@@ -108,8 +108,7 @@ template(name="home")
             h2.ui.header API Keys
         .ui.section.segment
           h3.ui.header Add a key
-          // See https://github.com/aldeed/meteor-autoform#component-and-helper-reference for info on attributes used here
-          {{> quickForm schema="AddKeyFormSchema" collection="Keys" id="insertKeyForm" type="insert" buttonContent="Add Key" validation="submit" resetOnSuccess="true" class="newKeyForm" removeEmptyStrings="false"}}
+          +insertKeyForm
         .ui.section.segment
           h3.ui.header Validate all keys
           button.validate-button Validate
@@ -144,3 +143,15 @@ template(name="home")
                               | #{errorMessage.errorType}
                         .description
                           | #{errorMessage.message}
+
+//- insertKeyForm
+template(name="insertKeyForm")
+  //- See https://github.com/aldeed/meteor-autoform#component-and-helper-reference for info on attributes used here
+  +autoForm schema="AddKeyFormSchema" collection="Keys" id="insertKeyForm" type="method" meteormethod="addKeySubmit" validation="none" resetOnSuccess="true"
+    .ui.fluid.input
+      +afFieldInput name="keyID" type="text" placeholder="Key ID"
+    {{afFieldMessage name="keyID"}}
+    .ui.fluid.input
+      +afFieldInput name="vCode" type="text" placeholder="Verification Code"
+    {{afFieldMessage name="vCode"}}
+    button(type="submit" class="ui fluid button") Add Key
