@@ -1,5 +1,5 @@
 Meteor.methods({
-  'notifyChanges': function (changes) {
-    console.log("This will eventually send an email with: " + changes);
+  'notifyChanges': function (key, changes) {
+    console.log("This will eventually send an email with: \nKey #" + key + " has changed: " + changes);
   }
 });
