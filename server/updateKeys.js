@@ -18,7 +18,7 @@ Meteor.methods({
     }
     else console.log("Proceeding to update keys...");
     // Fetch all keys from the database and validate them
-    let curKeys = Keys.find().fetch();
+    let curKeys = Keys.find().fetch(); // all are currently valid
     let curTimeout = 0;
     var cachedUntil = null;
     for (let i=0; i < curKeys.length; i++) {
@@ -27,20 +27,10 @@ Meteor.methods({
         let fnStart = new Date();
 
         Meteor.call('validateKey', curKeys[i].keyID, curKeys[i].vCode, function (err, result) {
-          if (err) {
-            //console.log(err);
-            // TODO: Handle changes since last check of key
-          }
-          else {
-            //console.log(result);
-            // TODO: Handle changes since last check of key
-            cachedUntil = result.cachedUntil;
-          }
-
+          Meteor.call('handleChanges', curKeys[i].keyID, err, result);
           let fnEnd = new Date();
           let fnDelta = fnEnd - fnStart;
           console.log("Call #" + i + " has returned in " + fnDelta + " milliseconds. ");
-          if (i == curKeys.length -1) console.log("Cached Until: " + cachedUntil);
         });
       }, curTimeout += Math.ceil(1000/30));
 

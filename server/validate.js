@@ -20,21 +20,21 @@ Meteor.methods({
             switch (err.code) {
               case '203':
                 err.reason = 'KeyID and/or vCode is invalid.';
-                err.errorType = 'MALFORMEDKEY'
+                err.errorType = 'MALFORMEDKEY';
                 break;
               case '222':
                 err.reason = 'Key has expired or been deleted.';
-                err.errorType = 'INVALIDKEY'
+                err.errorType = 'INVALIDKEY';
                 break;
               default:
                 err.reason = 'Unhandled API error code: ' + err.code;
             }
           } else if (err.response) {
             err.reason = 'Connection error.';
-            err.errorType = 'GENERIC'
+            err.errorType = 'GENERIC';
           } else {
             err.reason = 'Internal error.';
-            err.errorType = 'GENERIC'
+            err.errorType = 'GENERIC';
           }
           // Return error object and null result object
           return done(err, null);
@@ -56,7 +56,10 @@ Meteor.methods({
           statusFlags = ['GOOD'];
         }
 
-        done(null, statusFlags);
+        // Attach the statusFlags array to result for later inspection
+        result.statusFlags = statusFlags;
+
+        done(null, result);
       });
     });
 

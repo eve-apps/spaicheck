@@ -22,7 +22,7 @@ AutoForm.hooks({
   insertKeyForm: {
     // "before" hook is run before the form is submitted, before db insertion
     before: {
-      insert: function(doc) {
+      method: function(doc) {
         // Prevent the page from reloading on submission
         this.event.preventDefault();
 
@@ -47,13 +47,15 @@ AutoForm.hooks({
             }
             else {
               // Handle "valid" keys that fail corp requirements
-              if (result[0] !== 'GOOD') {
-                let reasonsString = result.join(' ');
+              if (result.statusFlags[0] !== 'GOOD') {
+                let reasonsString = result.statusFlags.join(' ');
                 Meteor.call('logKeyError', doc.keyID, doc.vCode, 'FAILCHECK', reasonsString);
                 // Cancel form submission
                 self.result(false);
               }
-              // Successfully complete form submission, and insert "doc" to the database
+              doc.resultBody = result;
+
+              // Successfully complete form submission, and call addKeySubmit()
               self.result(doc);
             }
           });

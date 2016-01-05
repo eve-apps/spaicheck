@@ -1,6 +1,28 @@
 // The Mongo collection to which our schema will be attached
 Keys = new Mongo.Collection("keys");
 
+ResultBodySchema = new SimpleSchema({
+  accessMask: {
+    type: Number
+  },
+  type: {
+    type: String
+  },
+  expires: {
+    type: String,
+    optional: true,
+    custom: function () {
+      if (!this.operator && this.value == null) {
+        return "required";
+      }
+    }
+  },
+  characters: {
+    type: Object,
+    blackbox: true
+  }
+});
+
 KeySchema = new SimpleSchema({
   keyID: {
     type: Number,
@@ -32,8 +54,8 @@ KeySchema = new SimpleSchema({
       omit: true // Don't render this field on quickForms
     }
   },
-  statusFlags: {
-    type: [String],
+  resultBody: {
+    type: ResultBodySchema,
     optional: true,
     autoform: {
       omit: true // Don't render this field on quickForms
