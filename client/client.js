@@ -202,5 +202,8 @@ Template.dashboard.events({
         console.log(result.result);
       });
     }
+  },
+  "click .rm-err": function() {
+    Errors.remove(this._id);
   }
 });

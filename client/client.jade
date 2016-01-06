@@ -126,9 +126,13 @@ template(name="home")
           .ui.accordion
             each errors
               .title
-                i.dropdown.icon
-                | Key ##{keyID} #[span(style="color: #ff0000") ({{keyErrorCount log}})]
-                .ui.divider
+                .ui.grid
+                  .twelve.wide.column
+                    i.dropdown.icon
+                    | Key ##{keyID} #[span(style="color: #ff0000") ({{keyErrorCount log}})]
+                  .right.aligned.four.wide.column 
+                    .ui.icon.button.circular.red.rm-err
+                      i.remove.icon.white
               .content
                 .ui.cards.olive
                   each errorMessage in log
@@ -143,6 +147,7 @@ template(name="home")
                               | #{errorMessage.errorType}
                         .description
                           | #{errorMessage.message}
+              .ui.divider
 
 //- insertKeyForm
 template(name="insertKeyForm")
