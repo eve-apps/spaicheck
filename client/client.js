@@ -30,6 +30,22 @@ var requireAuth = function(context, redirect) {
   }
 };
 
+// Redirect to home page if user is not on whitelist
+var requireWhitelist = function (context, redirect) {
+  if (context.route.name !== 'landing' && !Whitelist.findOne({characterID: String(Meteor.user().profile.eveOnlineCharacterId)})) {
+    redirect(FlowRouter.path('landing'));
+  }
+};
+
+// Redirect to home page if user gets removed from whitelist
+Meteor.startup(function () {
+  Whitelist.find({characterID: String(Meteor.user().profile.eveOnlineCharacterId)}).observe({
+    removed: function () {
+      FlowRouter.go('landing');
+    }
+  });
+});
+
 /**
  * Routes
  **/
@@ -40,7 +56,7 @@ var exposed = FlowRouter.group({});
 // Group for routes that require authentication
 var app = FlowRouter.group({
   prefix: "/app",
-  triggersEnter: [requireAuth]
+  triggersEnter: [requireAuth, requireWhitelist]
 });
 
 // Landing page route
