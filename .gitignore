@@ -1,5 +1,6 @@
 .meteor/local
 .meteor/meteorite
 node_modules
+server/private.js
 cache
 packages
