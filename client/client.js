@@ -148,6 +148,9 @@ Template.home.helpers({
   errors: function () {
     return Errors.find({});
   },
+  keys: function () {
+    return Keys.find({});
+  },
   keyErrorCount: function (log) {
     return log.length > 1 ? log.length + " Errors" : log.length + " Error";
   },
