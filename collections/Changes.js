@@ -1,6 +1,17 @@
 // The Mongo collection to which our schema will be attached
 Changes = new Mongo.Collection("changes");
 
+SingleChangeSchema = new SimpleSchema({
+  changeType: {
+    type: String
+  },
+  data: {
+    type: Object,
+    optional: true,
+    blackbox: true
+  }
+});
+
 ChangeObjectSchema = new SimpleSchema({
   createdAt: {
     type: Date,
@@ -15,18 +26,8 @@ ChangeObjectSchema = new SimpleSchema({
       }
     }
   },
-
-
-});
-
-SingleChangeSchema = new SimpleSchema({
-  changeType: {
-    type: String
-  },
-  data: {
-    type: Object,
-    optional: true,
-    blackbox: true
+  changes: {
+    type: [SingleChangeSchema]
   }
 });
 
