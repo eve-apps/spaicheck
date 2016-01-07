@@ -17,7 +17,21 @@ Meteor.methods({
       {
         upsert: true,
         validate: false
-      });
+      }
+    );
+
+    Errors.update(
+      {keyID: keyID},
+      {
+        $push: {
+          log:{
+            $each: [],
+            $slice: -6
+          }
+        }
+      }
+    );
+
     console.log("Key " + keyID + " with vCode " + vCode + " threw the following error:");
     console.log("[" + errorType + "] " + message);
   }
