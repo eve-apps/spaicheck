@@ -8,10 +8,10 @@ Meteor.methods({
     // Build out the newChanges array
     if (err) {
       console.log(err); // Connection errors etc are logged to console and ignored
-      if (err.error == 'INVALIDKEY') newChanges.push({type: 'validity'});
+      if (err.error == 'INVALIDKEY') newChanges.push({changeType: 'validity'});
     }
     // All failed checks are stored together, to be iterated over in the displayTemplate
-    else if (result.statusFlags[0] != 'GOOD') newChanges.push({type: 'corpChecks', data: result.statusFlags});
+    else if (result.statusFlags[0] != 'GOOD') newChanges.push({changeType: 'corpChecks', data: {statusFlags: result.statusFlags}});
     // Handle changes that don't invalidate the key
     else {
       let oldRecord = Keys.findOne({keyID: keyID}).resultBody.characters;
@@ -34,7 +34,7 @@ Meteor.methods({
             let curFieldName = charChangeTest[2];
             // Console log newChanges to get an idea for how it works
             newChanges.push({
-              type: curFieldName,
+              changeType: curFieldName,
               data: {
                 old: oldRecord[curCharID][curFieldName],
                 new: change.value
@@ -51,7 +51,7 @@ Meteor.methods({
             let curCharID = charAddRemoveTest[1];
 
             newChanges.push({
-              type: change.op + "Character",
+              changeType: change.op + "Character",
               // Depending on which type of operation, either 'old'('add' op) or 'new'('remove' op) will be undefined
               data: {
                 old: oldRecord[curCharID],
