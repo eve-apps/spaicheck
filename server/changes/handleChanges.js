@@ -11,7 +11,11 @@ Meteor.methods({
       if (err.error == 'INVALIDKEY') newChanges.push({changeType: 'validity'});
     }
     // All failed checks are stored together, to be iterated over in the displayTemplate
-    else if (result.statusFlags[0] != 'GOOD') newChanges.push({changeType: 'corpChecks', data: {statusFlags: result.statusFlags}});
+    else if (result.statusFlags[0] != 'GOOD') {
+      for (flag of result.statusFlags) {
+        newChanges.push({changeType: flag});
+      }
+    }
     // Handle changes that don't invalidate the key
     else {
       let oldRecord = Keys.findOne({keyID: keyID}).resultBody.characters;
@@ -29,17 +33,31 @@ Meteor.methods({
           // exec() returns an array where first item is the matched string, all other items are remembered values
           let charChangeTest = charChangePattern.exec(diff[index].path);
           // Make sure that the test was successful and if so, pull out remembered values
-          if (charChangeTest && charChangeTest[0]) {
+          if (charChangeTest) {
             let curCharID = charChangeTest[1];
             let curFieldName = charChangeTest[2];
-            // Console log newChanges to get an idea for how it works
-            newChanges.push({
-              changeType: curFieldName,
-              data: {
-                old: oldRecord[curCharID][curFieldName],
-                new: change.value
-              }
-            });
+            let oldData = oldRecord[curCharID][curFieldName];
+            let newData = change.value;
+            let npcCorpPattern = /1000(?:165|166|077|044|045|167|169|168|115|172|170|171)/;
+
+            if (curFieldName == 'corporationID' && npcCorpPattern.test(newData)) {
+              newChanges.push({changeType: 'leaveCorp', data: {old: oldData, new: newData}});
+            }
+            else if (curFieldName == 'corporationID' && npcCorpPattern.test(oldData)) {
+              newChanges.push({changeType: 'joinCorp', data: {old: oldData, new: newData}});
+            }
+            else if (curFieldName == 'corporationID') {
+              newChanges.push({changeType: 'switchCorp', data: {old: oldData, new: newData}});
+            }
+            else if (curFieldName == 'allianceID' && newData == '0') {
+              newChanges.push({changeType: 'leaveAlliance', data: {old: oldData, new: newData}});
+            }
+            else if (curFieldName == 'allianceID' && oldData == '0') {
+              newChanges.push({changeType: 'joinAlliance', data: {old: oldData, new: newData}});
+            }
+            else if (curFieldName == 'allianceID') {
+              newChanges.push({changeType: 'switchAlliance', data: {old: oldData, new: newData}});
+            }
           }
         }
         // 'add' and 'remove' ops can only logically happen at the 'characters' level
