@@ -164,15 +164,43 @@ Template.header.onRendered(function () {
   };
 
   // Settings
-  let errTimeChk = $('#errTimeChk');
-  errTimeChk.checkbox(Session.get('useEveDurations') ? 'set checked' : 'set unchecked');
-  errTimeChk.checkbox({
-    onChange: function () {
-      let checked = errTimeChk.checkbox('is checked');
-      Session.setPersistent('useEveDurations', checked);
-      settingsSaved();
+  let eveTimeBtn = $('#eveTimeBtn');
+  let friendlyTimeBtn = $('#friendlyTimeBtn');
+  let handleTimeFormat = function () {
+    if (Session.get('useEveDurations')) {
+      friendlyTimeBtn.removeClass('active');
+      friendlyTimeBtn.focusout();
+      eveTimeBtn.focus();
+      eveTimeBtn.addClass('active');
     }
+    else if (!Session.get('useEveDurations')) {
+      eveTimeBtn.removeClass('active');
+      eveTimeBtn.focusout();
+      friendlyTimeBtn.focus();
+      friendlyTimeBtn.addClass('active');
+    }
+    settingsSaved();
+  };
+
+  handleTimeFormat();
+
+  eveTimeBtn.click(function() {
+    Session.setPersistent('useEveDurations', true);
+    handleTimeFormat();
   });
+  friendlyTimeBtn.click(function() {
+    Session.setPersistent('useEveDurations', false);
+    handleTimeFormat();
+  });
+
+  // errTimeChk.checkbox(Session.get('useEveDurations') ? 'set checked' : 'set unchecked');
+  // errTimeChk.checkbox({
+  //   onChange: function () {
+  //     let checked = errTimeChk.checkbox('is checked');
+  //     Session.setPersistent('useEveDurations', checked);
+  //     settingsSaved();
+  //   }
+  // });
 });
 
 Template.home.onRendered(function () {

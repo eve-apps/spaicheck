@@ -12,23 +12,6 @@ head
   title Spaicheck
 //- Body
 body
-  #settings.ui.modal
-    .header
-      .ui.two.column.grid
-        .column
-          i.settings.icon
-          span Settings
-        .right.aligned.column
-          #settingsSaved.ui.green.label All settings saved
-    .content
-      .ui.two.column.grid.container
-        .row
-          .column
-            #errTimeChk.ui.checkbox
-              input(name="errTimeChk" type="checkbox")
-              label Use EVE time format
-          .column
-            span {{timeAgo}}
 
 //- --------- -//
 //-  HELPERS  -//
@@ -97,6 +80,30 @@ template(name="header")
           a.item
             i.log.out.icon
             span Log out
+  #settings.ui.modal
+    .header
+      .ui.two.column.grid
+        .column
+          i.settings.icon
+          span Settings
+        .right.aligned.column
+          #settingsSaved.ui.green.label All settings saved
+    .content
+      .ui.two.column.grid.container
+        .row
+          .column
+            h4#errTimeChk.ui.header
+              | Time Format
+            .ui.buttons
+              a#eveTimeBtn.ui.button
+                | EVE
+              a#friendlyTimeBtn.ui.button
+                | Friendly
+          .column
+            h4.ui.header
+              | Example
+            span {{timeAgo}}
+
 
 //- Dashboard Sidebar
 template(name="sidebar")
