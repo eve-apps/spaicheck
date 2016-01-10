@@ -10,6 +10,19 @@ head
   meta(name="application-name", content="SpaiCheck")
   meta(name="description", content="SpaiCheck helps you catch spais!")
   title Spaicheck
+//- Body
+body
+  #settings.ui.modal
+    .header
+      .ui.two.column.grid
+        .column
+          span Settings
+        .right.aligned.column
+          #settingsSaved.ui.label All settings saved
+    .content
+      #errTimeChk.ui.checkbox
+        input(name="errTimeChk" type="checkbox")
+        label Use EVE time format
 
 //- --------- -//
 //-  HELPERS  -//
@@ -72,10 +85,10 @@ template(name="header")
           a.item
             i.user.icon
             span Profile
-          a.item
+          a#settingsButton.item
             i.settings.icon
             span Settings
-          a.item.logout-button
+          a.item
             i.log.out.icon
             span Log out
 
@@ -115,13 +128,9 @@ template(name="home")
 
     .ui.nine.wide.column
       #active-errors.ui.raised.red.inverted.segment
-        .ui.two.column.grid
+        .ui.one.column.grid
           .column
             h2.ui.header Active Errors
-          .column
-            #errTimeChk.ui.checkbox
-              input(name="errTimeChk" type="checkbox")
-              label Use EVE time format
         .ui.section.segment
           .ui.accordion
             each errors

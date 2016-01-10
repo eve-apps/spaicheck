@@ -104,28 +104,76 @@ Template.dashboard.onRendered(function() {
       onHidden: function () {
         $('#side-toggle').html('>>');
       }
-    })
-  ;
+    });
 });
 
 // Dashboard header - initialize dropdown
 Template.header.onRendered(function () {
-  $("header .ui.dropdown").dropdown({ // TODO: make selector distinguish between multiple header tags
+  // Header dropdown
+  let headerDropdown = $("header .ui.dropdown").dropdown({
     action: "nothing"
+  });
+
+  // Settings modal
+  let settingsModal = $('#settings')
+    .modal({transition: 'fade up'})
+    .modal('attach events', '#settingsButton', 'show');
+  $('#settingsButton').on('click', function (e) {
+    headerDropdown.dropdown('hide');
+  });
+
+  // "All settings saved" label animation:
+  // Fade in when settings change
+  // Fade out after 2 seconds of settings not changing
+  // If settings change while fading out, stop animation and fade in again
+  let settingsSavedFadeOut = function () {
+    if ($('#settingsSaved').transition('is visible')) {
+      settingsSavedIsFadingOut = true;
+      $('#settingsSaved').transition({
+        animation: 'fade',
+        duration: '1s',
+        onComplete: function () {
+          settingsSavedIsFadingOut = false;
+        }
+      });
+    }
+  };
+  let settingsSavedTimeout = null;
+  let settingsSavedIsFadingOut = false;
+  let settingsSaved = function () {
+    if ($('#settingsSaved').transition('is animating') && settingsSavedIsFadingOut) {
+      $('#settingsSaved').transition('stop all');
+      settingsSavedIsFadingOut = false;
+      settingsSaved();
+    } else if (!$('#settingsSaved').transition('is visible')) {
+      $('#settingsSaved').transition({
+        animation: 'fade',
+        duration: '1s',
+        onComplete: function () {
+          Meteor.clearTimeout(settingsSavedTimeout);
+          settingsSavedTimeout = Meteor.setTimeout(settingsSavedFadeOut, 2000);
+        }
+      });
+    } else {
+      Meteor.clearTimeout(settingsSavedTimeout);
+      settingsSavedTimeout = Meteor.setTimeout(settingsSavedFadeOut, 2000);
+    }
+  };
+
+  // Settings
+  let errTimeChk = $('#errTimeChk');
+  errTimeChk.checkbox(Session.get('useEveDurations') ? 'set checked' : 'set unchecked');
+  errTimeChk.checkbox({
+    onChange: function () {
+      let checked = errTimeChk.checkbox('is checked');
+      Session.setPersistent('useEveDurations', checked);
+      settingsSaved();
+    }
   });
 });
 
 Template.home.onRendered(function () {
   $('#active-errors .ui.accordion').accordion();
-
-  let errTimeChk = $('#errTimeChk');
-
-  errTimeChk.checkbox(Session.get('useEveDurations') ? 'set checked' : 'set unchecked');
-  errTimeChk.checkbox({
-    onChange: function () {
-      Session.setPersistent('useEveDurations', errTimeChk.checkbox('is checked'));
-    }
-  });
 });
 
 /**
@@ -144,36 +192,38 @@ Template.registerHelper('currentCharId', function() {
   return (ref = Meteor.user()) != null ? ref.profile.eveOnlineCharacterId : void 0;
 });
 
+Template.registerHelper('prettyDate', function (date) {
+  return moment(date).format("M-D-YYYY h:mmA");
+});
+
+Template.registerHelper('timeAgo', function (date) {
+  Session.get('timer');
+  if (Session.get('useEveDurations')) {
+    let separator = ' ';
+    let terminator = 'ago';
+    let timeSinceError = moment().diff(date);
+    let duration = moment.duration(timeSinceError);
+    let durationArray = [];
+
+    if (duration.years() > 0)   durationArray.push(duration.years() + 'y');
+    if (duration.months() > 0)  durationArray.push(duration.months() + 'm');
+    if (duration.days() > 7)    durationArray.push(Math.floor(duration.days() / 7) + 'w');
+    if (duration.days() > 0)    durationArray.push((duration.days() % 7) + 'd');
+    if (duration.hours() > 0)   durationArray.push(duration.hours() + 'h');
+    if (duration.minutes() > 0) durationArray.push(duration.minutes() + 'm');
+    if (duration.seconds() > 0) durationArray.push(duration.seconds() + 's');
+
+    return durationArray.join(separator) + separator + terminator;
+  }
+  else return moment(date).fromNow();
+});
+
 Template.home.helpers({
   errors: function () {
     return Errors.find({});
   },
   keyErrorCount: function (log) {
     return log.length > 1 ? log.length + " Errors" : log.length + " Error";
-  },
-  prettyDate: function (date) {
-    return moment(date).format("M-D-YYYY h:mmA");
-  },
-  timeAgo: function (date) {
-    Session.get('timer');
-    if (Session.get('useEveDurations')) {
-      let separator = ' ';
-      let terminator = 'ago';
-      let timeSinceError = moment().diff(date);
-      let duration = moment.duration(timeSinceError);
-      let durationArray = [];
-
-      if (duration.years() > 0)   durationArray.push(duration.years() + 'y');
-      if (duration.months() > 0)  durationArray.push(duration.months() + 'm');
-      if (duration.days() > 7)    durationArray.push(Math.floor(duration.days() / 7) + 'w');
-      if (duration.days() > 0)    durationArray.push((duration.days() % 7) + 'd');
-      if (duration.hours() > 0)   durationArray.push(duration.hours() + 'h');
-      if (duration.minutes() > 0) durationArray.push(duration.minutes() + 'm');
-      if (duration.seconds() > 0) durationArray.push(duration.seconds() + 's');
-
-      return durationArray.join(separator) + separator + terminator;
-    }
-    else return moment(date).fromNow();
   }
 });
 
