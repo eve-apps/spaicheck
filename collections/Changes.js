@@ -43,7 +43,8 @@ ChangeSchema = new SimpleSchema({
     optional: true
   },
   log: {
-    type: [ChangeObjectSchema]
+    type: [ChangeObjectSchema],
+    optional: true
   }
 });
 

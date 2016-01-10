@@ -168,13 +168,14 @@ template(name="keyDisplay")
       .column
         h2.ui.green.header Keys
     .ui.section.segment
-      .ui.cards.olive
+      .ui.accordion
         each keys
-          .card
-            .content
-              .header
-                .title Key ##{keyID}
-              .meta
-                | test
-              .description
-                | #{vCode}
+          .title
+            i.dropdown.icon
+            | Key ##{keyID}
+          .content
+            each keyChanges keyID
+              each log
+                ul #{createdAt}
+                  each changes
+                    li #{changeType}
