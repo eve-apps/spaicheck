@@ -16,13 +16,19 @@ body
     .header
       .ui.two.column.grid
         .column
+          i.settings.icon
           span Settings
         .right.aligned.column
-          #settingsSaved.ui.label All settings saved
+          #settingsSaved.ui.green.label All settings saved
     .content
-      #errTimeChk.ui.checkbox
-        input(name="errTimeChk" type="checkbox")
-        label Use EVE time format
+      .ui.two.column.grid.container
+        .row
+          .column
+            #errTimeChk.ui.checkbox
+              input(name="errTimeChk" type="checkbox")
+              label Use EVE time format
+          .column
+            span {{timeAgo}}
 
 //- --------- -//
 //-  HELPERS  -//

@@ -11,6 +11,9 @@ var _ = lodash;
 // Set BlazeLayout root to body instead of custom div
 BlazeLayout.setRoot('body');
 
+// Jade shenanigans workaround
+settingsDate = new Date();
+
 /**
  * Auth
  **/
@@ -197,6 +200,7 @@ Template.registerHelper('prettyDate', function (date) {
 });
 
 Template.registerHelper('timeAgo', function (date) {
+  date = date || settingsDate;
   Session.get('timer');
   if (Session.get('useEveDurations')) {
     let separator = ' ';
