@@ -138,7 +138,8 @@ template(name="home")
         .ui.section.segment
           h3.ui.header Validate all keys
           button.validate-button Validate
-
+    .ui.nine.wide.column
+      +keyDisplay
     .ui.nine.wide.column
       #active-errors.ui.raised.red.inverted.segment
         .ui.one.column.grid
@@ -182,3 +183,21 @@ template(name="insertKeyForm")
       +afFieldInput name="vCode" type="text" placeholder="Verification Code"
     {{afFieldMessage name="vCode"}}
     button(type="submit" class="ui fluid button") Add Key
+
+template(name="keyDisplay")
+  #key-display.ui.raised.white.inverted.segment
+    .ui.two.column.grid
+      .column
+        h2.ui.green.header Keys
+    .ui.section.segment
+      .ui.accordion
+        each keys
+          .title
+            i.dropdown.icon
+            | Key ##{keyID}
+          .content
+            each keyChanges keyID
+              each log
+                ul #{createdAt}
+                  each changes
+                    li #{changeType}

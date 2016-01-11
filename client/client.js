@@ -205,6 +205,7 @@ Template.header.onRendered(function () {
 
 Template.home.onRendered(function () {
   $('#active-errors .ui.accordion').accordion();
+  $('#key-display .ui.accordion').accordion();
 });
 
 /**
@@ -256,6 +257,15 @@ Template.home.helpers({
   },
   keyErrorCount: function (log) {
     return log.length > 1 ? log.length + " Errors" : log.length + " Error";
+  }
+});
+
+Template.keyDisplay.helpers({
+  keys: function () {
+    return Keys.find({});
+  },
+  keyChanges: function (keyID) {
+    return Changes.find({keyID: keyID});
   }
 });
 

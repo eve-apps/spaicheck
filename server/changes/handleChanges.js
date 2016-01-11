@@ -10,7 +10,7 @@ Meteor.methods({
       console.log(err); // Connection errors etc are logged to console and ignored
       if (err.error == 'INVALIDKEY') newChanges.push({changeType: 'validity'});
     }
-    // All failed checks are stored together, to be iterated over in the displayTemplate
+    // All failed checks are iterated over and each represents a separate change
     else if (result.statusFlags[0] != 'GOOD') {
       for (flag of result.statusFlags) {
         newChanges.push({changeType: flag});
@@ -81,6 +81,25 @@ Meteor.methods({
       });
     }
     console.log(newChanges);
-    if (newChanges.length != 0) Meteor.call('notifyChanges', keyID, newChanges.toString());
+    if (newChanges.length != 0) {
+      Changes.update(
+        { keyID: keyID },
+        {
+          $set: {
+            keyID: keyID,
+          },
+          $push: {
+            log: {
+              changes: newChanges,
+              createdAt: new Date()
+            }
+          }
+        },
+        {
+          upsert: true,
+        }
+      );
+      Meteor.call('notifyChanges', keyID, newChanges.toString());
+    }
   }
 });
