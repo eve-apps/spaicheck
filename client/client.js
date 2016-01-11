@@ -225,7 +225,7 @@ Template.registerHelper('timeAgo', function (date) {
   else return moment(date).fromNow();
 });
 
-Template.home.helpers({
+Template.errorDisplay.helpers({
   errors: function () {
     return Errors.find({});
   },
