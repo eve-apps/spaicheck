@@ -50,7 +50,11 @@ template(name="dashboard")
       h3 | 
     +Template.dynamic(template=main)
     footer.ui.bottom.fixed.fluid.one.item.menu
-      h3.item.header Running on#[img.ui.mini.image(src="/meteor.png")] #[span(style="color: #db2233") Meteor]
+      ui.two.column.grid
+        .right.aligned.column
+          span Running on
+        .column
+          img.ui.small.image(src="/meteor.png")
 
 //- Dashboard Header
 template(name="header")
@@ -128,7 +132,7 @@ template(name="home")
 template(name="insertKeyForm")
   .ui.top.attached.segment
     .ui.two.column.grid
-      .column
+      .middle.aligned.column
         h3.ui.header Add New Key
       .right.aligned.column
         i.big.icons
@@ -149,7 +153,7 @@ template(name="insertKeyForm")
 template(name="errorDisplay")
   .ui.top.attached.segment
     .ui.two.column.grid
-      .column
+      .middle.aligned.column
         h3.ui.header Failed Keys
       .right.aligned.column
         i.flag.icon.big.red
@@ -186,7 +190,7 @@ template(name="errorDisplay")
 template(name="validateKeys")
   .ui.top.attached.segment
     .ui.two.column.grid
-      .column
+      .middle.aligned.column
         h3.ui.header Validate All Keys
       .right.aligned.column
         i.big.icons
@@ -199,7 +203,7 @@ template(name="validateKeys")
 template(name="keyDisplay")
   .ui.top.attached.segment
     .ui.two.column.grid
-      .column
+      .middle.aligned.column
         h3.ui.header Key Explorer
       .right.aligned.column
         i.find.icon.big
