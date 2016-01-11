@@ -168,16 +168,16 @@ Template.header.onRendered(function () {
   let friendlyTimeBtn = $('#friendlyTimeBtn');
   let handleTimeFormat = function () {
     if (Session.get('useEveDurations')) {
-      friendlyTimeBtn.removeClass('active');
+      friendlyTimeBtn.removeClass('active blue');
       friendlyTimeBtn.focusout();
       eveTimeBtn.focus();
-      eveTimeBtn.addClass('active');
+      eveTimeBtn.addClass('active blue');
     }
     else if (!Session.get('useEveDurations')) {
-      eveTimeBtn.removeClass('active');
+      eveTimeBtn.removeClass('active blue');
       eveTimeBtn.focusout();
       friendlyTimeBtn.focus();
-      friendlyTimeBtn.addClass('active');
+      friendlyTimeBtn.addClass('active blue');
     }
     settingsSaved();
   };
