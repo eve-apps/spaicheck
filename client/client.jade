@@ -148,6 +148,8 @@ template(name="home")
         .ui.section.segment
           .ui.accordion
             each errors
+              if @index != 0
+                .ui.divider
               .title
                 .ui.grid
                   .twelve.wide.column
@@ -169,7 +171,6 @@ template(name="home")
                               | #{errorMessage.errorType}
                         .description
                           | #{errorMessage.message}
-              .ui.divider
 
 //- insertKeyForm
 template(name="insertKeyForm")
@@ -191,6 +192,8 @@ template(name="keyDisplay")
     .ui.section.segment
       .ui.accordion
         each keys
+          if @index != 0
+            .ui.divider
           .title
             i.dropdown.icon
             | Key ##{keyID}
