@@ -154,8 +154,7 @@ template(name="home")
                     i.dropdown.icon
                     | Key ##{keyID} #[span(style="color: #ff0000") ({{keyErrorCount log}})]
                   .right.aligned.four.wide.column 
-                    .ui.icon.button.circular.red.rm-err
-                      i.remove.icon.white
+                    i.remove.circle.icon.big.red.rm-err
               .content
                 .ui.cards.olive
                   each errorMessage in log
