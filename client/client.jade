@@ -44,22 +44,16 @@ template(name="landing")
 
 //- Dashboard
 template(name="dashboard")
-  aside#mobile-menu.ui.sidebar.thin.inverted.left.vertical.menu
-    +Template.dynamic(template=side)
-  .pusher
-    aside#desktop-menu.ui.small.inverted.left.fixed.vertical.menu
-      +Template.dynamic(template=side)
-    #page-wrapper
-      +Template.dynamic(template=head)
-      +Template.dynamic(template=main)
-      footer.ui.bottom.fixed.inverted.fluid.one.item.menu
-        .item.header Running on Meteor
+  #page-wrapper
+    +Template.dynamic(template=head)
+    +Template.dynamic(template=main)
+    footer.ui.bottom.fixed.inverted.fluid.one.item.menu
+      .item.header Running on Meteor
 
 //- Dashboard Header
 template(name="header")
   header.ui.fixed.top.inverted.menu
     .left.menu
-      #side-toggle.ui.black.button &gt;&gt;
       a.item(href="{{pathFor 'home'}}")
         img.ui.tiny.image(src="/logo.png")
     .right.menu
@@ -104,22 +98,6 @@ template(name="header")
               | Example
             span {{timeAgo}}
 
-
-//- Dashboard Sidebar
-template(name="sidebar")
-  .item.header MENU
-  .item
-    .header Misc
-    .menu
-      a.item Lorem
-  .item
-    .header Tools
-    .menu
-      a.item Ipsum
-      a.item Dolor
-      a.item Sit
-      a.item Amet
-
 //- ---------- -//
 //-   ROUTES   -//
 //- ---------- -//
@@ -137,7 +115,7 @@ template(name="home")
           +insertKeyForm
         .ui.section.segment
           h3.ui.header Validate all keys
-          button.validate-button Validate
+          button.ui.button.fluid.validate-button Validate
     .ui.nine.wide.column
       +keyDisplay
     .ui.nine.wide.column

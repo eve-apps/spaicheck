@@ -61,7 +61,6 @@ app.route("/home", {
     return BlazeLayout.render("dashboard", {
       head: "header",
       main: "home",
-      side: "sidebar"
     });
   }
 });
@@ -92,22 +91,6 @@ Template.home.onDestroyed(function () {
 // Landing - clean up after Semantic UI's .sidebar()
 Template.landing.onRendered(function () {
   $('body').removeClass('pushable');
-});
-
-// Dashboard - initialize sidebar
-Template.dashboard.onRendered(function() {
-  $('#mobile-menu')
-    .sidebar({
-      transition: 'overlay',
-      dimPage: true,
-      closable: true,
-      onShow: function () {
-        $('#side-toggle').html('<<');
-      },
-      onHidden: function () {
-        $('#side-toggle').html('>>');
-      }
-    });
 });
 
 // Dashboard header - initialize dropdown
@@ -192,15 +175,6 @@ Template.header.onRendered(function () {
     Session.setPersistent('useEveDurations', false);
     handleTimeFormat();
   });
-
-  // errTimeChk.checkbox(Session.get('useEveDurations') ? 'set checked' : 'set unchecked');
-  // errTimeChk.checkbox({
-  //   onChange: function () {
-  //     let checked = errTimeChk.checkbox('is checked');
-  //     Session.setPersistent('useEveDurations', checked);
-  //     settingsSaved();
-  //   }
-  // });
 });
 
 Template.home.onRendered(function () {
@@ -280,20 +254,10 @@ Template.dashboard.events({
       FlowRouter.go(FlowRouter.path("landing"));
     });
   },
-  "click #side-toggle": function () {
-    // Toggle the sidebar
-    $('#mobile-menu').sidebar('toggle');
-    console.log($('.ui.fixed.top').visibility('get screen calculations'));
-  },
   "click .validate-button": function() {
     // Fetch all keys from the database and validate them
     // TODO: Use "Async" library to process these in parallel
-    var curKeys = Keys.find().fetch();
-    for (i=0; i < curKeys.length; i++) {
-      Meteor.call('validateKey', curKeys[i].keyID, curKeys[i].vCode, function(err, result) {
-        console.log(result.result);
-      });
-    }
+    Meteor.call('runChecks');
   },
   "click .rm-err": function() {
     Errors.remove(this._id);
