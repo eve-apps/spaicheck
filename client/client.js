@@ -240,6 +240,13 @@ Template.keyDisplay.helpers({
   },
   keyChanges: function (keyID) {
     return Changes.find({keyID: keyID});
+  },
+  addBottomClass: function (log) {
+    Meteor.setTimeout(function () {
+      $( ".changeDetail:last-child" ).removeClass("attached").
+      addClass("bottom attached");
+      console.log("jQuery Ran!");
+    }, 1);
   }
 });
 

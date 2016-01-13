@@ -218,6 +218,8 @@ template(name="keyDisplay")
         .content
           each keyChanges keyID
             each log
-              ul #{createdAt}
+              .log
+                .ui.top.attached.segment #{createdAt}
                 each changes
-                  li #{changeType}
+                  .ui.attached.segment.changeDetail #{changeType}
+            | #{addBottomClass log}
