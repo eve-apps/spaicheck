@@ -38,6 +38,13 @@ KeySchema = new SimpleSchema({
     label: "Verification Code",
     regEx: /^[0-9a-zA-Z]+$/ // Only allow numbers and upper-case and lower-case letters
   },
+  status: {
+    type: String,
+    allowedValues: ['GOOD', 'WARNING', 'ERROR'],
+    autoform: {
+      omit: true
+    }
+  },
   createdAt: {
     type: Date,
     // createdAt property is auto-created when an insertion to the db is made

@@ -18,7 +18,8 @@ Meteor.methods({
     }
     else console.log("Proceeding to update keys...");
     // Fetch all keys from the database and validate them
-    let curKeys = Keys.find().fetch(); // all are currently valid
+    let curKeys = Keys.find({status: {$in: ['GOOD', 'WARNING']}}).fetch(); // all currently valid keys
+    console.log(curKeys);
     let curTimeout = 0;
     var cachedUntil = null;
     for (let i=0; i < curKeys.length; i++) {

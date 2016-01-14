@@ -245,7 +245,6 @@ Template.keyDisplay.helpers({
     Meteor.setTimeout(function () {
       $( ".changeDetail:last-child" ).removeClass("attached").
       addClass("bottom attached");
-      console.log("jQuery Ran!");
     }, 1);
   },
   parseChangeHlp: function (changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx) {
@@ -273,7 +272,6 @@ Template.dashboard.events({
     Errors.remove(this._id);
   },
   "click .rm-key": function() {
-    console.log("click .rm-key");
     Keys.remove(Keys.findOne({keyID: this.keyID})._id)
   }
 });

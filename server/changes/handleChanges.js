@@ -22,7 +22,6 @@ Meteor.methods({
       let newRecord = result.characters;
       let diff = jsonPatch.compare(oldRecord, newRecord);
 
-      console.log(diff);
       // Iterate over the diff array, handling every possible change of importance to the corp
       diff.forEach(function (change, index) {
         // 'replace' ops can only logically happen inside a single character(#) object
@@ -75,7 +74,7 @@ Meteor.methods({
               // Depending on which type of operation, either 'old'('add' op) or 'new'('remove' op) will be undefined
               oldValueObj: oldRecord[curCharID],
               newValueObj: change.value,
-              severity: 'ERROR'
+              severity: 'WARNING'
             });
           }
         }
@@ -100,7 +99,23 @@ Meteor.methods({
           upsert: true,
         }
       );
-      Meteor.call('notifyChanges', keyID, newChanges.toString());
+
+      let highestSeverity = 'WARNING';
+      for(i = 0; i < newChanges.length; i++) {
+        let change = newChanges[i];
+        if (change.severity == 'ERROR') {
+          highestSeverity = change.severity;
+          break;
+        }
+      }
+
+      Keys.update(Keys.findOne({keyID: keyID})._id, {
+        $set: {
+          status: highestSeverity
+        }
+      });
+
+      // Meteor.call('notifyChanges', keyID, newChanges.toString());
     }
   }
 });
