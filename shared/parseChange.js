@@ -1,25 +1,8 @@
-parseChange = function (changeType, oldValStr, newValStr, oldValObj, newValObj, ctx) {
+parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, newValObj, ctx) {
   let newVal = newValStr || newValObj || null;
   let oldVal = oldValStr || oldValObj || null;
-  let warnPattern = /(?:leave|join|switch)(?:Corp|Alliance)|(?:add|remove)Character/;
-  let errPattern = /SINGLECHAR|BADMASK|EXPIRES/;
-  let severityColor = '';
-  const colorMarker = '&#9679';
 
-  let titleStr = '';
-  if (errPattern.test(changeType)) {
-    titleStr = 'This change invalidates the key';
-    severityColor = '#FF0000';
-  }
-  else if (warnPattern.test(changeType)) {
-    titleStr = 'This change does not invalidate the key';
-    severityColor = '#FFFF00';
-  }
-
-  let colorMarkerStyle = 'color:' + severityColor + ';margin-right:10px;font-size:250%;vertical-align:-25%;text-shadow:-2px 1px 3px #000;'
-  let colorMarkerStr = '<span title="' + titleStr + '" style="' + colorMarkerStyle + '">' + colorMarker + '</span> ';
-
-  let contentStr = '';
+  let colorMarkerStr = insertColorMarker(severity);
 
   let charName;
   if (ctx) charName = ctx.charName;
@@ -31,6 +14,7 @@ parseChange = function (changeType, oldValStr, newValStr, oldValObj, newValObj, 
   let oldName = ctx ? ctx.oldName : null;
   let newName = ctx ? ctx.newName : null;
 
+  let contentStr = '';
   switch (changeType) {
     case 'INVALIDKEY':
       contentStr = 'This key has expired or been deleted.'

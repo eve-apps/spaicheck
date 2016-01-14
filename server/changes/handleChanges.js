@@ -8,12 +8,12 @@ Meteor.methods({
     // Build out the newChanges array
     if (err) {
       console.log(err); // Connection errors etc are logged to console and ignored
-      if (err.error == 'INVALIDKEY') newChanges.push({changeType: err.error});
+      if (err.error == 'INVALIDKEY') newChanges.push({changeType: err.error, severity: 'ERROR'});
     }
     // All failed checks are iterated over and each represents a separate change
     else if (result.statusFlags[0] != 'GOOD') {
       for (flag of result.statusFlags) {
-        newChanges.push({changeType: flag});
+        newChanges.push({changeType: flag, severity: 'ERROR'});
       }
     }
     // Handle changes that don't invalidate the key
@@ -52,6 +52,7 @@ Meteor.methods({
               changeType: curChangeType,
               oldValueStr: oldValue,
               newValueStr: newValue,
+              severity: 'WARNING',
               context: {
                 charID: curCharID,
                 charName: oldRecord[curCharID].characterName,
@@ -73,7 +74,8 @@ Meteor.methods({
               changeType: change.op + "Character",
               // Depending on which type of operation, either 'old'('add' op) or 'new'('remove' op) will be undefined
               oldValueObj: oldRecord[curCharID],
-              newValueObj: change.value
+              newValueObj: change.value,
+              severity: 'ERROR'
             });
           }
         }

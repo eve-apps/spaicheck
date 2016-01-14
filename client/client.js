@@ -248,8 +248,8 @@ Template.keyDisplay.helpers({
       console.log("jQuery Ran!");
     }, 1);
   },
-  parseChangeHlp: function (changeType, oldValStr, newValStr, oldValObj, newValObj, ctx) {
-    return parseChange(changeType, oldValStr, newValStr, oldValObj, newValObj, ctx);
+  parseChangeHlp: function (changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx) {
+    return parseChange(changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx);
   }
 });
 

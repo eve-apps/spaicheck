@@ -8,6 +8,10 @@ SingleChangeSchema = new SimpleSchema({
       'leaveCorp', 'joinCorp', 'switchCorp', 'leaveAlliance', 'joinAlliance',
       'switchAlliance', 'addCharacter', 'removeCharacter']
   },
+  severity: {
+    type: String,
+    allowedValues: ['WARNING', 'ERROR']
+  },
   oldValueStr: {
     type: String,
     optional: true

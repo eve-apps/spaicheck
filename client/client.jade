@@ -228,5 +228,5 @@ template(name="keyDisplay")
                 .ui.top.attached.segment #{createdAt}
                 each changes
                   .ui.attached.segment.changeDetail 
-                    | {{{parseChangeHlp changeType oldValueStr newValueStr oldValueObj newValueObj context}}}
+                    | {{{parseChangeHlp changeType severity oldValueStr newValueStr oldValueObj newValueObj context}}}
             | #{addBottomClass log}
