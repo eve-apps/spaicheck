@@ -1,0 +1,13 @@
+{
+  "private": {
+    "mailUser": null,
+    "mailPass": null,
+    "mailServer": null,
+    "mailPort": null
+  },
+  "public": {
+    "adminID": null,
+    "corporationID": null,
+    "allianceID": null
+  }
+}
