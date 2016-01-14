@@ -40,7 +40,7 @@ parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, n
       contentStr = charStr + 'joined the "' + oldName + '" corporation.';
       break;
     case 'joinAlliance':
-      contentStr = charStr + 'and its corporation formed an alliance with "' + oldName + '".';
+      contentStr = charStr + 'and its corporation formed an alliance with "' + newName + '".';
       break;
     case 'switchCorp':
       contentStr = charStr + 'left "' + oldName + '" to join "' + newName + '".';
