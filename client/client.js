@@ -249,6 +249,10 @@ Template.keyDisplay.helpers({
   },
   parseChangeHlp: function (changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx) {
     return parseChange(changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx);
+  },
+  insertColorMarkerHlp: function (sev) {
+    console.log(sev);
+    return insertColorMarker(sev, true);
   }
 });
 
