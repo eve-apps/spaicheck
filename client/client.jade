@@ -221,5 +221,6 @@ template(name="keyDisplay")
               .log
                 .ui.top.attached.segment #{createdAt}
                 each changes
-                  .ui.attached.segment.changeDetail #{changeType}
+                  .ui.attached.segment.changeDetail 
+                    | {{{parseChange changeType oldValueStr newValueStr oldValueObj newValueObj context}}}
             | #{addBottomClass log}

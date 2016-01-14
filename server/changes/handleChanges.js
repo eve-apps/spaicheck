@@ -8,7 +8,7 @@ Meteor.methods({
     // Build out the newChanges array
     if (err) {
       console.log(err); // Connection errors etc are logged to console and ignored
-      if (err.error == 'INVALIDKEY') newChanges.push({changeType: 'validity'});
+      if (err.error == 'INVALIDKEY') newChanges.push({changeType: err.error});
     }
     // All failed checks are iterated over and each represents a separate change
     else if (result.statusFlags[0] != 'GOOD') {
@@ -34,30 +34,31 @@ Meteor.methods({
           let charChangeTest = charChangePattern.exec(diff[index].path);
           // Make sure that the test was successful and if so, pull out remembered values
           if (charChangeTest) {
+            let curChangeType = '';
             let curCharID = charChangeTest[1];
             let curFieldName = charChangeTest[2];
-            let oldData = oldRecord[curCharID][curFieldName];
-            let newData = change.value;
+            let oldValue = oldRecord[curCharID][curFieldName];
+            let newValue = change.value;
             let npcCorpPattern = /1000(?:165|166|077|044|045|167|169|168|115|172|170|171)/;
 
-            if (curFieldName == 'corporationID' && npcCorpPattern.test(newData)) {
-              newChanges.push({changeType: 'leaveCorp', data: {old: oldData, new: newData}});
-            }
-            else if (curFieldName == 'corporationID' && npcCorpPattern.test(oldData)) {
-              newChanges.push({changeType: 'joinCorp', data: {old: oldData, new: newData}});
-            }
-            else if (curFieldName == 'corporationID') {
-              newChanges.push({changeType: 'switchCorp', data: {old: oldData, new: newData}});
-            }
-            else if (curFieldName == 'allianceID' && newData == '0') {
-              newChanges.push({changeType: 'leaveAlliance', data: {old: oldData, new: newData}});
-            }
-            else if (curFieldName == 'allianceID' && oldData == '0') {
-              newChanges.push({changeType: 'joinAlliance', data: {old: oldData, new: newData}});
-            }
-            else if (curFieldName == 'allianceID') {
-              newChanges.push({changeType: 'switchAlliance', data: {old: oldData, new: newData}});
-            }
+            if (curFieldName == 'corporationID' && npcCorpPattern.test(newValue)) curChangeType = 'leaveCorp';
+            else if (curFieldName == 'corporationID' && npcCorpPattern.test(oldValue)) curChangeType = 'joinCorp';
+            else if (curFieldName == 'corporationID') curChangeType = 'switchCorp';
+            else if (curFieldName == 'allianceID' && newValue == '0') curChangeType = 'leaveAlliance';
+            else if (curFieldName == 'allianceID' && oldValue == '0') curChangeType = 'joinAlliance';
+            else if (curFieldName == 'allianceID') curChangeType = 'switchAlliance';
+
+            newChanges.push({
+              changeType: curChangeType,
+              oldValueStr: oldValue,
+              newValueStr: newValue,
+              context: {
+                charID: curCharID,
+                charName: oldRecord[curCharID].characterName,
+                oldName: oldRecord[curCharID][curFieldName.replace('ID', 'Name')],
+                newName: newRecord[curCharID][curFieldName.replace('ID', 'Name')]
+              }
+            });
           }
         }
         // 'add' and 'remove' ops can only logically happen at the 'characters' level
@@ -71,10 +72,8 @@ Meteor.methods({
             newChanges.push({
               changeType: change.op + "Character",
               // Depending on which type of operation, either 'old'('add' op) or 'new'('remove' op) will be undefined
-              data: {
-                old: oldRecord[curCharID],
-                new: change.value
-              }
+              oldValueObj: oldRecord[curCharID],
+              newValueObj: change.value
             });
           }
         }
