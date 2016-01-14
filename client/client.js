@@ -271,5 +271,9 @@ Template.dashboard.events({
   },
   "click .rm-err": function() {
     Errors.remove(this._id);
+  },
+  "click .rm-key": function() {
+    console.log("click .rm-key");
+    Keys.remove(Keys.findOne({keyID: this.keyID})._id)
   }
 });

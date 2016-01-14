@@ -163,14 +163,14 @@ template(name="errorDisplay")
         if @index != 0
           .ui.divider
         .title
-          .ui.grid
+          .ui.stackable.grid
             .twelve.wide.column
               i.dropdown.icon
               span Key ##{keyID} #[span(style="color: #ff0000") ({{keyErrorCount log}})]
             .right.aligned.four.wide.column
-              i.large.icons
-                i.inverted.remove.icon.rm-err
-                i.large.red.remove.circle.icon.rm-err
+              a.ui.small.compact.basic.button.rm-err
+                i.large.red.remove.circle.icon
+                | Discard
         .content
           .ui.cards
             each errorMessage in log
@@ -213,8 +213,14 @@ template(name="keyDisplay")
         if @index != 0
           .ui.divider
         .title
-          i.dropdown.icon
-          span Key ##{keyID}
+          .ui.stackable.grid
+            .twelve.wide.column
+              i.dropdown.icon
+              span Key ##{keyID}
+            .four.wide.right.aligned.column
+              a.ui.small.compact.button.red.rm-key
+                i.large.inverted.trash.icon
+                | Delete
         .content
           each keyChanges keyID
             each log
