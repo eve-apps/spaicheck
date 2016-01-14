@@ -59,9 +59,12 @@ template(name="dashboard")
 //- Dashboard Header
 template(name="header")
   header.ui.fixed.top.borderless.menu
-    .left.menu
+    .left.menu.logo
       a.item(href="{{pathFor 'home'}}")
-        img.ui.tiny.image.logo(src="/logo.png")
+        img.ui.tiny.image(src="/logo.png")
+        i.icons
+          i.large.spy.icon
+          i.huge.search.icon.grey
     .right.menu
       .ui.dropdown.item
         if currentUser
