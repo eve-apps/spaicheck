@@ -14,7 +14,9 @@ parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, n
   let oldName = ctx ? ctx.oldName : null;
   let newName = ctx ? ctx.newName : null;
 
-  let contentStr = '';
+  let changeTypeStr = '<span style="color:red;">' + changeType + '</span> '
+
+  let contentStr;
   switch (changeType) {
     case 'INVALIDKEY':
       contentStr = 'This key has expired or been deleted.'
@@ -55,7 +57,7 @@ parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, n
     default:
   }
 
-  dispStr = '<p>' + colorMarkerStr + contentStr + '</p>';
+  dispStr = '<p>' + colorMarkerStr + changeTypeStr + contentStr + '</p>';
 
   return dispStr;
 }
