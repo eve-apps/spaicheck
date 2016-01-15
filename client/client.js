@@ -43,9 +43,15 @@ var requireAuth = function(context, redirect) {
 
 // Redirect to home page if user is not admin and not on whitelist
 var requireWhitelist = function (context, redirect) {
-  if (Meteor.user().profile.eveOnlineCharacterId !== Meteor.settings.public.adminID &&
+  if (Meteor.user()) {
+    if (Meteor.user().profile.eveOnlineCharacterId !== Meteor.settings.public.adminID &&
       !Whitelist.findOne({characterID: String(Meteor.user().profile.eveOnlineCharacterId)})) {
-    redirect(FlowRouter.path('landing'));
+        redirect(FlowRouter.path('landing'));
+    }
+  } else {
+    Meteor.setTimeout(function () {
+      requireWhitelist(context, redirect);
+    }, 50);
   }
 };
 
@@ -295,7 +301,9 @@ Template.header.events({
     // Log the user out and redirect them to the landing page
     Meteor.logout(function() {
       // Stop watching for whitelist changes
-      whitelistWatch.stop();
+      if (whitelistWatch) {
+        whitelistWatch.stop();
+      }
       // Redirect to landing route
       FlowRouter.go(FlowRouter.path("landing"));
     });
