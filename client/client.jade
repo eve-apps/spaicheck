@@ -173,7 +173,7 @@ template(name="errorDisplay")
               i.dropdown.icon
               span Key ##{keyID} #[span(style="color: #ff0000") ({{keyErrorCount log}})]
             .right.aligned.four.wide.column
-              a.ui.small.compact.basic.button.rm-err
+              a.ui.mini.compact.basic.button.rm-err
                 i.large.red.remove.circle.icon
                 | Discard
         .content
@@ -219,28 +219,42 @@ template(name="keyDisplay")
           .ui.divider
         .title
           .ui.stackable.grid
-            .five.wide.column
+            .six.wide.column
               i.dropdown.icon
               | {{{insertColorMarkerHlp status}}} Key ##{keyID}
-            .eleven.wide.right.aligned.column
-              a.ui.tiny.compact.button.blue.toggle-changes
+            .ten.wide.right.aligned.column
+              a.ui.mini.compact.button.blue.toggle.detailsBtn
                 i.large.info.circle.icon.inverted
                 | Details
-              a(class="ui #{hasChanges keyID} labeled button toggle-changes")
-                a.ui.button.tiny.compact.button.yellow
+              a(class="ui #{hasChanges keyID} labeled button changesBtn")
+                a.ui.button.mini.compact.button.yellow
                   i.large.warning.sign.icon.inverted
                   | Changes
                 a.ui.basic.label
                   | #{numChanges keyID}
-              a.ui.tiny.compact.button.red.rm-key
+              a.ui.mini.compact.button.red.rm-key
                 i.large.inverted.trash.icon
                 | Delete
         .content
-          each keyChanges keyID
-            each log
-              .log
-                .ui.top.attached.segment #{createdAt}
-                each changes
-                  .ui.attached.segment.changeDetail 
-                    | {{{parseChangeHlp changeType severity oldValueStr newValueStr oldValueObj newValueObj context}}}
-            | #{addBottomClass log}
+          .changes
+            +changeDetails
+          .details
+            +keyDetails
+
+template(name="changeDetails")
+  each keyChanges keyID
+    each log
+      .log
+        .ui.top.attached.segment #{createdAt}
+        each changes
+          .ui.attached.segment.changeDetail
+            | {{{parseChangeHlp changeType severity oldValueStr newValueStr oldValueObj newValueObj context}}}
+    | #{addBottomClass log}
+    
+template(name="keyDetails")
+  ul Key #{keyID}
+    li Verification Code: #{vCode}
+    li Created At: #{createdAt}
+    ul Characters:
+      with resultBody
+        | {{{parseCharacters}}}

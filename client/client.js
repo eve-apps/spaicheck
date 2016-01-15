@@ -16,6 +16,23 @@ settingsDate = new Date();
 
 whitelistWatch = null;
 
+changesSet = false;
+activeChange = '';
+swapKeyContent = function () {
+  let curVal = changesSet;
+  let ch = $('.changes');
+  let dt = $('.details');
+
+  if (curVal) {
+    dt.fadeOut(100, function() {dt.removeClass('visible')});
+    ch.fadeIn(100)
+  }
+  else {
+    ch.fadeOut(100, function() {ch.removeClass('visible')});
+    dt.fadeIn(100);
+  }
+}
+
 /**
  * Auth
  **/
@@ -201,7 +218,12 @@ Template.header.onRendered(function () {
 
 Template.home.onRendered(function () {
   $('#active-errors .ui.accordion').accordion();
-  $('#key-display .ui.accordion').accordion();
+  $('#key-display .ui.accordion').accordion({
+    selector: {
+      trigger: null
+    },
+    animateChildren: false
+  });
 });
 
 /**
@@ -260,8 +282,11 @@ Template.keyDisplay.helpers({
   keys: function () {
     return Keys.find({});
   },
+  keyInfo: function (keyID) {
+    return Keys.findOne({keyID: keyID});
+  },
   hasChanges: function (keyID) {
-    return Changes.findOne({keyID: keyID}) ? '' : 'disabled';
+    return Changes.findOne({keyID: keyID}) ? 'toggle' : 'disabled';
   },
   numChanges: function (keyID) {
     let changeCount = 0;
@@ -269,7 +294,6 @@ Template.keyDisplay.helpers({
     if (allChanges) {
       let changeLog = allChanges.log
       changeLog.forEach(function (changesObj) {
-        console.log(changesObj);
         changesObj.changes.forEach(function () {
           changeCount++;
         });
@@ -277,6 +301,29 @@ Template.keyDisplay.helpers({
     }
     return changeCount;
   },
+  insertColorMarkerHlp: function (sev) {
+    return insertColorMarker(sev, true);
+  },
+  changesSet: function () {
+    return changesSet;
+  },
+  logThis: function () {
+    console.log(this);
+  }
+});
+
+Template.keyDetails.helpers({
+  parseCharacters: function () {
+    let chars = this.characters;
+    let charStr = '';
+    for (let char in chars) {
+      charStr += '<li>' + chars[char].characterName + '</li>\n';
+    }
+    return charStr;
+  }
+});
+
+Template.changeDetails.helpers({
   keyChanges: function (keyID) {
     return Changes.find({keyID: keyID});
   },
@@ -288,30 +335,12 @@ Template.keyDisplay.helpers({
   },
   parseChangeHlp: function (changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx) {
     return parseChange(changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx);
-  },
-  insertColorMarkerHlp: function (sev) {
-    console.log(sev);
-    return insertColorMarker(sev, true);
   }
 });
 
 /**
  * Events
  **/
-
-Template.dashboard.events({
-  "click .validate-button": function() {
-    // Fetch all keys from the database and validate them
-    // TODO: Use "Async" library to process these in parallel
-    Meteor.call('runChecks');
-  },
-  "click .rm-err": function() {
-    Errors.remove(this._id);
-  },
-  "click .rm-key": function() {
-    Keys.remove(Keys.findOne({keyID: this.keyID})._id)
-  }
-});
 
 Template.header.events({
   "click .logout-button": function() {
@@ -324,5 +353,57 @@ Template.header.events({
       // Redirect to landing route
       FlowRouter.go(FlowRouter.path("landing"));
     });
+  }
+});
+
+Template.validateKeys.events({
+  "click .validate-button": function() {
+    // Fetch all keys from the database and validate them
+    // TODO: Use "Async" library to process these in parallel
+    Meteor.call('runChecks');
+  }
+});
+
+Template.errorDisplay.events({
+  "click .rm-err": function() {
+    Errors.remove(this._id);
+  }
+});
+
+Template.keyDisplay.events({
+  "click .rm-key": function() {
+    Keys.remove(Keys.findOne({keyID: this.keyID})._id)
+  },
+  "click .toggle.changesBtn": function(event) {
+    event.stopImmediatePropagation();
+    let acc = $('#key-display .ui.accordion');
+    let thisBtn = $(event.currentTarget);
+    let keyIndex = $('.changesBtn').index(thisBtn);
+    if (changesSet) {
+      activeChange = keyIndex;
+      acc.accordion('toggle', keyIndex);
+    }
+    else {
+      changesSet = true;
+      swapKeyContent();
+      acc.accordion('close', activeChange);
+      Meteor.setTimeout(function() {acc.accordion('open', keyIndex);}, 500);
+    }
+  },
+  "click .toggle.detailsBtn": function(event) {
+    event.stopImmediatePropagation();
+    let acc = $('#key-display .ui.accordion');
+    let thisBtn = $(event.currentTarget);
+    let keyIndex = $('.detailsBtn').index(thisBtn);
+    if (!changesSet) {
+      activeChange = keyIndex
+      acc.accordion('toggle', keyIndex);
+    }
+    else {
+      changesSet = false;
+      swapKeyContent();
+      acc.accordion('close', activeChange);
+      Meteor.setTimeout(function() {acc.accordion('open', keyIndex);}, 500);
+    }
   }
 });
