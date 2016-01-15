@@ -41,3 +41,4 @@ npm-container
 momentjs:moment
 erasaur:meteor-lodash
 email
+mrt:flash-messages
