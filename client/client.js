@@ -14,6 +14,8 @@ BlazeLayout.setRoot('body');
 // Jade shenanigans workaround
 settingsDate = new Date();
 
+whitelistWatch = null;
+
 /**
  * Auth
  **/
@@ -22,6 +24,12 @@ settingsDate = new Date();
 Accounts.onLogin(function() {
   if (!Session.get("loginRedirected")) {
     FlowRouter.go(FlowRouter.path("home"));
+    // Redirect to home page if user gets removed from whitelist
+    whitelistWatch = Whitelist.find({characterID: String(Meteor.user().profile.eveOnlineCharacterId)}).observe({
+      removed: function () {
+        FlowRouter.go('landing');
+      }
+    });
     Session.setAuth("loginRedirected", true);
   }
 });
@@ -33,21 +41,13 @@ var requireAuth = function(context, redirect) {
   }
 };
 
-// Redirect to home page if user is not on whitelist
+// Redirect to home page if user is not admin and not on whitelist
 var requireWhitelist = function (context, redirect) {
-  if (context.route.name !== 'landing' && !Whitelist.findOne({characterID: String(Meteor.user().profile.eveOnlineCharacterId)})) {
+  if (Meteor.user().profile.eveOnlineCharacterId !== Meteor.settings.public.adminID &&
+      !Whitelist.findOne({characterID: String(Meteor.user().profile.eveOnlineCharacterId)})) {
     redirect(FlowRouter.path('landing'));
   }
 };
-
-// Redirect to home page if user gets removed from whitelist
-Meteor.startup(function () {
-  Whitelist.find({characterID: String(Meteor.user().profile.eveOnlineCharacterId)}).observe({
-    removed: function () {
-      FlowRouter.go('landing');
-    }
-  });
-});
 
 /**
  * Routes
@@ -277,12 +277,6 @@ Template.keyDisplay.helpers({
  **/
 
 Template.dashboard.events({
-  "click .logout-button": function() {
-    // Log the user out and redirect them to the landing page
-    Meteor.logout(function() {
-      FlowRouter.go(FlowRouter.path("landing"));
-    });
-  },
   "click .validate-button": function() {
     // Fetch all keys from the database and validate them
     // TODO: Use "Async" library to process these in parallel
@@ -293,5 +287,17 @@ Template.dashboard.events({
   },
   "click .rm-key": function() {
     Keys.remove(Keys.findOne({keyID: this.keyID})._id)
+  }
+});
+
+Template.header.events({
+  "click .logout-button": function() {
+    // Log the user out and redirect them to the landing page
+    Meteor.logout(function() {
+      // Stop watching for whitelist changes
+      whitelistWatch.stop();
+      // Redirect to landing route
+      FlowRouter.go(FlowRouter.path("landing"));
+    });
   }
 });
