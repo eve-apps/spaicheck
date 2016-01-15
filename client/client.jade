@@ -63,7 +63,7 @@ template(name="header")
   header.ui.fixed.top.borderless.menu
     .left.menu.logo
       a.item(href="{{pathFor 'home'}}")
-        img.ui.tiny.image(src="/logo.png")
+        img.ui.small.image(src="/logo.png")
         i.icons
           i.large.spy.icon
           i.huge.search.icon.grey
@@ -73,7 +73,7 @@ template(name="header")
           img.ui.avatar.image(src="https://image.eveonline.com/Character/#{currentCharId}_64.jpg")
         else
           img.ui.avatar.image(src="/anon.jpg")
-        span &nbsp;#{currentCharName}
+        span.user-name &nbsp;#{currentCharName}
         i.dropdown.icon
         .menu
           a.item
@@ -219,11 +219,20 @@ template(name="keyDisplay")
           .ui.divider
         .title
           .ui.stackable.grid
-            .twelve.wide.column
+            .five.wide.column
               i.dropdown.icon
               | {{{insertColorMarkerHlp status}}} Key ##{keyID}
-            .four.wide.right.aligned.column
-              a.ui.small.compact.button.red.rm-key
+            .eleven.wide.right.aligned.column
+              a.ui.tiny.compact.button.blue.toggle-changes
+                i.large.info.circle.icon.inverted
+                | Details
+              a(class="ui #{hasChanges keyID} labeled button toggle-changes")
+                a.ui.button.tiny.compact.button.yellow
+                  i.large.warning.sign.icon.inverted
+                  | Changes
+                a.ui.basic.label
+                  | #{numChanges keyID}
+              a.ui.tiny.compact.button.red.rm-key
                 i.large.inverted.trash.icon
                 | Delete
         .content

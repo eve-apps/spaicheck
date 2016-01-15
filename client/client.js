@@ -260,6 +260,23 @@ Template.keyDisplay.helpers({
   keys: function () {
     return Keys.find({});
   },
+  hasChanges: function (keyID) {
+    return Changes.findOne({keyID: keyID}) ? '' : 'disabled';
+  },
+  numChanges: function (keyID) {
+    let changeCount = 0;
+    let allChanges = Changes.findOne({keyID: keyID});
+    if (allChanges) {
+      let changeLog = allChanges.log
+      changeLog.forEach(function (changesObj) {
+        console.log(changesObj);
+        changesObj.changes.forEach(function () {
+          changeCount++;
+        });
+      });
+    }
+    return changeCount;
+  },
   keyChanges: function (keyID) {
     return Changes.find({keyID: keyID});
   },

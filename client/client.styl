@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css?family=Fugaz+One")
 header.ui.fixed.top.menu, footer.ui.bottom.fixed
   background-color #f3f3f3
-header .logo img.ui.tiny.image
+header .logo img.ui.image
   -webkit-filter: drop-shadow(1px 1px 1px #222);
   filter: drop-shadow(1px 1px 1px #222);
 header .logo i.icons
@@ -39,14 +39,18 @@ footer.ui.bottom.fixed
     display inline-block
     margin 1em 0.6em 1em 0
 
+#key-display .title .ui.basic.label
+  padding-top 0em
+  padding-bottom 0em
+
 .ui.top.attached.segment
   background-color #f3f3f3
 .log:not(:first-child)
   margin-top 1em
 
-@media screen and (min-width: 480px)
-  header.fixed.top .left.menu img
-    width 150px
+@media screen and (max-width: 420px)
+  span.user-name
+    display none!important
 @media screen and (min-width: 768px)
   padding 40px 0px 60px 0px
 #settingsSaved
