@@ -1,19 +1,19 @@
-insertColorMarker = function (severity, isKey) {
+insertColorMarker = function (severity) {
   const colorMarker = '&#9679';
   let severityColor = '';
   let titleStr = '';
 
   switch (severity) {
     case 'ERROR':
-      titleStr = isKey ? 'This key has at least 1 invalidating change' : 'This change invalidates the key';
+      titleStr = 'This key has at least 1 invalidating change';
       severityColor = '#FF0000';
       break;
     case 'WARNING':
-      titleStr = isKey ? 'This key has at least 1 change, but is still valid' : 'This change does not invalidate the key';
+      titleStr = 'This key has at least 1 change, but is still valid';
       severityColor = '#FFFF00';
       break;
     case 'GOOD':
-      titleStr = isKey ? 'This key has not changed' : 'This change does not invalidate the key';
+      titleStr = 'This key has not changed';
       severityColor = '#00FF00';
       break;
     default:

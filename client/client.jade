@@ -245,10 +245,11 @@ template(name="changeDetails")
   each keyChanges keyID
     each log
       .log
-        .ui.top.attached.segment #{createdAt}
+        .ui.top.attached.segment #{prettyDate createdAt}
         each changes
           .ui.attached.segment.changeDetail
-            | {{{parseChangeHlp changeType severity oldValueStr newValueStr oldValueObj newValueObj context}}}
+            p
+              | {{{parseChangeHlp changeType severity oldValueStr newValueStr oldValueObj newValueObj context}}}
     | #{addBottomClass log}
     
 template(name="keyDetails")
