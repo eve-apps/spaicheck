@@ -1,4 +1,4 @@
-parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, newValObj, ctx) {
+parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, newValObj, ctx, forEmail) {
   let newVal = newValStr || newValObj || null;
   let oldVal = oldValStr || oldValObj || null;
 
@@ -53,6 +53,6 @@ parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, n
     default:
   }
 
-  dispStr = insertChangeLabel(changeType, severity) + '<span class="change-text">' + contentStr + '</span>';
+  dispStr = (forEmail ? insertColorMarker(severity) : insertChangeLabel(changeType, severity)) + '<span class="change-text">' + contentStr + '</span>';
   return dispStr;
 }

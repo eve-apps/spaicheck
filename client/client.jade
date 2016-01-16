@@ -233,7 +233,7 @@ template(name="changeDetails")
         each changes
           .ui.attached.segment.changeDetail
             p
-              | {{{parseChangeHlp changeType severity oldValueStr newValueStr oldValueObj newValueObj context}}}
+              | {{{parseChangeHlp changeType severity oldValueStr newValueStr oldValueObj newValueObj context false}}}
     | #{addBottomClass log}
     
 template(name="keyDetails")

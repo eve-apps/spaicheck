@@ -144,8 +144,8 @@ handleDetailsClick = function (evType, ev) {
        addClass("bottom attached");
      }, 1);
    },
-   parseChangeHlp: function (changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx) {
-     return parseChange(changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx);
+   parseChangeHlp: function (changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx, email) {
+     return parseChange(changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx, email);
    }
  });
 
