@@ -2,8 +2,6 @@ parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, n
   let newVal = newValStr || newValObj || null;
   let oldVal = oldValStr || oldValObj || null;
 
-  let colorMarkerStr = insertColorMarker(severity);
-
   let charName;
   if (ctx) charName = ctx.charName;
   else if (newVal) charName = newVal.characterName;
@@ -13,8 +11,6 @@ parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, n
 
   let oldName = ctx ? ctx.oldName : null;
   let newName = ctx ? ctx.newName : null;
-
-  let changeTypeStr = '<span style="color:red;">' + changeType + '</span> '
 
   let contentStr;
   switch (changeType) {
@@ -57,7 +53,6 @@ parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, n
     default:
   }
 
-  dispStr = '<p>' + colorMarkerStr + changeTypeStr + contentStr + '</p>';
-
+  dispStr = insertChangeLabel(changeType, severity) + '<span class="change-text">' + contentStr + '</span>';
   return dispStr;
 }
