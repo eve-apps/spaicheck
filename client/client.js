@@ -16,20 +16,76 @@ settingsDate = new Date();
 
 whitelistWatch = null;
 
-changesSet = false;
-activeChange = '';
-swapKeyContent = function () {
-  let curVal = changesSet;
-  let ch = $('.changes');
-  let dt = $('.details');
-
-  if (curVal) {
-    dt.fadeOut(100, function() {dt.removeClass('visible')});
-    ch.fadeIn(100)
+handleDetailsClick = function (evType, ev) {
+  if (typeof handleDetailsClick.detailsType == 'undefined') {
+    handleDetailsClick.detailsType = 'INITVALUE';
   }
+  handleDetailsClick.swapKeyContent = function (index) {
+    let ch = $('.changes:eq(' + index + ')');
+    let dt = $('.details:eq(' + index + ')');
+
+    if (handleDetailsClick.detailsType == 'CHANGES') {
+      dt.hide();
+      ch.show();
+    }
+    else if (handleDetailsClick.detailsType == 'KEYINFO'){
+      ch.hide();
+      dt.show();
+    }
+  }
+
+  ev.stopImmediatePropagation();
+  let acc = $('#key-display .ui.accordion');
+  let thisBtn = $(ev.currentTarget);
+  let clickIndex;
+  if (evType == 'CHANGES') clickIndex = $('.changesBtn').index(thisBtn);
+  if (evType == 'KEYINFO') clickIndex = $('.detailsBtn').index(thisBtn);
+
+  // This is the first click after page loads
+  if (typeof handleDetailsClick.activeIndex == 'undefined') {
+    handleDetailsClick.detailsType = evType;
+    handleDetailsClick.swapKeyContent(clickIndex);
+    acc.accordion('open', clickIndex);
+    handleDetailsClick.activeIndex = clickIndex;
+  }
+  // The same type of button as before was clicked
+  else if (evType == handleDetailsClick.detailsType) {
+    // Same button as before
+    console.log(clickIndex + ", " + handleDetailsClick.activeIndex);
+    if (clickIndex == handleDetailsClick.activeIndex) {
+      acc.accordion('toggle', clickIndex);
+    }
+    // Corresponding button on another row
+    else {
+      handleDetailsClick.swapKeyContent(clickIndex);
+      acc.accordion('open', clickIndex);
+      handleDetailsClick.activeIndex = clickIndex;
+    }
+  }
+  // The other type of button was clicked
   else {
-    ch.fadeOut(100, function() {ch.removeClass('visible')});
-    dt.fadeIn(100);
+    handleDetailsClick.detailsType = evType;
+
+    // Other button on same row
+    if (clickIndex == handleDetailsClick.activeIndex) {
+      // Pane already open
+      if ($('.details:eq(' + clickIndex + ')').parent().hasClass('active')) {
+        acc.accordion('close', clickIndex);
+        Meteor.setTimeout(function() {handleDetailsClick.swapKeyContent(clickIndex);}, 500);
+        Meteor.setTimeout(function() {acc.accordion('open', clickIndex);}, 500);
+      }
+      // Pane closed
+      else {
+        handleDetailsClick.swapKeyContent(clickIndex);
+        acc.accordion('open', clickIndex);
+      }
+    }
+    // Other button on different row
+    else {
+      handleDetailsClick.swapKeyContent(clickIndex);
+      acc.accordion('open', clickIndex);
+      handleDetailsClick.activeIndex = clickIndex;
+    }
   }
 }
 
@@ -304,9 +360,6 @@ Template.keyDisplay.helpers({
   insertColorMarkerHlp: function (sev) {
     return insertColorMarker(sev, true);
   },
-  changesSet: function () {
-    return changesSet;
-  },
   logThis: function () {
     console.log(this);
   }
@@ -374,36 +427,10 @@ Template.keyDisplay.events({
   "click .rm-key": function() {
     Keys.remove(Keys.findOne({keyID: this.keyID})._id)
   },
-  "click .toggle.changesBtn": function(event) {
-    event.stopImmediatePropagation();
-    let acc = $('#key-display .ui.accordion');
-    let thisBtn = $(event.currentTarget);
-    let keyIndex = $('.changesBtn').index(thisBtn);
-    if (changesSet) {
-      activeChange = keyIndex;
-      acc.accordion('toggle', keyIndex);
-    }
-    else {
-      changesSet = true;
-      swapKeyContent();
-      acc.accordion('close', activeChange);
-      Meteor.setTimeout(function() {acc.accordion('open', keyIndex);}, 500);
-    }
+  "click .toggle.changesBtn": function(ev) {
+    handleDetailsClick('CHANGES', ev);
   },
-  "click .toggle.detailsBtn": function(event) {
-    event.stopImmediatePropagation();
-    let acc = $('#key-display .ui.accordion');
-    let thisBtn = $(event.currentTarget);
-    let keyIndex = $('.detailsBtn').index(thisBtn);
-    if (!changesSet) {
-      activeChange = keyIndex
-      acc.accordion('toggle', keyIndex);
-    }
-    else {
-      changesSet = false;
-      swapKeyContent();
-      acc.accordion('close', activeChange);
-      Meteor.setTimeout(function() {acc.accordion('open', keyIndex);}, 500);
-    }
+  "click .toggle.detailsBtn": function(ev) {
+    handleDetailsClick('KEYINFO', ev);
   }
 });
