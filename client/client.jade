@@ -159,10 +159,10 @@ template(name="errorDisplay")
   .ui.top.attached.segment
     .ui.two.column.grid
       .middle.aligned.column
-        h3.ui.header Failed Keys
+        h3.ui.header Import Errors
       .right.aligned.column
         i.flag.icon.big.red
-  #active-errors.ui.bottom.attached.section.segment
+  #error-display.ui.bottom.attached.section.segment
     .ui.accordion
       each errors
         if @index != 0

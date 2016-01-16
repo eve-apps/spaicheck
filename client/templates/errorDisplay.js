@@ -3,7 +3,7 @@
  **/
 
 Template.errorDisplay.onRendered(function () {
-  $('#active-errors .ui.accordion').accordion();
+  $('#error-display .ui.accordion').accordion();
 });
 
 /**
