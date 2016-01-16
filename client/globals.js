@@ -1,9 +1,9 @@
 // Set new thresholds
-  // moment.relativeTimeThreshold('s', 60);
-  // moment.relativeTimeThreshold('m', 60);
-  // moment.relativeTimeThreshold('h', 24);
-  // moment.relativeTimeThreshold('d', 30);
-  // moment.relativeTimeThreshold('M', 12);
+  moment.relativeTimeThreshold('s', 60);
+  moment.relativeTimeThreshold('m', 60);
+  moment.relativeTimeThreshold('h', 24);
+  moment.relativeTimeThreshold('d', 30);
+  moment.relativeTimeThreshold('M', 12);
 
 // Jade shenanigans workaround
 settingsDate = new Date();
