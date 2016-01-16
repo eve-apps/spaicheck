@@ -127,11 +127,7 @@ template(name="home")
     .column
       .ui.raised.tertiary.blue.inverted.segment
         h2.ui.header.inverted Key Management
-        .ui.two.column.stackable.grid
-          .ui.five.wide.column
-            +validateKeys
-          .ui.eleven.wide.column
-            +keyDisplay
+        +keyDisplay
 
 //- addKey
 template(name="addKey")
@@ -191,26 +187,14 @@ template(name="errorDisplay")
                   .description
                     | #{errorMessage.message}
 
-//- validateKeys
-template(name="validateKeys")
-  .ui.top.attached.segment
-    .ui.two.column.grid
-      .middle.aligned.column
-        h3.ui.header Validate All Keys
-      .right.aligned.column
-        i.big.icons
-          i.privacy.icon.yellow
-          i.corner.check.circle.icon.green
-  .ui.bottom.attached.section.segment
-    button.ui.button.fluid.blue.validate-button Validate
-
 //- keyDisplay
 template(name="keyDisplay")
   .ui.top.attached.segment
     .ui.two.column.grid
-      .middle.aligned.column
-        h3.ui.header Key Explorer
-      .right.aligned.column
+      .middle.aligned.four.wide.column
+        h3.ui.header Explorer
+      .right.aligned.twelve.wide.column
+        button.ui.small.button.green.validate-button Validate Keys
         i.find.icon.big
   #key-display.ui.bottom.attached.section.segment
     .ui.accordion
