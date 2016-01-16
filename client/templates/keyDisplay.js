@@ -79,93 +79,102 @@ handleDetailsClick = function (evType, ev) {
  * Page Events
  **/
 
- Template.keyDisplay.onRendered(function () {
-   $('#key-display .ui.accordion').accordion({
-     selector: {
-       trigger: null
-     },
-     animateChildren: false
-   });
- })
+Template.keyDisplay.onRendered(function () {
+  $('#key-display .ui.accordion').accordion({
+    selector: {
+      trigger: null
+    },
+    animateChildren: false
+  });
+})
 
- /**
-  * Helpers
-  **/
+/**
+ * Helpers
+ **/
 
- Template.keyDisplay.helpers({
-   keys: function () {
-     return Keys.find({});
-   },
-   keyInfo: function (keyID) {
-     return Keys.findOne({keyID: keyID});
-   },
-   hasChanges: function (keyID) {
-     return Changes.findOne({keyID: keyID}) ? 'toggle' : 'disabled';
-   },
-   numChanges: function (keyID) {
-     let changeCount = 0;
-     let allChanges = Changes.findOne({keyID: keyID});
-     if (allChanges) {
-       let changeLog = allChanges.log
-       changeLog.forEach(function (changesObj) {
-         changesObj.changes.forEach(function () {
-           changeCount++;
-         });
-       });
-     }
-     return changeCount;
-   },
-   insertColorMarkerHlp: function (sev) {
-     return insertColorMarker(sev, true);
-   },
-   logThis: function () {
-     console.log(this);
-   }
- });
+Template.keyDisplay.helpers({
+  keys: function () {
+    return Keys.find({});
+  },
+  keyInfo: function (keyID) {
+    return Keys.findOne({keyID: keyID});
+  },
+  hasChanges: function (keyID) {
+    return Changes.findOne({keyID: keyID}) ? 'toggle' : 'disabled';
+  },
+  numChanges: function (keyID) {
+    let changeCount = 0;
+    let allChanges = Changes.findOne({keyID: keyID});
+    if (allChanges) {
+      let changeLog = allChanges.log
+      changeLog.forEach(function (changesObj) {
+        changesObj.changes.forEach(function () {
+          changeCount++;
+        });
+      });
+    }
+    switch (changeCount) {
+      case 0:
+        return "No Change";
+        break;
+      case 1:
+        return changeCount + " Change";
+        break;
+      default:
+        return changeCount + " Changes";
+    }
+  },
+  insertColorMarkerHlp: function (sev) {
+    return insertColorMarker(sev, true);
+  },
+  logThis: function () {
+    console.log(this);
+  }
+});
 
- Template.keyDetails.helpers({
-   parseCharacters: function () {
-     let chars = this.characters;
-     let charStr = '';
-     for (let char in chars) {
-       charStr += '<li>' + chars[char].characterName + '</li>\n';
-     }
-     return charStr;
-   }
- });
+Template.keyDetails.helpers({
+  parseCharacters: function () {
+    let chars = this.characters;
+    let charStr = '';
+    for (let char in chars) {
+      charStr += '<li>' + chars[char].characterName + '</li>\n';
+    }
+    return charStr;
+  }
+});
 
- Template.changeDetails.helpers({
-   keyChanges: function (keyID) {
-     return Changes.find({keyID: keyID});
-   },
-   addBottomClass: function (log) {
-     Meteor.setTimeout(function () {
-       $( ".changeDetail:last-child" ).removeClass("attached").
-       addClass("bottom attached");
-     }, 1);
-   },
-   parseChangeHlp: function (changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx, email) {
-     return parseChange(changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx, email);
-   }
- });
+Template.changeDetails.helpers({
+  keyChanges: function (keyID) {
+    return Changes.find({keyID: keyID});
+  },
+  addBottomClass: function (log) {
+    Meteor.setTimeout(function () {
+      $( ".changeDetail:last-child" ).removeClass("attached").
+      addClass("bottom attached");
+    }, 1);
+  },
+  parseChangeHlp: function (changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx, email) {
+    return parseChange(changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx, email);
+  }
+});
 
- /**
-  * Event Handlers
-  **/
+/**
+ * Event Handlers
+ **/
 
- Template.keyDisplay.events({
-   "click .validate-button": function() {
-     // Fetch all keys from the database and validate them
-     // TODO: Use "Async" library to process these in parallel
-     Meteor.call('runChecks');
-   },
-   "click .toggle.changesBtn": function(ev) {
-     handleDetailsClick('CHANGES', ev);
-   },
-   "click .toggle.detailsBtn": function(ev) {
-     handleDetailsClick('KEYINFO', ev);
-   },
-   "click .rm-key": function() {
-     Keys.remove(Keys.findOne({keyID: this.keyID})._id)
-   },
- });
+Template.keyDisplay.events({
+  "click .validate-button": function() {
+    // Fetch all keys from the database and validate them
+    // TODO: Use "Async" library to process these in parallel
+    Meteor.call('runChecks');
+  },
+  "click .toggle.changesBtn": function(ev) {
+    handleDetailsClick('CHANGES', ev);
+  },
+  "click .toggle.detailsBtn": function(ev) {
+    handleDetailsClick('KEYINFO', ev);
+  },
+  "click .rm-key": function() {
+    Keys.remove(Keys.findOne({keyID: this.keyID})._id)
+  },
+});

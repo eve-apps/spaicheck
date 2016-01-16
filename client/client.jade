@@ -73,7 +73,7 @@ template(name="header")
           img.ui.avatar.image(src="https://image.eveonline.com/Character/#{currentCharId}_64.jpg")
         else
           img.ui.avatar.image(src="/anon.jpg")
-        span.user-name &nbsp;#{currentCharName}
+        span.user-name.micro-hide &nbsp;#{currentCharName}
         i.dropdown.icon
         .menu
           a.item
@@ -194,8 +194,12 @@ template(name="keyDisplay")
       .middle.aligned.four.wide.column
         h3.ui.header Explorer
       .right.aligned.twelve.wide.column
-        button.ui.small.button.green.validate-button Validate Keys
+        +validateButton(hidden='mobile-hide')
         i.find.icon.big
+      .ui.mobile.only.row
+        .column
+          +validateButton
+
   #key-display.ui.bottom.attached.section.segment
     .ui.accordion
       each keys
@@ -207,17 +211,15 @@ template(name="keyDisplay")
               i.dropdown.icon
               | {{{insertColorMarkerHlp status}}} Key ##{keyID}
             .ten.wide.right.aligned.column
-              a.ui.mini.compact.button.blue.toggle.detailsBtn
-                i.large.info.circle.icon.inverted
-                | Details
-              a(class="ui #{hasChanges keyID} labeled button changesBtn")
-                a.ui.button.mini.compact.button.yellow
-                  i.large.warning.sign.icon.inverted
-                  | Changes
-                a.ui.basic.label
+              .ui.small.compact.buttons.labeled
+                a.ui.button.blue.toggle.detailsBtn
+                  i.large.info.circle.icon.inverted.mobile-hide
+                  | Info
+                a.ui.button.yellow.changesBtn(class="#{hasChanges keyID}")
+                  i.large.warning.sign.icon.inverted.mobile-hide
                   | #{numChanges keyID}
-              a.ui.mini.compact.button.red.rm-key
-                i.large.inverted.trash.icon
+              a.ui.small.compact.button.red.rm-key
+                i.large.inverted.trash.icon.mobile-hide
                 | Delete
         .content
           .changes
@@ -243,3 +245,10 @@ template(name="keyDetails")
     ul Characters:
       with resultBody
         | {{{parseCharacters}}}
+
+template(name="validateButton")
+  button.ui.small.button.green.validate-button(class="#{hidden}")
+    i.big.icons
+      i.privacy.icon.yellow
+      i.corner.check.circle.icon.inverted
+    | Validate Keys
