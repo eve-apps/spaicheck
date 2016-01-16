@@ -25,7 +25,7 @@ parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, n
       contentStr = 'This key only provides info about a single character.';
       break;
     case 'BADMASK':
-      contentStr = 'The access rights no longer satisfy the Corporation conditions.';
+      contentStr = 'This key\'s access mask does not provide full access.';
       break;
     case 'EXPIRES':
       contentStr = 'This key has been set to expire.';
@@ -34,19 +34,19 @@ parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, n
       contentStr = charStr + 'left "' + oldName + '" and is now part of an NPC corporation.';
       break;
     case 'leaveAlliance':
-      contentStr = charStr + 'and its corporation are no longer allied with "' + oldName + '".';
+      contentStr = charStr + 'and their corporation are no longer allied with "' + oldName + '".';
       break;
     case 'joinCorp':
       contentStr = charStr + 'joined the "' + oldName + '" corporation.';
       break;
     case 'joinAlliance':
-      contentStr = charStr + 'and its corporation formed an alliance with "' + newName + '".';
+      contentStr = charStr + 'and their corporation formed an alliance with "' + newName + '".';
       break;
     case 'switchCorp':
       contentStr = charStr + 'left "' + oldName + '" to join "' + newName + '".';
       break;
     case 'switchAlliance':
-      contentStr = charStr + 'and its corporation broke their alliance with "' + oldName + '" to form a new alliance with "' + newName + '".';
+      contentStr = charStr + 'and their corporation broke their alliance with "' + oldName + '" to form an alliance with "' + newName + '".';
       break;
     case 'addCharacter':
       contentStr = charStr + 'has been created.';
