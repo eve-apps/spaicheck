@@ -134,11 +134,11 @@ template(name="addKey")
   .ui.top.attached.segment
     .ui.two.column.grid
       .middle.aligned.column
-        h3.ui.header Add New Key
+        h3.ui.header.grey Add New Key
       .right.aligned.column
         i.big.icons
           i.privacy.icon.yellow
-          i.corner.add.circle.icon.green
+          i.corner.add.circle.icon.inverted
   .ui.bottom.attached.section.segment
     //- See https://github.com/aldeed/meteor-autoform#component-and-helper-reference for info on attributes used here
     +autoForm schema="AddKeyFormSchema" collection="Keys" id="insertKeyForm" type="method" meteormethod="addKeySubmit" validation="none" resetOnSuccess="true"
@@ -155,7 +155,7 @@ template(name="errorDisplay")
   .ui.top.attached.segment
     .ui.two.column.grid
       .middle.aligned.column
-        h3.ui.header Import Errors
+        h3.ui.header.grey Import Errors
       .right.aligned.column
         i.flag.icon.big.red
   #error-display.ui.bottom.attached.section.segment
@@ -165,12 +165,18 @@ template(name="errorDisplay")
           .ui.divider
         .title
           .ui.stackable.grid
-            .twelve.wide.column
-              i.dropdown.icon
+            .six.wide.column
+              i.dropdown.icon.grey
               span Key ##{keyID} #[span(style="color: #ff0000") ({{keyErrorCount log}})]
-            .right.aligned.four.wide.column
-              a.ui.mini.compact.basic.button.rm-err
-                i.large.red.remove.circle.icon
+            .right.aligned.ten.wide.column
+              a.ui.small.compact.button.blue.show-err
+                i.large.inverted.info.circle.icon.micro-hide
+                | Show
+              a.ui.small.compact.button.green.recheck
+                i.large.inverted.check.circle.icon.micro-hide
+                | Recheck
+              a.ui.small.compact.button.red.rm-err
+                i.large.inverted.remove.circle.icon.micro-hide
                 | Discard
         .content
           .ui.cards
@@ -192,7 +198,7 @@ template(name="keyDisplay")
   .ui.top.attached.segment
     .ui.two.column.grid
       .middle.aligned.four.wide.column
-        h3.ui.header Explorer
+        h3.ui.header.grey Explorer
       .right.aligned.twelve.wide.column
         +validateButton(hidden='mobile-hide')
         i.find.icon.big
@@ -208,18 +214,18 @@ template(name="keyDisplay")
         .title
           .ui.stackable.grid
             .six.wide.column
-              i.dropdown.icon
+              i.dropdown.icon.grey
               | {{{insertColorMarkerHlp status}}} Key ##{keyID}
             .ten.wide.right.aligned.column
               .ui.small.compact.buttons.labeled
                 a.ui.button.blue.toggle.detailsBtn
-                  i.large.info.circle.icon.inverted.mobile-hide
+                  i.large.info.circle.icon.inverted.micro-hide
                   | Info
                 a.ui.button.yellow.changesBtn(class="#{hasChanges keyID}")
-                  i.large.warning.sign.icon.inverted.mobile-hide
+                  i.large.warning.sign.icon.inverted.micro-hide
                   | #{numChanges keyID}
               a.ui.small.compact.button.red.rm-key
-                i.large.inverted.trash.icon.mobile-hide
+                i.large.inverted.trash.icon.micro-hide
                 | Delete
         .content
           .changes

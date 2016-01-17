@@ -3,7 +3,11 @@
  **/
 
 Template.errorDisplay.onRendered(function () {
-  $('#error-display .ui.accordion').accordion();
+  $('#error-display .ui.accordion').accordion({
+    selector: {
+      trigger: '.show-err'
+    }
+  });
 });
 
 /**
@@ -24,7 +28,10 @@ Template.errorDisplay.helpers({
  **/
 
 Template.errorDisplay.events({
-  "click .rm-err": function() {
+  'click .recheck': function () {
+
+  },
+  'click .rm-err': function () {
     Errors.remove(this._id);
   }
 });
