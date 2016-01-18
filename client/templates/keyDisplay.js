@@ -37,7 +37,6 @@ handleDetailsClick = function (evType, ev) {
   // The same type of button as before was clicked
   else if (evType == handleDetailsClick.detailsType) {
     // Same button as before
-    console.log(clickIndex + ", " + handleDetailsClick.activeIndex);
     if (clickIndex == handleDetailsClick.activeIndex) {
       acc.accordion('toggle', clickIndex);
     }
@@ -175,6 +174,9 @@ Template.keyDisplay.events({
     handleDetailsClick('KEYINFO', ev);
   },
   "click .rm-key": function() {
-    Keys.remove(Keys.findOne({keyID: this.keyID})._id)
+    let foundChanges = Changes.findOne({keyID: this.keyID});
+
+    if (foundChanges) Changes.remove(foundChanges._id);
+    Keys.remove(Keys.findOne({keyID: this.keyID})._id);
   },
 });
