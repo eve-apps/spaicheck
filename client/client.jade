@@ -200,11 +200,11 @@ template(name="keyDisplay")
       .middle.aligned.four.wide.column
         h3.ui.header.grey Explorer
       .right.aligned.twelve.wide.column
-        +validateButton(hidden='mobile-hide')
+        +validateButton(custom='micro-hide')
         i.find.icon.big
-      .ui.mobile.only.row
-        .column
-          +validateButton
+      .ui.micro-show.row
+        .sixteen.wide.column
+          +validateButton(custom='fluid')
 
   #key-display.ui.bottom.attached.section.segment
     .ui.accordion
@@ -223,7 +223,7 @@ template(name="keyDisplay")
                   | Info
                 a.ui.button.yellow.changesBtn(class="#{hasChanges keyID}")
                   i.large.warning.sign.icon.inverted.micro-hide
-                  | #{numChanges keyID}
+                  .change-btn-text #{numChanges keyID}
               a.ui.small.compact.button.red.rm-key
                 i.large.inverted.trash.icon.micro-hide
                 | Delete
@@ -253,7 +253,7 @@ template(name="keyDetails")
         | {{{parseCharacters}}}
 
 template(name="validateButton")
-  button.ui.small.button.green.validate-button(class="#{hidden}")
+  button.ui.small.button.green.validate-button(class="#{custom}")
     i.big.icons
       i.privacy.icon.yellow
       i.corner.check.circle.icon.inverted
