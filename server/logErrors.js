@@ -34,7 +34,7 @@ Meteor.methods({
       case 'EXPIRES':
         reason = 'Key is set to expire.';
         break;
-      case 'UNHANDLED ':
+      case 'UNHANDLED':
         reason = 'Unhandled API error code ' + error.errCode + '.';
         break;
       default:
