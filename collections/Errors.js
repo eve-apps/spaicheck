@@ -15,10 +15,10 @@ ErrorMessageSchema = new SimpleSchema({
       }
     }
   },
-  errorType: {
+  error: {
     type: String
   },
-  message: {
+  reason: {
     type: String
   }
 })

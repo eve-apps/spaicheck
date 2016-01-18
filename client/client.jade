@@ -141,7 +141,7 @@ template(name="addKey")
           i.corner.add.circle.icon.inverted
   .ui.bottom.attached.section.segment
     //- See https://github.com/aldeed/meteor-autoform#component-and-helper-reference for info on attributes used here
-    +autoForm schema="AddKeyFormSchema" collection="Keys" id="insertKeyForm" type="method" meteormethod="addKeySubmit" validation="none" resetOnSuccess="true"
+    +autoForm schema="AddKeyFormSchema" collection="Keys" id="insertKeyForm" type="method" meteormethod="insertKey" validation="none" resetOnSuccess="true"
       .ui.fluid.input
         +afFieldInput name="keyID" type="text" placeholder="Key ID"
       {{afFieldMessage name="keyID"}}
@@ -189,9 +189,9 @@ template(name="errorDisplay")
                     | {{timeAgo errorMessage.createdAt}}
                     .right.floated
                       .ui.horizontal.red.label
-                        | #{errorMessage.errorType}
+                        | #{errorMessage.error}
                   .description
-                    | #{errorMessage.message}
+                    | #{errorMessage.reason}
 
 //- keyDisplay
 template(name="keyDisplay")

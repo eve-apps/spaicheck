@@ -9,19 +9,12 @@ Meteor.startup(function () {
 
 Meteor.methods({
   runChecks: function () {
-    // Skip checks if daily server maintenance is underway
-    let beginMaint = moment.utc().hours(11).minutes(00);
-    let endMaint = moment.utc().hours(11).minutes(30);
-    if (moment().utc().isBetween( beginMaint, endMaint)) {
-      console.log("EVE Online API is down for daily maintenance between 11:00-11:30GMT. Verification skipped.");
-      return;
-    }
-    else console.log("Proceeding to update keys...");
+    console.log("Updating keys...");
     // Fetch all keys from the database and validate them
     let curKeys = Keys.find({status: {$in: ['GOOD', 'WARNING']}}).fetch(); // all currently valid keys
-    console.log(curKeys);
     let curTimeout = 0;
     var cachedUntil = null;
+    
     for (let i=0; i < curKeys.length; i++) {
       // Limit calls to 30 per second by staggering them by 1 30th of a second
       Meteor.setTimeout(function () {

@@ -38,26 +38,10 @@ AutoForm.hooks({
           // It tells the client to not run any more functions until this method has returned
           Meteor.apply('validateKey', [doc.keyID, doc.vCode], true, function(err, result) {
             if (err) {
-              // Connection errors are ignored and form submission fails
-              if (err.error == 'GENERIC') return self.result(false);
-              // Log an appropriate error in the database including keyID and vCode for later use
-              Meteor.call('logKeyError', doc.keyID, doc.vCode, err.error, err.reason);
-              // Cancel form submission
+              Meteor.call('logKeyError', doc.keyID, doc.vCode, err);
               self.result(false);
             }
-            else {
-              // Handle "valid" keys that fail corp requirements
-              if (result.statusFlags[0] !== 'GOOD') {
-                let reasonsString = result.statusFlags.join(' ');
-                Meteor.call('logKeyError', doc.keyID, doc.vCode, 'FAILCHECK', reasonsString);
-                // Cancel form submission
-                self.result(false);
-              }
-              doc.resultBody = result;
-
-              // Successfully complete form submission, and call addKeySubmit()
-              self.result(doc);
-            }
+            else self.result(doc); // Successfully complete form submission, and call insertKey()
           });
         }
         // Cancel form submission

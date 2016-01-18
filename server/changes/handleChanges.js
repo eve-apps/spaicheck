@@ -3,23 +3,27 @@ const jsonPatch = Meteor.npmRequire('fast-json-patch');
 Meteor.methods({
   'handleChanges': function (keyID, err, result) {
     // Create array to hold all changes to key since last check
+    const ignoredErrors = ['CONNERR', 'INTERNAL'];
     let newChanges = [];
 
     // Build out the newChanges array
     if (err) {
-      console.log(err); // Connection errors etc are logged to console and ignored
-      if (err.error == 'INVALIDKEY') newChanges.push({changeType: err.error, severity: 'ERROR'});
-    }
-    // All failed checks are iterated over and each represents a separate change
-    else if (result.statusFlags[0] != 'GOOD') {
-      for (flag of result.statusFlags) {
-        newChanges.push({changeType: flag, severity: 'ERROR'});
+      // Push the error, unless it's on the ignoredErrors list
+      if (ignoredErrors.indexOf(err.error) > -1) console.log(err); // Connection errors etc are logged to console and ignored
+      // Handle corporation check failures; all failed checks are iterated over and each represents a separate change
+      else if (err.error.indexOf(',') > -1) {
+        for (flag of err.error.split(', ')) {
+          newChanges.push({changeType: flag, severity: 'ERROR'});
+        }
+      }
+      else {
+        newChanges.push({changeType: err.error, severity: 'ERROR'});
       }
     }
     // Handle changes that don't invalidate the key
     else {
       let oldRecord = Keys.findOne({keyID: keyID}).resultBody.characters;
-      let newRecord = result.characters;
+      let newRecord = result.resultBody.characters;
       let diff = jsonPatch.compare(oldRecord, newRecord);
 
       // Iterate over the diff array, handling every possible change of importance to the corp

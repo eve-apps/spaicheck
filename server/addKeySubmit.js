@@ -1,6 +1,5 @@
 Meteor.methods({
-  'addKeySubmit': function (doc) {
-    doc.status = 'GOOD';
+  'insertKey': function (doc) {
     Keys.insert(doc, {removeEmptyStrings: false});
   }
 });

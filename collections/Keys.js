@@ -41,6 +41,9 @@ KeySchema = new SimpleSchema({
   status: {
     type: String,
     allowedValues: ['GOOD', 'WARNING', 'ERROR'],
+    autoValue: function() {
+      if (this.isInsert) return 'GOOD'; // Key is verified before insertion
+    },
     autoform: {
       omit: true
     }
