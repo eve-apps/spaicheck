@@ -1,5 +1,8 @@
 Meteor.methods({
   'insertKey': function (doc) {
-    Keys.insert(doc, {removeEmptyStrings: false});
+    Meteor.call('detectPrimaryCharacter', doc, function (err, result) {
+      if (!doc.primaryChar) doc.primaryChar = result;
+      Keys.insert(doc, {removeEmptyStrings: false});
+    });
   }
 });

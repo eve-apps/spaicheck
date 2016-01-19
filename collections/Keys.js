@@ -38,6 +38,10 @@ KeySchema = new SimpleSchema({
     label: "Verification Code",
     regEx: /^[0-9a-zA-Z]+$/ // Only allow numbers and upper-case and lower-case letters
   },
+  primaryChar: {
+    type: String,
+    optional: true
+  },
   status: {
     type: String,
     allowedValues: ['GOOD', 'WARNING', 'ERROR'],
