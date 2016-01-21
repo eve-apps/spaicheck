@@ -5,6 +5,15 @@ const eveonlinejs = Meteor.npmRequire('eveonlinejs');
 // MemoryCache because FileCache was having trouble creating files/dirs(using Node) from within Meteor
 eveonlinejs.setCache(new eveonlinejs.cache.MemoryCache());
 
+Meteor.startup(function () {
+  // Run initial startup check on all Keys
+  Meteor.call('runChecks');
+  // Run validation checks on all keys every 6 minutes
+  Meteor.setInterval(function () {
+    Meteor.call('runChecks');
+  }, 360000);
+});
+
 Meteor.methods({
   // Wrapped to run synchronously using meteorhacks:npm's Async package
   'validateKey': function (keyID, vCode) {
@@ -66,5 +75,12 @@ Meteor.methods({
 
     // If no error was produced, return the "result" property because the API key exists
     return runSyncResult.result;
+  },
+
+  'insertKey': function (doc) {
+    Meteor.call('detectPrimaryCharacter', doc, function (err, result) {
+      if (!doc.primaryChar) doc.primaryChar = result;
+      Keys.insert(doc, {removeEmptyStrings: false});
+    });
   }
 });
