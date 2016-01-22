@@ -78,9 +78,11 @@ Meteor.methods({
   },
 
   'insertKey': function (doc) {
-    Meteor.call('detectPrimaryCharacter', doc, function (err, result) {
-      if (!doc.primaryChar) doc.primaryChar = result;
-      Keys.insert(doc, {removeEmptyStrings: false});
+    Keys.insert(doc, {removeEmptyStrings: false});
+
+    Meteor.call('walkCharacters', doc.resultBody.characters, doc.keyID, doc.vCode, function (err, walkResult) {
+      console.log("walkCharacters finished!");
+      console.log(walkResult);
     });
   }
 });
