@@ -1,19 +1,19 @@
 const eveonlinejs = Meteor.npmRequire('eveonlinejs');
 
 Meteor.methods({
-  'walkCharacters': function (charactersObj, keyID, vCode) {
+  'addKeyCharacters': function (charactersObj, keyID, vCode) {
     let runSyncResult = Async.runSync(function (done) {
       for (let charID in charactersObj) {
-        Meteor.call('fetchCharacter', keyID, vCode, charID);
-        done(null, charID);
+        Meteor.call('insertCharacter', keyID, vCode, charID);
       }
+      done(null, true);
     });
 
     if (runSyncResult.error) throw runSyncResult.error;
     else if (runSyncResult.result) return runSyncResult.result;
   },
 
-  'fetchCharacter': function (keyID, vCode, charID) {
+  'insertCharacter': function (keyID, vCode, charID) {
     let runSyncResult = Async.runSync(function (done) {
       eveonlinejs.fetch('eve:CharacterInfo', {keyID: keyID, vCode: vCode, characterID: charID}, function (err, result) {
         if (err) done(err, null);

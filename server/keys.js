@@ -33,18 +33,9 @@ Meteor.methods({
 
           // If no checks have failed at this point, the key is sufficient to join the corporation
           // Prepare the key info for insertion in the db
-          if (statusFlags[0] == undefined) {
-            let keyObject = {
-              keyID: keyID,
-              vCode: vCode,
-              resultBody: result
-            }
-            done(null, keyObject);
-          }
-          else {
-            // According to Meteor docs, the 'error' property of a Meteor.Error object should be a string
-            done({error: statusFlags.join(', ')}, null);
-          }
+          if (statusFlags[0] == undefined) done(null, result);
+          // According to Meteor docs, the 'error' property of a Meteor.Error object should be a string
+          else done({error: statusFlags.join(', ')}, null);
         }
         // Anything returned as an err object by the API call is returned as err to be thrown as a Meteor.Error
         if (err) {
@@ -78,11 +69,14 @@ Meteor.methods({
   },
 
   'insertKey': function (doc) {
-    Keys.insert(doc, {removeEmptyStrings: false});
-
-    Meteor.call('walkCharacters', doc.resultBody.characters, doc.keyID, doc.vCode, function (err, walkResult) {
-      console.log("walkCharacters finished!");
-      console.log(walkResult);
+    Meteor.call('validateKey', doc.keyID, doc.vCode, function (err, validationResult) {
+      if (err) Meteor.call('logKeyError', doc.keyID, doc.vCode, err);
+      else {
+        doc.resultBody = validationResult;
+        Keys.insert(doc, {removeEmptyStrings: false});
+      }
     });
+
+    Meteor.call('addKeyCharacters', doc.resultBody.characters, doc.keyID, doc.vCode);
   }
 });

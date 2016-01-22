@@ -47,7 +47,7 @@ Meteor.methods({
     // Handle changes that don't invalidate the key
     else {
       let oldRecord = Keys.findOne({keyID: keyID}).resultBody.characters;
-      let newRecord = result.resultBody.characters;
+      let newRecord = result.characters;
       let diff = jsonPatch.compare(oldRecord, newRecord);
 
       // Iterate over the diff array, handling every possible change of importance to the corp

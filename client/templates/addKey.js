@@ -31,21 +31,8 @@ AutoForm.hooks({
           hook for further validation */
         formIsValid = AutoForm.validateForm('insertKeyForm');
 
-        if (formIsValid) {
-          // Storing context because "this.result()" is not available from within the Meteor method
-          let self = this;
-          // The third argument to "validateKey()" is "wait"
-          // It tells the client to not run any more functions until this method has returned
-          Meteor.apply('validateKey', [doc.keyID, doc.vCode], true, function(err, result) {
-            if (err) {
-              Meteor.call('logKeyError', doc.keyID, doc.vCode, err);
-              self.result(false);
-            }
-            else self.result(doc); // Successfully complete form submission, and call insertKey()
-          });
-        }
-        // Cancel form submission
-        else this.result(false);
+        if (formIsValid) this.result(doc); // Successfully complete form submission, and call insertKey()
+        else this.result(false); // Cancel form submission
       }
     }
   }
