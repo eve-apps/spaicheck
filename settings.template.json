@@ -5,7 +5,7 @@
     "mailServer": null,
     "mailPort": null
   },
-  "public": {
+  "exposed": {
     "adminID": null,
     "corporationID": null,
     "allianceID": null

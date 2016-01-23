@@ -29,7 +29,7 @@ Security.defineMethod("ifAdmin", {
   fetch: [],
   transform: null,
   deny: function (type, arg, userID, doc, fields, modifier) {
-    let res =  Meteor.user() ? Meteor.user().profile.eveOnlineCharacterId !== Meteor.settings.public.adminID : true;
+    let res =  Meteor.user() ? Meteor.user().profile.eveOnlineCharacterId !== Meteor.call('adminID') : true;
     console.log("SECURITY - ADMIN:", (res ? "DENY" : "ALLOW"), userID, type, doc, fields, modifier);
     return res;
   }
