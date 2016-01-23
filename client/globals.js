@@ -50,3 +50,7 @@ Template.registerHelper('timeAgo', function (date) {
   }
   else return moment(date).fromNow();
 });
+
+Template.registerHelper('logThis', function () {
+  console.log(this);
+})
