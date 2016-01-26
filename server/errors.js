@@ -4,7 +4,7 @@ Meteor.methods({
       Meteor.call('logKeyError', keyID, vCode, {error: singleError});
     }
   },
-  
+
   'logKeyError': function (keyID, vCode, error) {
     let reason = '';
 
@@ -21,6 +21,9 @@ Meteor.methods({
         break;
       case 'CONNERR':
         reason = 'Connection error.';
+        break;
+      case 'EXISTINGKEY':
+        reason = 'This or another key already exists for this player.'
         break;
       case 'INVALIDKEY':
         reason = 'Key has expired or been deleted.';

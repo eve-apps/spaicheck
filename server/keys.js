@@ -72,11 +72,17 @@ Meteor.methods({
     Meteor.call('validateKey', doc.keyID, doc.vCode, function (err, validationResult) {
       if (err) Meteor.call('logKeyError', doc.keyID, doc.vCode, err);
       else {
+        for (let charID in validationResult.characters) {
+          if (Characters.findOne({characterID: Number(charID)})) {
+            Meteor.call('logKeyError', doc.keyID, doc.vCode, {error: 'EXISTINGKEY'})
+            return false;
+          }
+        }
         doc.resultBody = validationResult;
         Keys.insert(doc, {removeEmptyStrings: false});
+        Meteor.call('addKeyCharacters', doc.resultBody.characters, doc.keyID, doc.vCode);
       }
     });
 
-    Meteor.call('addKeyCharacters', doc.resultBody.characters, doc.keyID, doc.vCode);
   }
 });
