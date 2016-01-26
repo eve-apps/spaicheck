@@ -10,7 +10,16 @@ Template.header.onRendered(function () {
 
   // Settings modal
   let settingsModal = $('#settings')
-    .modal({transition: 'fade up'})
+    .modal(
+      {
+        transition: 'fade up',
+        onShow: function () {
+          $('#settingsSaved').transition('hide');
+        },
+        onHidden: function () {
+          $('#settingsSaved').transition('hide');
+        }
+      })
     .modal('attach events', '#settingsButton', 'show');
   $('#settingsButton').on('click', function (e) {
     headerDropdown.dropdown('hide');
@@ -59,9 +68,11 @@ Template.header.onRendered(function () {
   let eveTimeBtn = $('#eveTimeBtn');
   let friendlyTimeBtn = $('#friendlyTimeBtn');
   let handleTimeFormat = function () {
+    let eveAlreadyActive = Session.get('useEveDurations') && eveTimeBtn.hasClass('active');
+    let friendlyAlreadyActive = !Session.get('useEveDurations') && friendlyTimeBtn.hasClass('active');
+    if (eveAlreadyActive || friendlyAlreadyActive) return null;
     if (Session.get('useEveDurations')) {
       friendlyTimeBtn.removeClass('active blue');
-
       friendlyTimeBtn.focusout();
       eveTimeBtn.focus();
       eveTimeBtn.addClass('active blue');
