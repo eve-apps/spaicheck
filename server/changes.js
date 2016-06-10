@@ -111,7 +111,7 @@ Meteor.methods({
       if (diff.length != 0) {
         Keys.update(Keys.findOne({keyID: keyID})._id, {
           $set: {
-            'resultBody.characters': result.resultBody.characters,
+            'resultBody.characters': result.characters,
           }
         });
       }
@@ -178,7 +178,7 @@ Meteor.methods({
     this.unblock();
 
     Email.send({
-      to: mailTo,
+      to: Meteor.settings.private.mailTo,
       from: "changes@spaicheck.com",
       subject: "Key #" + key + " has changed",
       text: changes

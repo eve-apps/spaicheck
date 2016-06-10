@@ -3,7 +3,8 @@
     "mailUser": null,
     "mailPass": null,
     "mailServer": null,
-    "mailPort": null
+    "mailPort": null,
+    "mailTo": null
   },
   "public": {
     "adminID": null,
