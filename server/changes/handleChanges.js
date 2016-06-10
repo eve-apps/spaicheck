@@ -83,6 +83,14 @@ Meteor.methods({
           }
         }
       });
+
+      if (diff.length != 0) {
+        Keys.update(Keys.findOne({keyID: keyID})._id, {
+          $set: {
+            'resultBody.characters': result.resultBody.characters,
+          }
+        });
+      }
     }
     console.log(newChanges);
     if (newChanges.length != 0) {
@@ -119,7 +127,24 @@ Meteor.methods({
         }
       });
 
-      // Meteor.call('notifyChanges', keyID, newChanges.toString());
+      const affectedChar = Keys.findOne({"keyID": keyID}).primaryChar;
+      const divider = '\n______________________________\n';
+      const softDivider = '\n------------------------------\n';
+
+      let content = '';
+      let data = '';
+
+      for (change of newChanges) {
+        let valueObj = change.newValueObj || change.oldValueObj;
+        for (fieldName in valueObj) {
+          data += `${fieldName}: ${valueObj[fieldName]}\n`
+        }
+
+        content += `${divider}Change Type: ${change.changeType}${softDivider}${data}`;
+        data = '';
+      }
+
+      Meteor.call('notifyChanges', affectedChar, `Affected Character: ${affectedChar}\n${content}`);
     }
   }
 });
