@@ -1,21 +1,6 @@
 // The Mongo collection to which our schema will be attached
 Characters = new Mongo.Collection("characters");
 
-EmploymentRecordSchema = new SimpleSchema({
-  recordID: {
-    type: String
-  },
-  corporationID: {
-    type: String
-  },
-  corporationName: {
-    type: String
-  },
-  startDate: {
-    type: Date
-  }
-});
-
 ApplicationSchema = new SimpleSchema({
   applicationID: {
     type: String,
@@ -37,7 +22,7 @@ ApplicationSchema = new SimpleSchema({
 
 CharacterSchema = new SimpleSchema({
   characterID: {
-    type: String,
+    type: Number,
     index: true,
     unique: true
   },
@@ -46,19 +31,23 @@ CharacterSchema = new SimpleSchema({
     optional: true
   },
   corporationID: {
-    type: String,
+    type: Number,
     optional: true
   },
-  corporationName: {
+  corporation: {
     type: String,
     optional: true
   },
   allianceID: {
-    type: String,
+    type: Number,
     optional: true
   },
   allianceName: {
     type: String,
+    optional: true
+  },
+  skillPoints: {
+    type: Number,
     optional: true
   },
   securityStatus: {
@@ -66,11 +55,12 @@ CharacterSchema = new SimpleSchema({
     optional: true
   },
   employmentHistory: {
-    type: [EmploymentRecordSchema],
+    type: Object,
+    blackbox: true,
     optional: true
   },
   keyID: { // Associated API key
-    type: String,
+    type: Number,
     optional: true
   },
   applications: { // Associated membership applications

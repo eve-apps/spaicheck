@@ -95,15 +95,15 @@ Template.keyDisplay.helpers({
   keys: function () {
     return Keys.find({});
   },
-  keyInfo: function (keyID) {
-    return Keys.findOne({keyID: keyID});
+  keyInfo: function () {
+    return Keys.findOne({keyID: this.keyID});
   },
-  hasChanges: function (keyID) {
-    return Changes.findOne({keyID: keyID}) ? 'toggle' : 'disabled';
+  hasChanges: function () {
+    return Changes.findOne({keyID: this.keyID}) ? 'toggle' : 'disabled';
   },
-  numChanges: function (keyID) {
+  numChanges: function () {
     let changeCount = 0;
-    let allChanges = Changes.findOne({keyID: keyID});
+    let allChanges = Changes.findOne({keyID: this.keyID});
     if (allChanges) {
       let changeLog = allChanges.log
       changeLog.forEach(function (changesObj) {
@@ -125,26 +125,21 @@ Template.keyDisplay.helpers({
   },
   insertColorMarkerHlp: function (sev) {
     return insertColorMarker(sev, true);
-  },
-  logThis: function () {
-    console.log(this);
   }
 });
 
 Template.keyDetails.helpers({
-  parseCharacters: function () {
-    let chars = this.characters;
-    let charStr = '';
-    for (let char in chars) {
-      charStr += '<li>' + chars[char].characterName + '</li>\n';
-    }
-    return charStr;
+  characters: function () {
+    return Characters.find({keyID: this.keyID});
+  },
+  isPrimary: function () {
+    return Keys.findOne({keyID: this.keyID}).primaryChar == this.characterName;
   }
 });
 
 Template.changeDetails.helpers({
-  keyChanges: function (keyID) {
-    return Changes.find({keyID: keyID});
+  keyChanges: function () {
+    return Changes.find({keyID: this.keyID});
   },
   addBottomClass: function (log) {
     Meteor.setTimeout(function () {
@@ -179,4 +174,7 @@ Template.keyDisplay.events({
     if (foundChanges) Changes.remove(foundChanges._id);
     Keys.remove(Keys.findOne({keyID: this.keyID})._id);
   },
+  "click .set-primary": function () {
+    Meteor.call('setPrimaryCharacter', this.keyID, this.characterName);
+  }
 });

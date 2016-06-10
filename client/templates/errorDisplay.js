@@ -29,14 +29,10 @@ Template.errorDisplay.helpers({
 
 Template.errorDisplay.events({
   'click .recheck': function () {
-    let keyID = this.keyID;
-    let vCode = this.vCode;
-    Meteor.call('validateKey', keyID, vCode, function(err, result) {
-      if (err) {
-        Meteor.call('logKeyError', keyID, vCode, err);
-      } //log error
-      else Meteor.call('insertKey', result);
-    });
+    let doc = {};
+    doc.keyID = this.keyID;
+    doc.vCode = this.vCode;
+    Meteor.call('insertKey', doc);
   },
   'click .rm-err': function () {
     Errors.remove(this._id);
