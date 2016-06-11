@@ -107,6 +107,14 @@ Meteor.methods({
           }
         }
       });
+
+      if (diff.length != 0) {
+        Keys.update(Keys.findOne({keyID: keyID})._id, {
+          $set: {
+            'resultBody.characters': result.characters,
+          }
+        });
+      }
     }
     console.log(newChanges);
     if (newChanges.length != 0) {
@@ -143,20 +151,51 @@ Meteor.methods({
         }
       });
 
-      // Meteor.call('notifyChanges', keyID, newChanges.toString());
+      const affectedChar = Keys.findOne({"keyID": keyID}).primaryChar;
+      const divider = '\n______________________________\n';
+      const softDivider = '\n------------------------------\n';
+
+      let content = '';
+      let data = '';
+
+      for (change of newChanges) {
+        let valueObj = change.newValueObj || change.oldValueObj;
+        for (fieldName in valueObj) {
+          switch (fieldName) {
+            case 'characterName':
+              data += `${fieldName}: ${valueObj[fieldName]} <a href="https://zkillboard.com/character/${valueObj.characterID}/">[zKillboard]</a> <a href="http://evewho.com/pilot/${valueObj.characterName.replace(/ /g, '+')}/">[EveWho]</a>\n`
+              break;
+            case 'corporationName':
+              data += `${fieldName}: ${valueObj[fieldName]} <a href="https://zkillboard.com/corporation/${valueObj.corporationID}/">[zKillboard]</a> <a href="http://evewho.com/corp/${valueObj.corporationName.replace(/ /g, '+')}/">[EveWho]</a>\n`
+              break;
+            case 'allianceName':
+              data += valueObj.allianceID !== '0' ? `${fieldName}: ${valueObj[fieldName]} <a href="https://zkillboard.com/alliance/${valueObj.allianceID}/">[zKillboard]</a> <a href="http://evewho.com/alli/${valueObj.allianceName.replace(/ /g, '+')}/">[EveWho]</a>\n` : `${fieldName}: \n`
+              break;
+            default:
+              data += `${fieldName}: ${valueObj[fieldName]}\n`
+          }
+        }
+
+        content += `${divider}Change Type: ${change.changeType}${softDivider}${data}`;
+        data = '';
+      }
+
+      content = content.replace(/\n/g, '<br>');
+
+      Meteor.call('notifyChanges', affectedChar, `Affected Character: ${affectedChar}\n${content}`);
     }
   },
 
-  'notifyChanges': function (key, changes) {
+  'notifyChanges': function (charName, changes) {
     // Let other method calls from the same client start running,
     // without waiting for the email sending to complete.
     this.unblock();
 
     Email.send({
-      to: mailTo,
+      to: Meteor.settings.private.mailTo,
       from: "changes@spaicheck.com",
-      subject: "Key #" + key + " has changed",
-      text: changes
+      subject: "Key for " + charName + " has changed",
+      html: changes
     });
   }
 });
