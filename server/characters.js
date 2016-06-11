@@ -39,26 +39,59 @@ Meteor.methods({
   },
 
   'detectPrimaryCharacter': function (keyID) {
+    // Function Declarations
+    const findOldestChar = (chars) => {
+      let oldestStartDate = moment();
+      let oldestChar = null;
+
+      chars.forEach((char) => {
+        for (recordID in char.employmentHistory) {
+          let record = char.employmentHistory[recordID];
+
+          if (record.corporationID == Meteor.settings.public.corporationID) {
+            if (oldestChar == null) {
+              oldestChar = char;
+            }
+
+            thisStartDate = moment(record.startDate);
+
+            if (thisStartDate.isBefore(oldestStartDate)) {
+              oldestStartDate = thisStartDate;
+              oldestChar = char;
+            }
+          }
+        }
+      });
+
+      return oldestChar;
+    };
+
+    // detectPrimaryCharacter Body
     let charList = Characters.find({keyID: keyID}).fetch();
 
-    charList.sort(function (a, b) {
-      let aInCorporation = a.corporationID == Meteor.settings.public.corporationID;
-      let bInCorporation = b.corporationID == Meteor.settings.public.corporationID;
-      let aInAlliance = a.allianceID == Meteor.settings.public.allianceID;
-      let bInAlliance = b.allianceID == Meteor.settings.public.allianceID;
+    if (charList.length > 1) {
+      inCorpList = charList.filter((char) => char.corporationID == Meteor.settings.public.corporationID);
 
-      if (aInCorporation && !bInCorporation) return -1;
-      else if (bInCorporation && !aInCorporation) return 1;
-      else if (aInAlliance && !bInAlliance) return -1;
-      else if (bInAlliance && !aInAlliance) return 1;
-      else if (a.skillPoints > b.skillPoints) return -1;
-      else if (b.skillPoints > a.skillPoints) return 1;
-    });
+      if (inCorpList.length > 1) {
+        inCorpList = [findOldestChar(inCorpList)];
+      }
+      charList = inCorpList.length != 0 ? inCorpList : charList;
+    }
 
-    let primaryChar = charList[0].characterName;
+    if (charList.length > 1) {
+      inAllianceList = charList.filter((char) => char.allianceID == Meteor.settings.public.allianceID);
+      charList = inAllianceList.length != 0 ? inAllianceList : charList;
+    }
+
+    if (charList.length > 1) {
+      charList.sort((a, b) => b.skillPoints - a.skillPoints);
+    }
+
+    const primaryChar = charList[0].characterName;
     Meteor.call('setPrimaryCharacter', keyID, primaryChar)
     return primaryChar;
   },
+
   'setPrimaryCharacter': function (keyID, charName) {
     Keys.update(
       {keyID: keyID},
