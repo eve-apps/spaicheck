@@ -80,7 +80,7 @@ Meteor.methods({
         }
         doc.resultBody = validationResult;
         Keys.insert(doc, {removeEmptyStrings: false});
-        Meteor.call('addKeyCharacters', doc.resultBody.characters, doc.keyID, doc.vCode);
+        Meteor.call('addKeyCharacters', doc.keyID);
       }
     });
   },

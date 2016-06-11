@@ -1,11 +1,16 @@
 const eveonlinejs = Meteor.npmRequire('eveonlinejs');
 
 Meteor.methods({
-  'addKeyCharacters': function (charactersObj, keyID, vCode) {
+  'addKeyCharacters': function (keyID) {
+    Characters.remove({keyID: keyID});
+
     let runSyncResult = Async.runSync(function (done) {
-      for (let charID in charactersObj) {
-        Meteor.call('insertCharacter', keyID, vCode, charID);
+      charactersObj = Keys.findOne({"keyID": keyID}).resultBody.characters;
+
+      for (charID in charactersObj) {
+        Meteor.call('insertCharacter', keyID, charID);
       }
+
       Meteor.call('detectPrimaryCharacter', keyID);
       done(null, true);
     });
