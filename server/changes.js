@@ -193,7 +193,7 @@ Meteor.methods({
 
     Email.send({
       to: Meteor.settings.private.mailTo,
-      from: "changes@spaicheck.com",
+      from: "\"Spaicheck\" <changes@spaicheck.com>",
       subject: "Key for " + charName + " has changed",
       html: changes
     });
