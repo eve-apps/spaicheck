@@ -161,12 +161,26 @@ Meteor.methods({
       for (change of newChanges) {
         let valueObj = change.newValueObj || change.oldValueObj;
         for (fieldName in valueObj) {
-          data += `${fieldName}: ${valueObj[fieldName]}\n`
+          switch (fieldName) {
+            case 'characterName':
+              data += `${fieldName}: ${valueObj[fieldName]} <a href="https://zkillboard.com/character/${valueObj.characterID}/">[zKillboard]</a> <a href="http://evewho.com/pilot/${valueObj.characterName.replace(/ /g, '+')}/">[EveWho]</a>\n`
+              break;
+            case 'corporationName':
+              data += `${fieldName}: ${valueObj[fieldName]} <a href="https://zkillboard.com/corporation/${valueObj.corporationID}/">[zKillboard]</a> <a href="http://evewho.com/corp/${valueObj.corporationName.replace(/ /g, '+')}/">[EveWho]</a>\n`
+              break;
+            case 'allianceName':
+              data += valueObj.allianceID !== '0' ? `${fieldName}: ${valueObj[fieldName]} <a href="https://zkillboard.com/alliance/${valueObj.allianceID}/">[zKillboard]</a> <a href="http://evewho.com/alli/${valueObj.allianceName.replace(/ /g, '+')}/">[EveWho]</a>\n` : `${fieldName}: \n`
+              break;
+            default:
+              data += `${fieldName}: ${valueObj[fieldName]}\n`
+          }
         }
 
         content += `${divider}Change Type: ${change.changeType}${softDivider}${data}`;
         data = '';
       }
+
+      content = content.replace(/\n/g, '<br>');
 
       Meteor.call('notifyChanges', affectedChar, `Affected Character: ${affectedChar}\n${content}`);
     }
@@ -181,7 +195,7 @@ Meteor.methods({
       to: Meteor.settings.private.mailTo,
       from: "changes@spaicheck.com",
       subject: "Key for " + charName + " has changed",
-      text: changes
+      html: changes
     });
   }
 });
