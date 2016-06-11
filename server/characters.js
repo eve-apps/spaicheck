@@ -14,7 +14,9 @@ Meteor.methods({
     else if (runSyncResult.result) return runSyncResult.result;
   },
 
-  'insertCharacter': function (keyID, vCode, charID) {
+  'insertCharacter': function (keyID, charID) {
+    const vCode = Keys.findOne({keyID: keyID}).vCode;
+
     let runSyncResult = Async.runSync(function (done) {
       eveonlinejs.fetch('eve:CharacterInfo', {keyID: keyID, vCode: vCode, characterID: charID}, function (err, result) {
         if (err) done(err, null);
