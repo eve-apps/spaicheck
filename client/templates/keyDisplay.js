@@ -169,10 +169,7 @@ Template.keyDisplay.events({
     handleDetailsClick('KEYINFO', ev);
   },
   "click .rm-key": function() {
-    let foundChanges = Changes.findOne({keyID: this.keyID});
-
-    if (foundChanges) Changes.remove(foundChanges._id);
-    Keys.remove(Keys.findOne({keyID: this.keyID})._id);
+    Meteor.call('removeKey', this.keyID);
   },
   "click .set-primary": function () {
     Meteor.call('setPrimaryCharacter', this.keyID, this.characterName);

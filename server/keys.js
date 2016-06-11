@@ -83,6 +83,11 @@ Meteor.methods({
         Meteor.call('addKeyCharacters', doc.resultBody.characters, doc.keyID, doc.vCode);
       }
     });
+  },
 
+  'removeKey': function (keyID) {
+    Changes.remove({keyID: keyID});
+    Characters.remove({keyID: keyID});
+    Keys.remove({keyID: keyID});
   }
 });
