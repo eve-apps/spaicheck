@@ -1,5 +1,69 @@
 const jsonPatch = Meteor.npmRequire('fast-json-patch');
 
+// Notification base class
+class Notification {
+  constructor(){}
+}
+
+class NotificationEmail extends Notification {
+  constructor(subject, body){
+    super();
+
+    this.subject = subject;
+    this.body = body;
+  }
+
+  send(to){
+    to = to || Meteor.settings.private.mailTo;
+    Meteor.call('sendEmail', to, this.subject, this.body);
+  }
+}
+
+class ChangeNotificationEmail extends NotificationEmail {
+  constructor(changes, keyID, primaryChar, highestSeverity){
+    // Construct subject
+    let subject = (function constructSubject(){
+      return "Key for " + primaryChar + " has changed";
+    })();
+
+    // Construct body
+    let body = (function constructBody(){
+      const divider = '\n______________________________\n';
+      const softDivider = '\n------------------------------\n';
+
+      let content = '';
+      let data = '';
+
+      for (change of changes) {
+        let valueObj = change.newValueObj || change.oldValueObj;
+        for (fieldName in valueObj) {
+          switch (fieldName) {
+            case 'characterName':
+              data += `${fieldName}: ${valueObj[fieldName]} <a href="https://zkillboard.com/character/${valueObj.characterID}/">[zKillboard]</a> <a href="http://evewho.com/pilot/${valueObj.characterName.replace(/ /g, '+')}/">[EveWho]</a>\n`
+              break;
+            case 'corporationName':
+              data += `${fieldName}: ${valueObj[fieldName]} <a href="https://zkillboard.com/corporation/${valueObj.corporationID}/">[zKillboard]</a> <a href="http://evewho.com/corp/${valueObj.corporationName.replace(/ /g, '+')}/">[EveWho]</a>\n`
+              break;
+            case 'allianceName':
+              data += valueObj.allianceID !== '0' ? `${fieldName}: ${valueObj[fieldName]} <a href="https://zkillboard.com/alliance/${valueObj.allianceID}/">[zKillboard]</a> <a href="http://evewho.com/alli/${valueObj.allianceName.replace(/ /g, '+')}/">[EveWho]</a>\n` : `${fieldName}: \n`
+              break;
+            default:
+              data += `${fieldName}: ${valueObj[fieldName]}\n`
+          }
+        }
+
+        content += `${divider}Change Type: ${change.changeType}${softDivider}${data}`;
+        data = '';
+      }
+
+      content = content.replace(/\n/g, '<br>');
+      return `Affected Character: ${primaryChar}\n${content}`;
+    })();
+
+    super(subject, body);
+  }
+}
+
 Meteor.methods({
   'runChecks': function () {
     console.log("Updating keys...");
@@ -154,50 +218,21 @@ Meteor.methods({
       });
 
       const affectedChar = Keys.findOne({"keyID": keyID}).primaryChar;
-      const divider = '\n______________________________\n';
-      const softDivider = '\n------------------------------\n';
-
-      let content = '';
-      let data = '';
-
-      for (change of newChanges) {
-        let valueObj = change.newValueObj || change.oldValueObj;
-        for (fieldName in valueObj) {
-          switch (fieldName) {
-            case 'characterName':
-              data += `${fieldName}: ${valueObj[fieldName]} <a href="https://zkillboard.com/character/${valueObj.characterID}/">[zKillboard]</a> <a href="http://evewho.com/pilot/${valueObj.characterName.replace(/ /g, '+')}/">[EveWho]</a>\n`
-              break;
-            case 'corporationName':
-              data += `${fieldName}: ${valueObj[fieldName]} <a href="https://zkillboard.com/corporation/${valueObj.corporationID}/">[zKillboard]</a> <a href="http://evewho.com/corp/${valueObj.corporationName.replace(/ /g, '+')}/">[EveWho]</a>\n`
-              break;
-            case 'allianceName':
-              data += valueObj.allianceID !== '0' ? `${fieldName}: ${valueObj[fieldName]} <a href="https://zkillboard.com/alliance/${valueObj.allianceID}/">[zKillboard]</a> <a href="http://evewho.com/alli/${valueObj.allianceName.replace(/ /g, '+')}/">[EveWho]</a>\n` : `${fieldName}: \n`
-              break;
-            default:
-              data += `${fieldName}: ${valueObj[fieldName]}\n`
-          }
-        }
-
-        content += `${divider}Change Type: ${change.changeType}${softDivider}${data}`;
-        data = '';
-      }
-
-      content = content.replace(/\n/g, '<br>');
-
-      Meteor.call('notifyChanges', affectedChar, `Affected Character: ${affectedChar}\n${content}`);
+      let email = new ChangeNotificationEmail(newChanges, keyID, affectedChar, highestSeverity);
+      email.send();
     }
   },
 
-  'notifyChanges': function (charName, changes) {
+  'sendEmail': function (to, subject, body) {
     // Let other method calls from the same client start running,
     // without waiting for the email sending to complete.
     this.unblock();
 
     Email.send({
-      to: Meteor.settings.private.mailTo,
-      from: "changes@spaicheck.com",
-      subject: "Key for " + charName + " has changed",
-      html: changes
+      to: to,
+      from: "\"Spaicheck\" <changes@spaicheck.com>",
+      subject: subject,
+      html: body
     });
   }
 });
