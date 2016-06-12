@@ -68,26 +68,30 @@ Meteor.methods({
 
     // detectPrimaryCharacter Body
     let charList = Characters.find({keyID: keyID}).fetch();
+    let primaryChar = 'no character';
+    if (!charList.length) {
+      console.warn('Account has no characters!');
+    } else {
+      if (charList.length > 1) {
+        inCorpList = charList.filter((char) => char.corporationID == Meteor.settings.public.corporationID);
 
-    if (charList.length > 1) {
-      inCorpList = charList.filter((char) => char.corporationID == Meteor.settings.public.corporationID);
-
-      if (inCorpList.length > 1) {
-        inCorpList = [findOldestChar(inCorpList)];
+        if (inCorpList.length > 1) {
+          inCorpList = [findOldestChar(inCorpList)];
+        }
+        charList = inCorpList.length != 0 ? inCorpList : charList;
       }
-      charList = inCorpList.length != 0 ? inCorpList : charList;
+
+      if (charList.length > 1) {
+        inAllianceList = charList.filter((char) => char.allianceID == Meteor.settings.public.allianceID);
+        charList = inAllianceList.length != 0 ? inAllianceList : charList;
+      }
+
+      if (charList.length > 1) {
+        charList.sort((a, b) => b.skillPoints - a.skillPoints);
+      }
+      primaryChar = charList[0].characterName;
     }
 
-    if (charList.length > 1) {
-      inAllianceList = charList.filter((char) => char.allianceID == Meteor.settings.public.allianceID);
-      charList = inAllianceList.length != 0 ? inAllianceList : charList;
-    }
-
-    if (charList.length > 1) {
-      charList.sort((a, b) => b.skillPoints - a.skillPoints);
-    }
-
-    const primaryChar = charList[0].characterName;
     Meteor.call('setPrimaryCharacter', keyID, primaryChar)
     return primaryChar;
   },
