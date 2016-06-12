@@ -1,4 +1,5 @@
 const jsonPatch = Meteor.npmRequire('fast-json-patch');
+const humanize = Meteor.npmRequire('humanize-plus');
 
 // Notification base class
 class Notification {
@@ -23,7 +24,39 @@ class ChangeNotificationEmail extends NotificationEmail {
   constructor(changes, keyID, primaryChar, highestSeverity){
     // Construct subject
     let subject = (function constructSubject(){
-      return "Key for " + primaryChar + " has changed";
+      // Update on WeAreOneForever's account: Character "Mr. Atoms" has been created, and 2 more changes
+      let result = `Update on ${primaryChar}'s account: `;
+      let mainChange = changes[0];
+      let noTail = false;
+      switch (mainChange.changeType) {
+        case 'addCharacter':
+          result += `Character "${mainChange.newValueObj.characterName}" has been created`;
+          break;
+        case 'removeCharacter':
+          result += `Character "${mainChange.oldValueObj.characterName}" has been removed`;
+          break;
+        case 'joinCorp':
+          result += `Character "${mainChange.newValueObj.characterName}" has joined the "${mainChange.newValueObj.corporationName}" corporation`;
+          break;
+        case 'leaveCorp':
+          result += `Character "${mainChange.oldValueObj.characterName}" has left the "${mainChange.oldValueObj.corporationName}" corporation`;
+          break;
+        case 'switchCorp':
+          result += `Character "${mainChange.oldValueObj.characterName}" has left the "${mainChange.oldValueObj.corporationName}" corporation to join "${mainChange.newValueObj.corporationName}"`;
+          break;
+        default:
+          result += `${changes.length} ${humanize.pluralize(changes.length, 'change')}`
+          noTail = true;
+      }
+
+      if (!noTail && changes.length > 1) {
+        result += `, and ${changes.length - 1} more ${humanize.pluralize(changes.length - 1, 'change')}`
+      }
+      //'leaveAlliance'
+      //'joinAlliance'
+      //'switchAlliance'
+
+      return result;
     })();
 
     // Construct body
@@ -57,7 +90,7 @@ class ChangeNotificationEmail extends NotificationEmail {
       }
 
       content = content.replace(/\n/g, '<br>');
-      return `Affected Character: ${primaryChar}\n${content}`;
+      return `Primary Character: ${primaryChar}\n${content}`;
     })();
 
     super(subject, body);
@@ -124,8 +157,8 @@ Meteor.methods({
     }
     // Handle changes that don't invalidate the key
     else {
-      let oldRecord = Keys.findOne({keyID: keyID}).resultBody.characters;
-      let newRecord = result.characters;
+      let oldRecord = _.map(Keys.findOne({keyID: keyID}).resultBody.characters, function(character){return _.omit(character, ['factionID', 'factionName']);});
+      let newRecord = _.map(result.characters, function(character){return _.omit(character, ['factionID', 'factionName']);});
       let diff = jsonPatch.compare(oldRecord, newRecord);
 
       // Iterate over the diff array, handling every possible change of importance to the corp
@@ -239,8 +272,8 @@ Meteor.methods({
       }
 
       if (shouldNotify) {
-        const affectedChar = Keys.findOne({"keyID": keyID}).primaryChar;
-        let email = new ChangeNotificationEmail(newChanges, keyID, affectedChar, highestSeverity);
+        const primaryChar = Keys.findOne({"keyID": keyID}).primaryChar;
+        let email = new ChangeNotificationEmail(newChanges, keyID, primaryChar, highestSeverity);
         email.send();
       }
     }
