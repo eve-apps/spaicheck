@@ -244,6 +244,9 @@ template(name="keyDisplay")
 
 template(name="changeDetails")
   each keyChanges
+    a.ui.small.compact.button.green.reviewed(keyid="{{../keyID}}")
+      i.large.inverted.check.circle.icon.micro-hide
+      | Mark&nbsp;as&nbsp;Reviewed
     each log
       .log
         .ui.top.attached.segment #{prettyDate createdAt}

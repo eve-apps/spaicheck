@@ -114,7 +114,7 @@ Template.keyDisplay.helpers({
     }
     switch (changeCount) {
       case 0:
-        return "No Change";
+        return "No Changes";
         break;
       case 1:
         return changeCount + " Change";
@@ -173,5 +173,9 @@ Template.keyDisplay.events({
   },
   "click .set-primary": function () {
     Meteor.call('setPrimaryCharacter', this.keyID, this.characterName);
+  },
+  "click .button.reviewed": function(ev) {
+    let keyID = parseInt($(ev.currentTarget).attr('keyid'), 10);
+    Meteor.call('acceptChanges', keyID);
   }
 });
