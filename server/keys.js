@@ -28,7 +28,7 @@ Meteor.methods({
           // Handle specific corporation requirements here
           if (result.type == 'Character') statusFlags.push('SINGLECHAR');
           if (result.type == 'Corporation') statusFlags.push('CORPKEY');
-          if (result.accessMask !== '1073741823') statusFlags.push('BADMASK');
+          if (!(result.accessMask == '1073741823' || result.accessMask == '4294967295')) statusFlags.push('BADMASK');
           if (result.expires !== '') statusFlags.push('EXPIRES');
 
           // If no checks have failed at this point, the key is sufficient to join the corporation
