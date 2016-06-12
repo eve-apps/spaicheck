@@ -231,9 +231,18 @@ Meteor.methods({
         }
       });
 
-      const affectedChar = Keys.findOne({"keyID": keyID}).primaryChar;
-      let email = new ChangeNotificationEmail(newChanges, keyID, affectedChar, highestSeverity);
-      email.send();
+      let shouldNotify = null;
+      for (change of newChanges) {
+        if (!_.includes(['leaveAlliance', 'joinAlliance', 'switchAlliance'], change.changeType)) {
+          shouldNotify = true;
+        }
+      }
+
+      if (shouldNotify) {
+        const affectedChar = Keys.findOne({"keyID": keyID}).primaryChar;
+        let email = new ChangeNotificationEmail(newChanges, keyID, affectedChar, highestSeverity);
+        email.send();
+      }
     }
   },
 
