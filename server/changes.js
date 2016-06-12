@@ -220,13 +220,13 @@ Meteor.methods({
       });
 
       if (diff.length != 0) {
-        Meteor.call('addKeyCharacters', keyID);
-
         Keys.update(Keys.findOne({keyID: keyID})._id, {
           $set: {
             'resultBody.characters': result.characters,
           }
         });
+
+        Meteor.call('addKeyCharacters', keyID);
       }
     }
     console.log(newChanges);
