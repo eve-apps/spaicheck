@@ -64,6 +64,13 @@ Meteor.methods({
     // If Async.runSync() returned an error, throw a Meteor.Error containing the reason
     if (runSyncResult.error) throw new Meteor.Error(runSyncResult.error.error);
 
+    // Remove the 'factionID' and 'factionName' properties from the characters in the API result
+    let characters = {};
+    _.forOwn(runSyncResult.result.characters, function (character, characterID) {
+      characters[characterID] = _.omit(character, ['factionID', 'factionName']);
+    });
+    runSyncResult.result.characters = characters;
+
     // If no error was produced, return the "result" property because the API key exists
     return runSyncResult.result;
   },
