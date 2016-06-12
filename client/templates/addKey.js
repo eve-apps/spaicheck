@@ -37,3 +37,18 @@ AutoForm.hooks({
     }
   }
 });
+
+/**
+ * Event Handlers
+ **/
+
+Template.addKey.events({
+  'submit .csv': function (event) {
+    event.preventDefault();
+
+    const csvData = event.target.csvBox.value;
+    Meteor.call('insertKeysBulk', csvData);
+
+    event.target.csvBox.value = '';
+  }
+});

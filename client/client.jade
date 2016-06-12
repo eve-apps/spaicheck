@@ -140,16 +140,25 @@ template(name="addKey")
           i.privacy.icon.yellow
           i.corner.add.circle.icon.inverted
   .ui.bottom.attached.section.segment
-    //- See https://github.com/aldeed/meteor-autoform#component-and-helper-reference for info on attributes used here
-    +autoForm schema="AddKeyFormSchema" collection="Keys" id="insertKeyForm" type="method" meteormethod="insertKey" validation="none" resetOnSuccess="true"
-      .ui.fluid.input
-        +afFieldInput name="keyID" type="text" placeholder="Key ID"
-      | {{afFieldMessage name="keyID"}}
-      .ui.fluid.input
-        +afFieldInput name="vCode" type="text" placeholder="Verification Code"
-      | {{afFieldMessage name="vCode"}}
-      button(type="submit" class="ui fluid button blue") Add Key
-
+    .ui.two.column.grid
+      .right.aligned.column
+        //- See https://github.com/aldeed/meteor-autoform#component-and-helper-reference for info on attributes used here
+        +autoForm schema="AddKeyFormSchema" collection="Keys" id="insertKeyForm" type="method" meteormethod="insertKey" validation="none" resetOnSuccess="true"
+          .ui.form
+            .field
+              .ui.fluid.input
+                +afFieldInput name="keyID" type="text" placeholder="Key ID"
+              | {{afFieldMessage name="keyID"}}
+            .field
+              .ui.fluid.input
+                +afFieldInput name="vCode" type="text" placeholder="Verification Code"
+              | {{afFieldMessage name="vCode"}}
+            button(type="submit" class="ui fluid button blue") Add Key
+      .middle.aligned.column
+        form(class="ui form csv")
+          .field
+            textarea(name="csvBox" placeholder="Bulk CSV")
+          button(type="submit" class="ui fluid button blue") Add All
 //- errorDisplay
 template(name="errorDisplay")
   .ui.top.attached.segment
