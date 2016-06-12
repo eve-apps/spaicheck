@@ -53,8 +53,8 @@ Meteor.methods({
     Errors.update(
       { keyID: keyID },
       {
-        $set: {
-          keyID: keyID,
+        $setOnInsert: {
+          // keyID: keyID,
           vCode: vCode
         },
         $addToSet: {
