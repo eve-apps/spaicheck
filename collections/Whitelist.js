@@ -6,6 +6,14 @@ WhitelistSchema = new SimpleSchema({
     type: String,
     index: true,
     unique: true
+  },
+  emailAddress: {
+    type: String,
+    optional: true
+  },
+  notify: {
+    type: Boolean,
+    optional: true
   }
 });
 
