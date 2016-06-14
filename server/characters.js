@@ -30,11 +30,10 @@ Meteor.methods({
           done(null, result);
         }
       });
-    })
+    });
     if (runSyncResult.error) throw runSyncResult.error;
-    else if (runSyncResult.result) {
+    else if (runSyncResult.result && !Characters.findOne({characterID: runSyncResult.result.characterID})) {
       Characters.insert(runSyncResult.result);
-      return runSyncResult.result;
     }
   },
 
