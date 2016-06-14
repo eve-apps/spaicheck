@@ -9,7 +9,8 @@ WhitelistSchema = new SimpleSchema({
   },
   emailAddress: {
     type: String,
-    optional: true
+    optional: true,
+    regEx: SimpleSchema.RegEx.Email
   },
   notify: {
     type: Boolean,
