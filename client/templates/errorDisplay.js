@@ -35,6 +35,6 @@ Template.errorDisplay.events({
     Meteor.call('insertKey', doc);
   },
   'click .rm-err': function () {
-    Errors.remove(this._id);
+    Meteor.call('discardError', this._id);
   }
 });

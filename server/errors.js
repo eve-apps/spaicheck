@@ -84,5 +84,9 @@ Meteor.methods({
 
     console.log("Key " + keyID + " with vCode " + vCode + " threw the following error:");
     console.log("[" + error.error + "] " + reason);
+  },
+
+  'discardError': function (errorId) {
+    Errors.remove(errorId);
   }
 });

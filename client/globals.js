@@ -54,3 +54,5 @@ Template.registerHelper('timeAgo', function (date) {
 Template.registerHelper('logThis', function () {
   console.log(this);
 })
+
+Meteor.subscribe('authorizedPub');

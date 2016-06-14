@@ -121,6 +121,7 @@ Meteor.methods({
     Characters.remove({keyID: keyID});
     Keys.remove({keyID: keyID});
   },
+
   'acceptChanges': function (keyID) {
     console.log('acceptChanges for ' + keyID);
     Changes.remove({keyID: keyID});
