@@ -13,13 +13,13 @@ const isAuthorized = function () {
 
 Meteor.publish('authorizedPub', function () {
   if (isAuthorized.call(this)) {
-    let cursors = [];
-
-    cursors.push(Changes.find({}));
-    cursors.push(Characters.find({}));
-    cursors.push(Errors.find({}));
-    cursors.push(Keys.find({}));
-    cursors.push(Whitelist.find({}, {fields: {characterID: 1}}));
+    let cursors = [
+      Changes.find({}),
+      Characters.find({}),
+      Errors.find({}),
+      Keys.find({}),
+      Whitelist.find({}, {fields: {characterID: 1}})
+    ];
 
     return cursors;
   }
