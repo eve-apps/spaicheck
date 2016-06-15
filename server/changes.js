@@ -12,11 +12,34 @@ class NotificationEmail extends Notification {
 
     this.subject = subject;
     this.body = body;
+    this.retries = 3;
+    this.retryWaitMs = 5*60*1000;
   }
 
-  send(to){
-    to = to || Meteor.settings.private.mailTo;
-    Meteor.call('sendEmail', to, this.subject, this.body);
+  send(to, retries, retryWaitMs){
+    if (to == null) {
+      to = _.map(Whitelist.find({$and: [{emailAddress: {$ne: null}}, {notify: true}]}, {fields: {emailAddress: true, _id: false}}).fetch(), 'emailAddress');
+    } else if (!_.isArray(to)) {
+      to = [to];
+    }
+
+    if (!to.length) {
+      console.warn('No recipients for notification!');
+      return;
+    }
+
+    retries = retries || this.retries;
+    retryWaitMs = retryWaitMs || this.retryWaitMs;
+
+    console.log(to);
+
+    _.forEach(to, (address) => {
+      let emailJob = new Job(emailJobs, 'sendEmail', {
+        to: address,
+        subject: this.subject,
+        body: this.body
+      }).retry({retries: retries, wait: retryWaitMs}).save();
+    });
   }
 }
 
@@ -277,18 +300,5 @@ Meteor.methods({
         email.send();
       }
     }
-  },
-
-  'sendEmail': function (to, subject, body) {
-    // Let other method calls from the same client start running,
-    // without waiting for the email sending to complete.
-    this.unblock();
-
-    Email.send({
-      to: to,
-      from: "\"Spaicheck\" <changes@spaicheck.com>",
-      subject: subject,
-      html: body
-    });
   }
 });
