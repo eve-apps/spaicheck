@@ -1,14 +1,14 @@
 {
   "private": {
-    "mailUser": null,
-    "mailPass": null,
-    "mailServer": null,
-    "mailPort": null,
-    "mailTo": null
+    "mailUser": "postmaster@blah.mailgun.org",
+    "mailPass": "b4da55",
+    "mailServer": "smtp.mailgun.org",
+    "mailPort": "587",
+    "rootUrl": "http://localhost:3000"
   },
   "public": {
-    "adminID": null,
-    "corporationID": null,
-    "allianceID": null
+    "adminID": 123456789,
+    "corporationID": 123456789,
+    "allianceID": 123456789
   }
 }

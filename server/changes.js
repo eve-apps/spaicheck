@@ -112,6 +112,7 @@ class ChangeNotificationEmail extends NotificationEmail {
         data = '';
       }
 
+      content += `\n\n<a href="${Meteor.absoluteUrl('app/home')}">Visit Spaicheck for more information.</a>`
       content = content.replace(/\n/g, '<br>');
       return `Primary Character: ${primaryChar}\n${content}`;
     })();
