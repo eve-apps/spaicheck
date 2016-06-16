@@ -56,7 +56,7 @@ Template.registerHelper('logThis', function () {
 })
 
 Template.registerHelper('isAdmin', function () {
-  let result = Meteor.user() && Meteor.user().profile.eveOnlineCharacterId == Meteor.settings.public.adminID;
+  let result = Meteor.user() && Meteor.user().profile.eveOnlineCharacterId === Meteor.settings.public.adminID;
   console.log(result);
   return result;
 })

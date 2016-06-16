@@ -47,7 +47,7 @@ Meteor.methods({
         for (recordID in char.employmentHistory) {
           let record = char.employmentHistory[recordID];
 
-          if (record.corporationID == Meteor.settings.public.corporationID) {
+          if (record.corporationID === Meteor.settings.public.corporationID) {
             if (oldestChar == null) {
               oldestChar = char;
             }
@@ -72,7 +72,7 @@ Meteor.methods({
       console.warn('Account has no characters!');
     } else {
       if (charList.length > 1) {
-        inCorpList = charList.filter((char) => char.corporationID == Meteor.settings.public.corporationID);
+        inCorpList = charList.filter((char) => char.corporationID === Meteor.settings.public.corporationID);
 
         if (inCorpList.length > 1) {
           inCorpList = [findOldestChar(inCorpList)];
@@ -81,7 +81,7 @@ Meteor.methods({
       }
 
       if (charList.length > 1) {
-        inAllianceList = charList.filter((char) => char.allianceID == Meteor.settings.public.allianceID);
+        inAllianceList = charList.filter((char) => char.allianceID === Meteor.settings.public.allianceID);
         charList = inAllianceList.length != 0 ? inAllianceList : charList;
       }
 

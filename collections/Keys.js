@@ -12,7 +12,7 @@ ResultBodySchema = new SimpleSchema({
     type: String,
     optional: true,
     custom: function () {
-      if (!this.operator && this.value == null) {
+      if (!this.operator && this.value === null) {
         return "required";
       }
     }

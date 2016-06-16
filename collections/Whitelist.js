@@ -23,13 +23,13 @@ WhitelistSchema = new SimpleSchema({
 
 Whitelist.allow({
   insert: function (userId) {
-    return Meteor.users.findOne(userId).profile.eveOnlineCharacterId == Meteor.settings.public.adminID;
+    return Meteor.users.findOne(userId).profile.eveOnlineCharacterId === Meteor.settings.public.adminID;
   },
   remove: function (userId) {
-    return Meteor.users.findOne(userId).profile.eveOnlineCharacterId == Meteor.settings.public.adminID;
+    return Meteor.users.findOne(userId).profile.eveOnlineCharacterId === Meteor.settings.public.adminID;
   },
   update: function (userId) {
-    return Meteor.users.findOne(userId).profile.eveOnlineCharacterId == Meteor.settings.public.adminID;
+    return Meteor.users.findOne(userId).profile.eveOnlineCharacterId === Meteor.settings.public.adminID;
   }
 })
 

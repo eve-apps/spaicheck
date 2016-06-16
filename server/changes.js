@@ -161,7 +161,7 @@ Meteor.methods({
       Meteor.setTimeout(function () {
         let fnStart = new Date();
 
-        if (curKeys[i].status == 'ERROR') {
+        if (curKeys[i].status === 'ERROR') {
           Meteor.call('validateKey', curKeys[i].keyID, curKeys[i].vCode, function (err, result) {
             if (!err) {
               Keys.update({keyID: curKeys[i].keyID}, {
@@ -215,7 +215,7 @@ Meteor.methods({
       // Iterate over the diff array, handling every possible change of importance to the corp
       diff.forEach(function (change, index) {
         // 'replace' ops can only logically happen inside a single character(#) object
-        if (change.op == 'replace') {
+        if (change.op === 'replace') {
           // RegEx to catch changes to corporationID or allianceID
           let charChangePattern = /\/(\d+)\/(corporationID|allianceID)/;
           // After test, charChangeTest will hold remembered values for characterID and changed field
@@ -230,12 +230,12 @@ Meteor.methods({
             let newValue = change.value;
             let npcCorpPattern = /1000(?:165|166|077|044|045|167|169|168|115|172|170|171)/;
 
-            if (curFieldName == 'corporationID' && npcCorpPattern.test(newValue)) curChangeType = 'leaveCorp';
-            else if (curFieldName == 'corporationID' && npcCorpPattern.test(oldValue)) curChangeType = 'joinCorp';
-            else if (curFieldName == 'corporationID') curChangeType = 'switchCorp';
-            else if (curFieldName == 'allianceID' && newValue == '0') curChangeType = 'leaveAlliance';
-            else if (curFieldName == 'allianceID' && oldValue == '0') curChangeType = 'joinAlliance';
-            else if (curFieldName == 'allianceID') curChangeType = 'switchAlliance';
+            if (curFieldName === 'corporationID' && npcCorpPattern.test(newValue)) curChangeType = 'leaveCorp';
+            else if (curFieldName === 'corporationID' && npcCorpPattern.test(oldValue)) curChangeType = 'joinCorp';
+            else if (curFieldName === 'corporationID') curChangeType = 'switchCorp';
+            else if (curFieldName === 'allianceID' && newValue === '0') curChangeType = 'leaveAlliance';
+            else if (curFieldName === 'allianceID' && oldValue === '0') curChangeType = 'joinAlliance';
+            else if (curFieldName === 'allianceID') curChangeType = 'switchAlliance';
 
             newChanges.push({
               changeType: curChangeType,
@@ -252,7 +252,7 @@ Meteor.methods({
           }
         }
         // 'add' and 'remove' ops can only logically happen at the 'characters' level
-        else if (change.op == 'add' || change.op == 'remove') {
+        else if (change.op === 'add' || change.op === 'remove') {
           // The following works very similarly to the "if" block above. Look there for more help.
           let charAddRemovePattern = /\/(\d+)/;
           let charAddRemoveTest = charAddRemovePattern.exec(diff[index].path);
@@ -303,7 +303,7 @@ Meteor.methods({
       let highestSeverity = 'WARNING';
       for(i = 0; i < newChanges.length; i++) {
         let change = newChanges[i];
-        if (change.severity == 'ERROR') {
+        if (change.severity === 'ERROR') {
           highestSeverity = change.severity;
           break;
         }
