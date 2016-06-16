@@ -3,7 +3,7 @@ const getAuthLevel = function (user) {
   isLoggedIn = user;
 
   if (isLoggedIn) {
-    characterID = Meteor.users.findOne(user).profile.eveOnlineCharacterId
+    characterID = Meteor.users.findOne(user).profile.eveOnlineCharacterId;
     isAdmin = characterID == Meteor.settings.public.adminID;
     isWhitelisted = Whitelist.findOne({characterID: String(characterID)});
   }
