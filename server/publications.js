@@ -1,18 +1,20 @@
-const isAuthorized = function () {
+const getAuthLevel = function (user) {
   let isLoggedIn, characterID, isAdmin, isWhitelisted;
-  isLoggedIn = this.userId;
+  isLoggedIn = user;
 
   if (isLoggedIn) {
-    characterID = Meteor.users.findOne(this.userId).profile.eveOnlineCharacterId
+    characterID = Meteor.users.findOne(user).profile.eveOnlineCharacterId
     isAdmin = characterID == Meteor.settings.public.adminID;
     isWhitelisted = Whitelist.findOne({characterID: String(characterID)});
   }
 
-  return isLoggedIn && (isAdmin || isWhitelisted);
+  if (isAdmin) return "admin";
+  else if (isWhitelisted) return "whitelist";
+  else return "anon"
 }
 
 Meteor.publish('authorizedPub', function () {
-  if (isAuthorized.call(this)) {
+  if (getAuthLevel(this.userId) == "admin" || getAuthLevel(this.userId) == "whitelist") {
     let cursors = [
       Changes.find({}),
       Characters.find({}),
@@ -22,6 +24,15 @@ Meteor.publish('authorizedPub', function () {
     ];
 
     return cursors;
+  }
+  else {
+    this.ready();
+  }
+});
+
+Meteor.publish('adminPub', function () {
+  if (getAuthLevel(this.userId) == "admin") {
+    return Whitelist.find({});
   }
   else {
     this.ready();

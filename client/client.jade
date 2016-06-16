@@ -79,6 +79,10 @@ template(name="header")
           a.item
             i.user.icon
             span Profile
+          if isAdmin
+            a(href="/app/whitelist").item.whitelist-button
+              i.edit.icon
+              span Edit Whitelist
           a#settingsButton.item
             i.settings.icon
             span Settings
@@ -112,6 +116,32 @@ template(name="header")
 //- ---------- -//
 //-   ROUTES   -//
 //- ---------- -//
+
+//- Whitelist Editor
+template(name="whitelist")
+  main.ui.one.column.grid
+    .eight.wide.column
+      +quickForm collection="Whitelist" id="insertWhitelistForm" type="insert" resetOnSuccess="true"
+      #whitelist-table
+        table.ui.single.line.table
+          thead
+            tr
+              th Character ID
+              th Email Address
+              th Notify By Email
+              th Remove Member
+          tbody
+            each whitelist
+              tr
+                td #{characterID}
+                td {{email}}
+                td
+                  .ui.fitted.checkbox.email-notify
+                    input(name="email-notify" type="checkbox" id="#{_id}")
+                    label {{setCheckboxState _id emailAddress notify}}
+                td
+                  a.ui.tiny.icon.button.red.rm-member
+                    i.large.inverted.x.icon.micro-hide
 
 //- Home
 template(name="home")

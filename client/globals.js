@@ -55,4 +55,10 @@ Template.registerHelper('logThis', function () {
   console.log(this);
 })
 
+Template.registerHelper('isAdmin', function () {
+  console.log(Meteor.user() && Meteor.user().profile.eveOnlineCharacterId == Meteor.settings.public.adminID);
+  return Meteor.user() && Meteor.user().profile.eveOnlineCharacterId == Meteor.settings.public.adminID;
+})
+
 Meteor.subscribe('authorizedPub');
+Meteor.subscribe('adminPub');

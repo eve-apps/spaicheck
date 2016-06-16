@@ -58,6 +58,16 @@ exposed.route("/", {
   }
 });
 
+app.route("/whitelist", {
+  name: "whitelist",
+  action: function() {
+    return BlazeLayout.render("dashboard", {
+      head: "header",
+      main: "whitelist"
+    });
+  }
+});
+
 // App home route
 app.route("/home", {
   name: "home",
