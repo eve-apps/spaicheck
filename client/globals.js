@@ -56,8 +56,9 @@ Template.registerHelper('logThis', function () {
 })
 
 Template.registerHelper('isAdmin', function () {
-  console.log(Meteor.user() && Meteor.user().profile.eveOnlineCharacterId == Meteor.settings.public.adminID);
-  return Meteor.user() && Meteor.user().profile.eveOnlineCharacterId == Meteor.settings.public.adminID;
+  let result = Meteor.user() && Meteor.user().profile.eveOnlineCharacterId == Meteor.settings.public.adminID;
+  console.log(result);
+  return result;
 })
 
 Meteor.subscribe('authorizedPub');
