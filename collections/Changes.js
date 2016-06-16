@@ -4,7 +4,7 @@ Changes = new Mongo.Collection("changes");
 SingleChangeSchema = new SimpleSchema({
   changeType: {
     type: String,
-    allowedValues: ['INVALIDKEY', 'SINGLECHAR', 'BADMASK', 'EXPIRES',
+    allowedValues: ['INVALIDKEY', 'SINGLECHAR', 'BADMASK', 'EXPIRES', 'MALFORMEDKEY', 'CORPKEY',
       'leaveCorp', 'joinCorp', 'switchCorp', 'leaveAlliance', 'joinAlliance',
       'switchAlliance', 'addCharacter', 'removeCharacter']
   },

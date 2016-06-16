@@ -12,11 +12,34 @@ class NotificationEmail extends Notification {
 
     this.subject = subject;
     this.body = body;
+    this.retries = 3;
+    this.retryWaitMs = 5*60*1000;
   }
 
-  send(to){
-    to = to || Meteor.settings.private.mailTo;
-    Meteor.call('sendEmail', to, this.subject, this.body);
+  send(to, retries, retryWaitMs){
+    if (to == null) {
+      to = _.map(Whitelist.find({$and: [{emailAddress: {$ne: null}}, {notify: true}]}, {fields: {emailAddress: true, _id: false}}).fetch(), 'emailAddress');
+    } else if (!_.isArray(to)) {
+      to = [to];
+    }
+
+    if (!to.length) {
+      console.warn('No recipients for notification!');
+      return;
+    }
+
+    retries = retries || this.retries;
+    retryWaitMs = retryWaitMs || this.retryWaitMs;
+
+    console.log(to);
+
+    _.forEach(to, (address) => {
+      let emailJob = new Job(emailJobs, 'sendEmail', {
+        to: address,
+        subject: this.subject,
+        body: this.body
+      }).retry({retries: retries, wait: retryWaitMs}).save();
+    });
   }
 }
 
@@ -24,9 +47,18 @@ class ChangeNotificationEmail extends NotificationEmail {
   constructor(changes, keyID, primaryChar, highestSeverity){
     // Construct subject
     let subject = (function constructSubject(){
-      // Update on WeAreOneForever's account: Character "Mr. Atoms" has been created, and 2 more changes
-      let result = `Update on ${primaryChar}'s account: `;
       let mainChange = changes[0];
+      let invalidating = false;
+      for (var i = 0; i < changes.length; i++) {
+        if (_.includes(['INVALIDKEY', 'SINGLECHAR', 'BADMASK', 'EXPIRES', 'MALFORMEDKEY', 'CORPKEY'], changes[i].changeType)) {
+          invalidating = true;
+          mainChange = changes[i];
+          break;
+        }
+      }
+
+      let result = invalidating ? `${primaryChar}'s key is no longer valid: ` : `Update on ${primaryChar}'s account: `;
+
       let noTail = false;
       switch (mainChange.changeType) {
         case 'addCharacter':
@@ -43,6 +75,24 @@ class ChangeNotificationEmail extends NotificationEmail {
           break;
         case 'switchCorp':
           result += `Character "${mainChange.oldValueObj.characterName}" has left the "${mainChange.oldValueObj.corporationName}" corporation to join "${mainChange.newValueObj.corporationName}"`;
+          break;
+        case 'INVALIDKEY':
+          result += 'Key has expired or been deleted';
+          break;
+        case 'SINGLECHAR':
+          result += 'Key now only provides info about a single character';
+          break;
+        case 'BADMASK':
+          result += 'Key no longer provides all permissions';
+          break;
+        case 'EXPIRES':
+          result += 'Key has been set to expire';
+          break;
+        case 'MALFORMEDKEY':
+          result += 'Key\'s verification code has changed';
+          break;
+        case 'CORPKEY':
+          result += 'Key is now a corporation key, not a player key';
           break;
         default:
           result += `${changes.length} ${humanize.pluralize(changes.length, 'change')}`
@@ -89,6 +139,7 @@ class ChangeNotificationEmail extends NotificationEmail {
         data = '';
       }
 
+      content += `\n\n<a href="${Meteor.absoluteUrl('app/home')}">Visit Spaicheck for more information.</a>`
       content = content.replace(/\n/g, '<br>');
       return `Primary Character: ${primaryChar}\n${content}`;
     })();
@@ -277,18 +328,5 @@ Meteor.methods({
         email.send();
       }
     }
-  },
-
-  'sendEmail': function (to, subject, body) {
-    // Let other method calls from the same client start running,
-    // without waiting for the email sending to complete.
-    this.unblock();
-
-    Email.send({
-      to: to,
-      from: "\"Spaicheck\" <changes@spaicheck.com>",
-      subject: subject,
-      html: body
-    });
   }
 });
