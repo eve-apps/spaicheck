@@ -47,9 +47,18 @@ class ChangeNotificationEmail extends NotificationEmail {
   constructor(changes, keyID, primaryChar, highestSeverity){
     // Construct subject
     let subject = (function constructSubject(){
-      // Update on WeAreOneForever's account: Character "Mr. Atoms" has been created, and 2 more changes
-      let result = `Update on ${primaryChar}'s account: `;
       let mainChange = changes[0];
+      let invalidating = false;
+      for (var i = 0; i < changes.length; i++) {
+        if (_.includes(['INVALIDKEY', 'SINGLECHAR', 'BADMASK', 'EXPIRES', 'MALFORMEDKEY', 'CORPKEY'], changes[i].changeType)) {
+          invalidating = true;
+          mainChange = changes[i];
+          break;
+        }
+      }
+
+      let result = invalidating ? `${primaryChar}'s key is no longer valid: ` : `Update on ${primaryChar}'s account: `;
+
       let noTail = false;
       switch (mainChange.changeType) {
         case 'addCharacter':
@@ -66,6 +75,24 @@ class ChangeNotificationEmail extends NotificationEmail {
           break;
         case 'switchCorp':
           result += `Character "${mainChange.oldValueObj.characterName}" has left the "${mainChange.oldValueObj.corporationName}" corporation to join "${mainChange.newValueObj.corporationName}"`;
+          break;
+        case 'INVALIDKEY':
+          result += 'Key has expired or been deleted';
+          break;
+        case 'SINGLECHAR':
+          result += 'Key now only provides info about a single character';
+          break;
+        case 'BADMASK':
+          result += 'Key no longer provides all permissions';
+          break;
+        case 'EXPIRES':
+          result += 'Key has been set to expire';
+          break;
+        case 'MALFORMEDKEY':
+          result += 'Key\'s verification code has changed';
+          break;
+        case 'CORPKEY':
+          result += 'Key is now a corporation key, not a player key';
           break;
         default:
           result += `${changes.length} ${humanize.pluralize(changes.length, 'change')}`
