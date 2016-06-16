@@ -10,7 +10,7 @@ const getAuthLevel = function (user) {
 
   if (isAdmin) return "admin";
   else if (isWhitelisted) return "whitelist";
-  else return "anon"
+  else return "anon";
 }
 
 Meteor.publish('authorizedPub', function () {
