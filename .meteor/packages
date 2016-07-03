@@ -26,7 +26,6 @@ johnantoni:meteor-normalize
 zimme:active-route
 semantic:ui
 flemay:less-autoprefixer
-coffeescript@1.1.3-beta.7
 dalgard:jade
 stylus@2.512.4-beta.7
 aldeed:collection2
