@@ -29,7 +29,6 @@ flemay:less-autoprefixer
 dalgard:jade
 stylus@2.512.4-beta.7
 aldeed:collection2
-meteortoys:allthings
 meteorhacks:npm
 aldeed:autoform
 
@@ -37,8 +36,6 @@ npm-container
 momentjs:moment
 erasaur:meteor-lodash
 email@1.0.15-beta.7
-mrt:flash-messages
-reactive-var@1.0.10
 vsivsi:job-collection
 standard-minifier-css
 standard-minifier-js
