@@ -11,31 +11,37 @@ blaze-html-templates@1.0.4    # Compile .html files into Meteor Blaze views
 session@1.1.6                 # Client-side reactive dictionary for your app
 jquery@1.11.9                  # Helpful client-side library
 tracker@1.0.14                 # Meteor's client-side reactive programming library
-
 es5-shim@4.5.13-beta.7                # ECMAScript 5 compatibility for older browsers.
 ecmascript@0.4.7-beta.7              # Enable ECMAScript2015+ syntax in app code
-
+stylus@2.512.4-beta.7
 browser-policy@1.0.9
 accounts-ui@1.1.9
+npm-container
+standard-minifier-js
+email@1.0.15-beta.7
+less
+
+# 3rd-party server-side packages
+
 tmikoss:accounts-eveonline
-kadira:flow-router
-kadira:blaze-layout
-arillo:flow-router-helpers
+aldeed:collection2
+aldeed:autoform
+vsivsi:job-collection
 u2622:persistent-session
+
+# 3rd-party client-side packages
+
+kadira:blaze-layout
+kadira:flow-router
+arillo:flow-router-helpers
+semantic:ui
 johnantoni:meteor-normalize
 zimme:active-route
-semantic:ui
-flemay:less-autoprefixer
-dalgard:jade
-stylus@2.512.4-beta.7
-aldeed:collection2
-meteorhacks:npm
-aldeed:autoform
+juliancwirko:postcss
 
-npm-container
-momentjs:moment
+# To be removed/replaced
+
+dalgard:jade
+meteorhacks:npm
 erasaur:meteor-lodash
-email@1.0.15-beta.7
-vsivsi:job-collection
-standard-minifier-css
-standard-minifier-js
+momentjs:moment

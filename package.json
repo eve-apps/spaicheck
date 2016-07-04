@@ -15,5 +15,13 @@
   "bugs": {
     "url": "https://github.com/eve-apps/spaicheck/issues"
   },
-  "homepage": "https://github.com/eve-apps/spaicheck#readme"
+  "homepage": "https://github.com/eve-apps/spaicheck#readme",
+  "dependencies": {
+    "autoprefixer": "^6.3.7"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {"browsers": ["last 2 versions"]}
+    }
+  }
 }
