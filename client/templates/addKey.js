@@ -1,3 +1,7 @@
+'use strict';
+
+import {_} from '/imports/shared/globals';
+
 /* AddKeyFormSchema is for prevalidation only, to determine if it's worth making an API call.
   KeySchema can't be used because during prevalidation, some required properties don't exist
   yet so the form would always be invalid. */

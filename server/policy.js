@@ -1,3 +1,7 @@
+'use strict';
+
+import {_} from '/imports/shared/globals';
+
 BrowserPolicy.framing.disallow();
 BrowserPolicy.content.disallowEval();
 BrowserPolicy.content.allowInlineStyles();
@@ -10,7 +14,7 @@ const trusted = [
   "*.eveonline.com"
 ];
 
-for (origin of trusted) {
+for (let origin of trusted) {
   origin = `https://${origin}`;
   BrowserPolicy.content.allowOriginForAll(origin);
 }

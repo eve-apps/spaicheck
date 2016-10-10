@@ -1,39 +1,33 @@
-const eveonlinejs = Npm.require('eveonlinejs');
+'use strict';
+
+import {_} from '/imports/shared/globals';
 
 Meteor.methods({
-  'addKeyCharacters': function (keyID) {
+  'addKeyCharacters': async function (keyID) {
     Characters.remove({keyID: keyID});
 
-    let runSyncResult = Async.runSync(function (done) {
-      charactersObj = Keys.findOne({"keyID": keyID}).resultBody.characters;
+    let charactersObj = Keys.findOne({"keyID": keyID}).resultBody.characters;
 
-      for (charID in charactersObj) {
-        Meteor.call('insertCharacter', keyID, charID);
-      }
+    let promises = _.map(charactersObj, (charID) => callPromise('insertCharacter', keyID, charID));
 
-      Meteor.call('detectPrimaryCharacter', keyID);
-      done(null, true);
-    });
+    await Promise.all(promises);
 
-    if (runSyncResult.error) throw runSyncResult.error;
-    else if (runSyncResult.result) return runSyncResult.result;
+    await callPromise('detectPrimaryCharacter', keyID);
+
+    return true;
   },
 
-  'insertCharacter': function (keyID, charID) {
+  'insertCharacter': async function (keyID, charID) {
     const vCode = Keys.findOne({keyID: keyID}).vCode;
 
-    let runSyncResult = Async.runSync(function (done) {
-      eveonlinejs.fetch('eve:CharacterInfo', {keyID: keyID, vCode: vCode, characterID: charID}, function (err, result) {
-        if (err) done(err, null);
-        else {
-          result.keyID = keyID;
-          done(null, result);
-        }
-      });
-    });
-    if (runSyncResult.error) throw runSyncResult.error;
-    else if (runSyncResult.result && !Characters.findOne({characterID: runSyncResult.result.characterID})) {
-      Characters.insert(runSyncResult.result);
+    let characterInfo = await eveFetch('eve:CharacterInfo', {keyID: keyID, vCode: vCode, characterID: charID});
+
+    if (characterInfo && !Characters.findOne({characterID: characterInfo.characterID})) {
+      characterInfo.keyID = keyID;
+      Characters.insert(characterInfo);
+    }
+    else {
+      console.log('will not insert character');
     }
   },
 

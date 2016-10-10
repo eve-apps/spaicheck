@@ -1,7 +1,9 @@
-// The Mongo collection to which our schema will be attached
-Whitelist = new Mongo.Collection("whitelist");
+'use strict';
 
-WhitelistSchema = new SimpleSchema({
+// The Mongo collection to which our schema will be attached
+const Whitelist = new Mongo.Collection("whitelist");
+
+const WhitelistSchema = new SimpleSchema({
   characterID: {
     type: String,
     index: true,
@@ -34,3 +36,5 @@ Whitelist.allow({
 })
 
 Whitelist.attachSchema(WhitelistSchema);
+
+export default Whitelist;

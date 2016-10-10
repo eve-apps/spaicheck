@@ -1,7 +1,9 @@
-// The Mongo collection to which our schema will be attached
-Changes = new Mongo.Collection("changes");
+'use strict';
 
-SingleChangeSchema = new SimpleSchema({
+// The Mongo collection to which our schema will be attached
+const Changes = new Mongo.Collection("changes");
+
+const SingleChangeSchema = new SimpleSchema({
   changeType: {
     type: String,
     allowedValues: ['INVALIDKEY', 'SINGLECHAR', 'BADMASK', 'EXPIRES', 'MALFORMEDKEY', 'CORPKEY',
@@ -37,7 +39,7 @@ SingleChangeSchema = new SimpleSchema({
   }
 });
 
-ChangeObjectSchema = new SimpleSchema({
+const ChangeObjectSchema = new SimpleSchema({
   createdAt: {
     type: Date,
     // createdAt property is auto-created when an insertion to the db is made
@@ -56,7 +58,7 @@ ChangeObjectSchema = new SimpleSchema({
   }
 });
 
-ChangeSchema = new SimpleSchema({
+const ChangeSchema = new SimpleSchema({
   keyID: {
     type: Number,
     index: true,
@@ -74,3 +76,5 @@ ChangeSchema = new SimpleSchema({
 });
 
 Changes.attachSchema(ChangeSchema);
+
+export default Changes;

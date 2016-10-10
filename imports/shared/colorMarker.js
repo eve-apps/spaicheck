@@ -1,5 +1,8 @@
-insertColorMarker = function (severity) {
-  const colorMarker = '&#9679';
+'use strict';
+
+const colorMarker = '&#9679';
+
+export const insertColorMarker = function (severity) {
   let severityColor = '';
   let titleStr = '';
 

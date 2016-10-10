@@ -1,4 +1,6 @@
-insertChangeLabel = function (changeType, severity) {
+'use strict';
+
+export const insertChangeLabel = function (changeType, severity) {
   let severityColor = '';
   let severityTitle = '';
 

@@ -1,4 +1,10 @@
-parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, newValObj, ctx, forEmail) {
+'use strict';
+
+import {_} from '/imports/shared/globals';
+import {insertChangeLabel} from '/imports/shared/changeLabel';
+import {insertColorMarker} from '/imports/shared/colorMarker';
+
+export const parseChange = function (changeType, severity, oldValStr, newValStr, oldValObj, newValObj, ctx, forEmail) {
   let newVal = newValStr || newValObj || null;
   let oldVal = oldValStr || oldValObj || null;
 

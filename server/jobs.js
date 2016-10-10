@@ -1,9 +1,13 @@
-emailJobs = new JobCollection('emailJobs');
+'use strict';
+
+import {_} from '/imports/shared/globals';
+
+export const emailJobs = new JobCollection('emailJobs');
 Meteor.startup(function () {
   return emailJobs.startJobServer();
 });
 
-emailQueue = emailJobs.processJobs('sendEmail', {workTimeout: 60*60*1000}, function (job, cb) {
+export const emailQueue = emailJobs.processJobs('sendEmail', {workTimeout: 60*60*1000}, function (job, cb) {
   let email = job.data;
   try {
     Email.send({

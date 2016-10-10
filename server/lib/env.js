@@ -1,3 +1,7 @@
+'use strict';
+
+import {_} from '/imports/shared/globals';
+
 Meteor.startup(function () {
   process.env.ROOT_URL = Meteor.settings.private.rootUrl;
 

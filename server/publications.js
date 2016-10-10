@@ -1,3 +1,7 @@
+'use strict';
+
+import {_} from '/imports/shared/globals';
+
 const getAuthLevel = function (user) {
   let isLoggedIn, characterID, isAdmin, isWhitelisted;
   isLoggedIn = user;

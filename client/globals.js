@@ -1,3 +1,7 @@
+'use strict';
+
+import {_} from '/imports/shared/globals';
+
 // Set new thresholds
   moment.relativeTimeThreshold('s', 60);
   moment.relativeTimeThreshold('m', 60);

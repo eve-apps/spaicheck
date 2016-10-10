@@ -1,7 +1,9 @@
-// The Mongo collection to which our schema will be attached
-Keys = new Mongo.Collection("keys");
+'use strict';
 
-ResultBodySchema = new SimpleSchema({
+// The Mongo collection to which our schema will be attached
+const Keys = new Mongo.Collection("keys");
+
+const ResultBodySchema = new SimpleSchema({
   accessMask: {
     type: Number
   },
@@ -23,7 +25,7 @@ ResultBodySchema = new SimpleSchema({
   }
 });
 
-KeySchema = new SimpleSchema({
+const KeySchema = new SimpleSchema({
   keyID: {
     type: Number,
     label: "Key ID",
@@ -86,3 +88,5 @@ KeySchema.messages({
   "keyFailed": "The API key failed verification with the server"
 });
 Keys.attachSchema(KeySchema);
+
+export default Keys;

@@ -1,7 +1,9 @@
-// The Mongo collection to which our schema will be attached
-Errors = new Mongo.Collection("errors");
+'use strict';
 
-ErrorMessageSchema = new SimpleSchema({
+// The Mongo collection to which our schema will be attached
+const Errors = new Mongo.Collection("errors");
+
+const ErrorMessageSchema = new SimpleSchema({
   createdAt: {
     type: Date,
     // createdAt property is auto-created when an insertion to the db is made
@@ -23,7 +25,7 @@ ErrorMessageSchema = new SimpleSchema({
   }
 })
 
-ErrorSchema = new SimpleSchema({
+const ErrorSchema = new SimpleSchema({
   keyID: {
     type: Number,
     index: true,
@@ -43,3 +45,5 @@ ErrorSchema = new SimpleSchema({
 });
 
 Errors.attachSchema(ErrorSchema);
+
+export default Errors;

@@ -1,5 +1,8 @@
-const jsonPatch = Npm.require('fast-json-patch');
-const humanize = Npm.require('humanize-plus');
+'use strict';
+
+import {denodeify, eveonlinejs, eveFetch, callPromise, jsonPatch, humanize} from '/imports/server/globals';
+import {_} from '/imports/shared/globals';
+import Keys from '/imports/collections/Keys';
 
 // Notification base class
 class Notification {
@@ -174,6 +177,7 @@ Meteor.methods({
           });
         }
         else {
+          console.log('current key:', curKeys[i]);
           Meteor.call('validateKey', curKeys[i].keyID, curKeys[i].vCode, function (err, result) {
             Meteor.call('handleChanges', curKeys[i].keyID, err, result);
             let fnEnd = new Date();
@@ -194,6 +198,10 @@ Meteor.methods({
 
     // Build out the newChanges array
     if (err) {
+      if (!err.error) {
+        console.log('unhandled error in handleChanges', err);
+        return;
+      }
       // Push the error, unless it's on the ignoredErrors list
       if (ignoredErrors.indexOf(err.error) > -1) console.log(err); // Connection errors etc are logged to console and ignored
       // Handle corporation check failures; all failed checks are iterated over and each represents a separate change

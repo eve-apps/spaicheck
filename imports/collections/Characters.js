@@ -1,7 +1,9 @@
-// The Mongo collection to which our schema will be attached
-Characters = new Mongo.Collection("characters");
+'use strict';
 
-ApplicationSchema = new SimpleSchema({
+// The Mongo collection to which our schema will be attached
+const Characters = new Mongo.Collection("characters");
+
+const ApplicationSchema = new SimpleSchema({
   applicationID: {
     type: String,
     index: true,
@@ -20,7 +22,7 @@ ApplicationSchema = new SimpleSchema({
   }
 });
 
-CharacterSchema = new SimpleSchema({
+const CharacterSchema = new SimpleSchema({
   characterID: {
     type: Number,
     index: true,
@@ -82,3 +84,5 @@ CharacterSchema = new SimpleSchema({
 });
 
 Characters.attachSchema(CharacterSchema);
+
+export default Characters;

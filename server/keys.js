@@ -1,6 +1,7 @@
-/* global Meteor Async */
 'use strict';
-const eveonlinejs = Npm.require('eveonlinejs');
+
+import {denodeify, eveonlinejs, eveFetch, callPromise, jsonPatch, humanize} from '/imports/server/globals';
+import {_} from '/imports/shared/globals';
 
 // MemoryCache because FileCache was having trouble creating files/dirs(using Node) from within Meteor
 eveonlinejs.setCache(new eveonlinejs.cache.MemoryCache());
@@ -33,6 +34,8 @@ Meteor.methods({
 
           // If no checks have failed at this point, the key is sufficient to join the corporation
           // Prepare the key info for insertion in the db
+          console.log('statusFlags:', statusFlags);
+          console.log('statusFlags[0] == undefined?', statusFlags[0] == undefined);
           if (statusFlags[0] == undefined) done(null, result);
           // According to Meteor docs, the 'error' property of a Meteor.Error object should be a string
           else done({error: statusFlags.join(', ')}, null);
@@ -61,6 +64,7 @@ Meteor.methods({
       });
     });
 
+    console.log('runSyncResult.error:', runSyncResult.error);
     // If Async.runSync() returned an error, throw a Meteor.Error containing the reason
     if (runSyncResult.error) throw new Meteor.Error(runSyncResult.error.error);
 
@@ -71,6 +75,7 @@ Meteor.methods({
     });
     runSyncResult.result.characters = characters;
 
+    console.log('returning result');
     // If no error was produced, return the "result" property because the API key exists
     return runSyncResult.result;
   },
