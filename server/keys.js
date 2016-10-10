@@ -1,6 +1,6 @@
 /* global Meteor Async */
 'use strict';
-const eveonlinejs = Meteor.npmRequire('eveonlinejs');
+const eveonlinejs = Npm.require('eveonlinejs');
 
 // MemoryCache because FileCache was having trouble creating files/dirs(using Node) from within Meteor
 eveonlinejs.setCache(new eveonlinejs.cache.MemoryCache());
@@ -77,6 +77,7 @@ Meteor.methods({
 
   'insertKey': function (doc) {
     Meteor.call('validateKey', doc.keyID, doc.vCode, function (err, validationResult) {
+      console.log(`validateKey result: keyID ${doc.keyID}, vCode ${doc.vCode}`, err, validationResult);
       if (err) Meteor.call('logKeyError', doc.keyID, doc.vCode, err);
       else {
         for (let charID in validationResult.characters) {

@@ -1,4 +1,4 @@
-const eveonlinejs = Meteor.npmRequire('eveonlinejs');
+const eveonlinejs = Npm.require('eveonlinejs');
 
 Meteor.methods({
   'addKeyCharacters': function (keyID) {

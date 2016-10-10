@@ -1,5 +1,5 @@
-const jsonPatch = Meteor.npmRequire('fast-json-patch');
-const humanize = Meteor.npmRequire('humanize-plus');
+const jsonPatch = Npm.require('fast-json-patch');
+const humanize = Npm.require('humanize-plus');
 
 // Notification base class
 class Notification {
