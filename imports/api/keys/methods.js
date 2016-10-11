@@ -8,15 +8,11 @@ const denodeify = denodeifyModule(Promise);
 
 const callPromise = denodeify(Meteor.call);
 
-import eveonlinejs from 'eveonlinejs';
-const eveFetch = denodeify(eveonlinejs.fetch);
+import { eveonlinejs, eveFetch } from '/imports/server/eveFetch';
 
 import Keys from '/imports/api/keys/Keys';
 import Characters from '/imports/api/characters/Characters';
 import Changes from '/imports/api/changes/Changes';
-
-// MemoryCache because FileCache was having trouble creating files/dirs(using Node) from within Meteor
-eveonlinejs.setCache(new eveonlinejs.cache.MemoryCache());
 
 Meteor.startup(function () {
   // Run initial startup check on all Keys
@@ -104,6 +100,7 @@ Meteor.methods({
           }
         }
         doc.resultBody = validationResult;
+        console.log(`--- inserting key with keyID ${doc.keyID} into db ---`);
         Keys.insert(doc, {removeEmptyStrings: false});
         Meteor.call('addKeyCharacters', doc.keyID);
       }

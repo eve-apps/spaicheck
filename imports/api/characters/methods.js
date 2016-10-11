@@ -8,8 +8,7 @@ const denodeify = denodeifyModule(Promise);
 
 const callPromise = denodeify(Meteor.call);
 
-import eveonlinejs from 'eveonlinejs';
-const eveFetch = denodeify(eveonlinejs.fetch);
+import { eveonlinejs, eveFetch } from '/imports/server/eveFetch';
 
 import Keys from '/imports/api/keys/Keys';
 import Characters from '/imports/api/characters/Characters';
@@ -23,7 +22,10 @@ Meteor.methods({
 
     let charactersObj = Keys.findOne({"keyID": keyID}).resultBody.characters;
 
-    let promises = _.map(charactersObj, (charID) => callPromise('insertCharacter', keyID, charID));
+    let promises = _.map(charactersObj, (character) => {
+      console.log('character:', character);
+      return callPromise('insertCharacter', keyID, character.characterID);
+    });
 
     await Promise.all(promises);
 
@@ -35,9 +37,19 @@ Meteor.methods({
   'insertCharacter': async function (keyID, charID) {
     const vCode = Keys.findOne({keyID: keyID}).vCode;
 
-    let characterInfo = await eveFetch('eve:CharacterInfo', {keyID: keyID, vCode: vCode, characterID: charID});
+    console.log('>>>about to do the thing');
+    try {
+      let characterInfo = await eveFetch('eve:CharacterInfo', {keyID: keyID, vCode: vCode, characterID: charID});
+    }
+    catch (e) {
+      console.error(e);
+      return;
+    }
 
+
+    console.log('>>>it did the thing');
     if (characterInfo && !Characters.findOne({characterID: characterInfo.characterID})) {
+      console.log('characterInfo is here');
       characterInfo.keyID = keyID;
       Characters.insert(characterInfo);
     }
