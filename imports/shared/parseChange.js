@@ -1,6 +1,5 @@
 'use strict';
 
-import {_} from '/imports/shared/globals';
 import {insertChangeLabel} from '/imports/shared/changeLabel';
 import {insertColorMarker} from '/imports/shared/colorMarker';
 

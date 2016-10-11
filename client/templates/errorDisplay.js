@@ -1,6 +1,6 @@
 'use strict';
 
-import {_} from '/imports/shared/globals';
+import Errors from '/imports/api/errors/Errors';
 
 /**
  * Page Events

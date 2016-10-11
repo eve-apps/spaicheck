@@ -1,6 +1,6 @@
 'use strict';
 
-import {_} from '/imports/shared/globals';
+// TODO: Import moment
 
 // Set new thresholds
   moment.relativeTimeThreshold('s', 60);
@@ -10,7 +10,7 @@ import {_} from '/imports/shared/globals';
   moment.relativeTimeThreshold('M', 12);
 
 // Jade shenanigans workaround
-settingsDate = new Date();
+window.settingsDate = new Date();
 
 /**
  * Helpers

@@ -1,12 +1,17 @@
 'use strict';
 
-import {_} from '/imports/shared/globals';
+import {insertColorMarker} from '/imports/shared/colorMarker';
+import {parseChange} from '/imports/shared/parseChange';
+
+import Changes from '/imports/api/changes/Changes';
+import Characters from '/imports/api/characters/Characters';
+import Keys from '/imports/api/keys/Keys';
 
 /**
  * Shared functions
  **/
 
-handleDetailsClick = function (evType, ev) {
+const handleDetailsClick = function (evType, ev) {
   if (typeof handleDetailsClick.detailsType === 'undefined') {
     handleDetailsClick.detailsType = 'INITVALUE';
   }

@@ -1,8 +1,12 @@
 'use strict';
 
-import {_} from '/imports/shared/globals';
+// TODO: Check if lodash is a default export
+import _ from 'lodash';
+
+import process from 'process';
 
 Meteor.startup(function () {
+  // TODO: Don't assume settings are defined
   process.env.ROOT_URL = Meteor.settings.private.rootUrl;
 
   if (_.every(["mailUser", "mailPass", "mailServer", "mailPort"], function (mailSetting) { return Meteor.settings.private[mailSetting] != null; })) {

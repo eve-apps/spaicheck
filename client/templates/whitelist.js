@@ -1,6 +1,6 @@
 'use strict';
 
-import {_} from '/imports/shared/globals';
+import Whitelist from '/imports/api/whitelist/Whitelist';
 
 Template.whitelist.onRendered(function () {
   $('#whitelist-table .ui.checkbox').checkbox({});

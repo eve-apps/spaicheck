@@ -1,9 +1,9 @@
 'use strict';
 
-import {_} from '/imports/shared/globals';
+// TODO: Import Session
 
 Meteor.startup(function () {
-  defaultOptions = {
+  let defaultOptions = {
     useEveDurations: false
   };
 

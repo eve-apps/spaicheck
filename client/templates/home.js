@@ -1,10 +1,10 @@
 'use strict';
 
-import {_} from '/imports/shared/globals';
-
 /**
  * Page Events
  **/
+
+var eachSecond;
 
 Template.home.onCreated(function () {
   Session.set('timer', true);

@@ -1,6 +1,6 @@
 'use strict';
 
-import {_} from '/imports/shared/globals';
+// TODO: import BrowserPolicy
 
 BrowserPolicy.framing.disallow();
 BrowserPolicy.content.disallowEval();

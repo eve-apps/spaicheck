@@ -1,6 +1,14 @@
 'use strict';
 
-import {_} from '/imports/shared/globals';
+// TODO: Check if lodash is a default export
+import _ from 'lodash';
+
+import denodeifyModule from 'es6-denodeify';
+const denodeify = denodeifyModule(Promise);
+
+const callPromise = denodeify(Meteor.call);
+
+import Errors from '/imports/api/errors/Errors';
 
 Meteor.methods({
   'splitErrors': function (keyID, vCode, error) {

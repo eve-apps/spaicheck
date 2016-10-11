@@ -1,17 +1,19 @@
 'use strict';
 
-import {_} from '/imports/shared/globals';
+import Whitelist from '/imports/api/whitelist/Whitelist';
 
 /**
  * Auth
  **/
+
+export var whitelistWatch;
 
 // Redirect to home route on login
 Accounts.onLogin(function() {
   if (!Session.get("loginRedirected")) {
     FlowRouter.go(FlowRouter.path("home"));
     // Redirect to home page if user gets removed from whitelist
-    let whitelistWatch = Whitelist.find({characterID: String(Meteor.user().profile.eveOnlineCharacterId)}).observe({
+    whitelistWatch = Whitelist.find({characterID: String(Meteor.user().profile.eveOnlineCharacterId)}).observe({
       removed: function () {
         FlowRouter.go('landing');
       }
@@ -19,6 +21,8 @@ Accounts.onLogin(function() {
     Session.setAuth("loginRedirected", true);
   }
 });
+
+// TODO: Move auth checks out of this file
 
 // Redirect to landing page if not authenticated
 var requireAuth = function(context, redirect) {

@@ -1,6 +1,6 @@
 'use strict';
 
-import {_} from '/imports/shared/globals';
+import { whitelistWatch } from '/client/routes';
 
 /**
  * Page Events
@@ -112,6 +112,7 @@ Template.header.events({
     Meteor.logout(function() {
       // Stop watching for whitelist changes
       if (whitelistWatch) {
+        // TODO: Check if this actually works
         whitelistWatch.stop();
       }
       // Redirect to landing route

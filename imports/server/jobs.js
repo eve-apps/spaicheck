@@ -1,6 +1,6 @@
 'use strict';
 
-import {_} from '/imports/shared/globals';
+// TODO: Import JobCollection
 
 export const emailJobs = new JobCollection('emailJobs');
 Meteor.startup(function () {

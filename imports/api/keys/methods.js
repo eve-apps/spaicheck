@@ -1,7 +1,19 @@
 'use strict';
 
-import {denodeify, eveonlinejs, eveFetch, callPromise, jsonPatch, humanize} from '/imports/server/globals';
-import {_} from '/imports/shared/globals';
+// TODO: Check if lodash is a default export
+import _ from 'lodash';
+
+import denodeifyModule from 'es6-denodeify';
+const denodeify = denodeifyModule(Promise);
+
+const callPromise = denodeify(Meteor.call);
+
+import eveonlinejs from 'eveonlinejs';
+const eveFetch = denodeify(eveonlinejs.fetch);
+
+import Keys from '/imports/api/keys/Keys';
+import Characters from '/imports/api/characters/Characters';
+import Changes from '/imports/api/changes/Changes';
 
 // MemoryCache because FileCache was having trouble creating files/dirs(using Node) from within Meteor
 eveonlinejs.setCache(new eveonlinejs.cache.MemoryCache());

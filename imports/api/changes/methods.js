@@ -1,8 +1,20 @@
 'use strict';
 
-import {denodeify, eveonlinejs, eveFetch, callPromise, jsonPatch, humanize} from '/imports/server/globals';
-import {_} from '/imports/shared/globals';
-import Keys from '/imports/collections/Keys';
+// TODO: Check if lodash is a default export
+import _ from 'lodash';
+
+// TODO: Import job
+import denodeifyModule from 'es6-denodeify';
+const denodeify = denodeifyModule(Promise);
+
+const callPromise = denodeify(Meteor.call);
+
+import jsonPatch from 'fast-json-patch';
+import humanize from 'humanize-plus';
+import { emailJobs } from '/imports/server/jobs';
+import Keys from '/imports/api/keys/Keys';
+import Whitelist from '/imports/api/whitelist/Whitelist';
+import Changes from '/imports/api/changes/Changes';
 
 // Notification base class
 class Notification {

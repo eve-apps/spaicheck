@@ -1,5 +1,8 @@
 'use strict';
 
+// TODO: Import SimpleSchema
+// TODO: Import Mongo
+
 // The Mongo collection to which our schema will be attached
 const Changes = new Mongo.Collection("changes");
 
