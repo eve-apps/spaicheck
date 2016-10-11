@@ -7,6 +7,8 @@ import Changes from '/imports/api/changes/Changes';
 import Characters from '/imports/api/characters/Characters';
 import Keys from '/imports/api/keys/Keys';
 
+window.Keys = Keys;
+
 /**
  * Shared functions
  **/

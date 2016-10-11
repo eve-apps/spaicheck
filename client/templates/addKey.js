@@ -31,7 +31,7 @@ AutoForm.hooks({
         /* If a {{quickForm}} or {{autoForm}} has both a "schema=" and a "collection=" attribute
           then "validateForm()" uses "schema" for prevalidation and if successful, runs the "before"
           hook for further validation */
-        formIsValid = AutoForm.validateForm('insertKeyForm');
+        let formIsValid = AutoForm.validateForm('insertKeyForm');
 
         if (formIsValid) this.result(doc); // Successfully complete form submission, and call insertKey()
         else this.result(false); // Cancel form submission
