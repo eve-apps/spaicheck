@@ -3,11 +3,6 @@
 // TODO: Check if lodash is a default export
 import _ from 'lodash';
 
-import denodeifyModule from 'es6-denodeify';
-const denodeify = denodeifyModule(Promise);
-
-const callPromise = denodeify(Meteor.call);
-
 import { eveonlinejs, eveFetch } from '/imports/server/eveFetch';
 
 import Keys from '/imports/api/keys/Keys';
@@ -15,116 +10,147 @@ import Characters from '/imports/api/characters/Characters';
 
 // TODO: Import moment
 
+const insertCharacter = async function insertCharacter (keyID, charID) {
+  const vCode = await Keys.findOne({keyID: keyID}).vCode;
 
-Meteor.methods({
-  'addKeyCharacters': async function (keyID) {
-    Characters.remove({keyID: keyID});
+  console.log('>>>about to fetch from api');
+  try {
+    let characterInfo = await eveFetch('eve:CharacterInfo', {keyID: keyID, vCode: vCode, characterID: charID});
+    console.log('>>>fetched from api');
 
-    let charactersObj = Keys.findOne({"keyID": keyID}).resultBody.characters;
-
-    let promises = _.map(charactersObj, (character) => {
-      console.log('character:', character);
-      return callPromise('insertCharacter', keyID, character.characterID);
-    });
-
-    await Promise.all(promises);
-
-    await callPromise('detectPrimaryCharacter', keyID);
-
-    return true;
-  },
-
-  'insertCharacter': async function (keyID, charID) {
-    const vCode = Keys.findOne({keyID: keyID}).vCode;
-
-    console.log('>>>about to do the thing');
-    try {
-      let characterInfo = await eveFetch('eve:CharacterInfo', {keyID: keyID, vCode: vCode, characterID: charID});
-    }
-    catch (e) {
-      console.error(e);
-      return;
-    }
-
-
-    console.log('>>>it did the thing');
-    if (characterInfo && !Characters.findOne({characterID: characterInfo.characterID})) {
+    if (characterInfo && !(await Characters.findOne({characterID: characterInfo.characterID}))) {
       console.log('characterInfo is here');
       characterInfo.keyID = keyID;
-      Characters.insert(characterInfo);
+      await Characters.insert(characterInfo);
+      return characterInfo.characterName;
     }
     else {
       console.log('will not insert character');
     }
-  },
+  }
+  catch (e) {
+    console.error(e);
+  }
+};
 
-  'detectPrimaryCharacter': function (keyID) {
-    // Function Declarations
-    const findOldestChar = (chars) => {
-      let oldestStartDate = moment();
-      let oldestChar = null;
+const detectPrimaryCharacter = async function detectPrimaryCharacter (keyID) {
+  // Function Declarations
+  const findOldestChar = (chars) => {
+    let oldestStartDate = moment();
+    let oldestChar = null;
 
-      chars.forEach((char) => {
-        for (recordID in char.employmentHistory) {
-          let record = char.employmentHistory[recordID];
+    chars.forEach((char) => {
+      for (recordID in char.employmentHistory) {
+        let record = char.employmentHistory[recordID];
 
-          if (record.corporationID === Meteor.settings.public.corporationID) {
-            if (oldestChar == null) {
-              oldestChar = char;
-            }
+        if (record.corporationID === Meteor.settings.public.corporationID) {
+          if (oldestChar == null) {
+            oldestChar = char;
+          }
 
-            thisStartDate = moment(record.startDate);
+          let thisStartDate = moment(record.startDate);
 
-            if (thisStartDate.isBefore(oldestStartDate)) {
-              oldestStartDate = thisStartDate;
-              oldestChar = char;
-            }
+          if (thisStartDate.isBefore(oldestStartDate)) {
+            oldestStartDate = thisStartDate;
+            oldestChar = char;
           }
         }
-      });
-
-      return oldestChar;
-    };
-
-    // detectPrimaryCharacter Body
-    let charList = Characters.find({keyID: keyID}).fetch();
-    let primaryChar = 'no character';
-    if (!charList.length) {
-      console.warn('Account has no characters!');
-    } else {
-      if (charList.length > 1) {
-        inCorpList = charList.filter((char) => char.corporationID === Meteor.settings.public.corporationID);
-
-        if (inCorpList.length > 1) {
-          inCorpList = [findOldestChar(inCorpList)];
-        }
-        charList = inCorpList.length != 0 ? inCorpList : charList;
       }
+    });
 
-      if (charList.length > 1) {
-        inAllianceList = charList.filter((char) => char.allianceID === Meteor.settings.public.allianceID);
-        charList = inAllianceList.length != 0 ? inAllianceList : charList;
-      }
+    return oldestChar;
+  };
 
-      if (charList.length > 1) {
-        charList.sort((a, b) => b.skillPoints - a.skillPoints);
+  console.log('findOldestChar defined');
+
+  // detectPrimaryCharacter Body
+  let charList = await Characters.find({keyID: keyID}).fetch();
+
+  console.log('Characters fetched from db', charList);
+  let primaryChar = 'no character';
+  if (!charList.length) {
+    console.warn('Account has no characters!');
+  } else {
+    console.log(`Account has ${charList.length} characters`);
+    if (charList.length > 1) {
+      console.warn('000');
+      let inCorpList = charList.filter((char) => char.corporationID === Meteor.settings.public.corporationID);
+      console.warn('a');
+
+      if (inCorpList.length > 1) {
+        console.warn('b');
+        inCorpList = [findOldestChar(inCorpList)];
+        console.warn('c');
       }
-      primaryChar = charList[0].characterName;
+      charList = inCorpList.length != 0 ? inCorpList : charList;
+      console.warn('d');
     }
 
-    Meteor.call('setPrimaryCharacter', keyID, primaryChar)
-    return primaryChar;
-  },
+    if (charList.length > 1) {
+      console.warn('d');
+      inAllianceList = charList.filter((char) => char.allianceID === Meteor.settings.public.allianceID);
+      console.warn('e');
+      charList = inAllianceList.length != 0 ? inAllianceList : charList;
+      console.warn('f');
+    }
 
-  'setPrimaryCharacter': function (keyID, charName) {
-    Keys.update(
-      {keyID: keyID},
-      {
-        $set: {
-          primaryChar: charName
-        }
+    if (charList.length > 1) {
+      console.warn('g');
+      charList.sort((a, b) => b.skillPoints - a.skillPoints);
+      console.warn('h');
+    }
+    console.warn('i');
+    primaryChar = charList[0].characterName;
+    console.warn('k');
+  }
+  console.log('detectPrimaryCharacter exited');
+  return primaryChar;
+};
+
+const setPrimaryCharacter = async function (keyID, charName) {
+  await Keys.update(
+    {keyID},
+    {
+      $set: {
+        primaryChar: charName
       }
-    );
-    console.log('Primary character for key #' + keyID + ' has been set to ' + charName + '.');
+    }
+  );
+  console.log('Primary character for key #' + keyID + ' has been set to ' + charName + '.');
+};
+
+const addKeyCharacters = async function addKeyCharacters (keyID) {
+  await Characters.remove({keyID: keyID});
+
+  let charactersObj = await Keys.findOne({"keyID": keyID}).resultBody.characters;
+
+  let promises = Object.entries(charactersObj).map((character) => {
+    console.log('character:', character[1]);
+    return insertCharacter(keyID, character[0]);
+  });
+
+  let results = await Promise.all(promises);
+
+  for (let i = 0; i < results.length; i++) {
+    const result = results[i];
+    import util from 'util';
+    console.log(`result ${i} = ${util.inspect(result, false, null)}`);
+  }
+
+  console.log('done displaying results');
+
+  let primary = await detectPrimaryCharacter(keyID);
+  console.log('primary character: ' + primary);
+  await setPrimaryCharacter(keyID, primary);
+  console.log('primary character saved in db');
+};
+
+
+Meteor.methods({
+  'addKeyCharacters': async function (keyID) {
+    await addKeyCharacters(keyID);
+  },
+  'setPrimaryCharacter': async function (keyID, charName) {
+    await setPrimaryCharacter(keyID, charName);
   }
 });

@@ -4,10 +4,6 @@
 import _ from 'lodash';
 
 // TODO: Import job
-import denodeifyModule from 'es6-denodeify';
-const denodeify = denodeifyModule(Promise);
-
-const callPromise = denodeify(Meteor.call);
 
 import jsonPatch from 'fast-json-patch';
 import humanize from 'humanize-plus';
