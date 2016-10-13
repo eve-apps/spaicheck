@@ -1,6 +1,5 @@
 'use strict';
 
-// TODO: Check if lodash is a default export
 import _ from 'lodash';
 
 // TODO: Import job
