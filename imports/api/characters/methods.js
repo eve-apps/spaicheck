@@ -1,4 +1,4 @@
-'use strict';
+
 
 import _ from 'lodash';
 
@@ -9,15 +9,15 @@ import Characters from '/imports/api/characters/Characters';
 
 // TODO: Import moment
 
-const insertCharacter = async function insertCharacter (keyID, charID) {
-  const vCode = await Keys.findOne({keyID: keyID}).vCode;
+const insertCharacter = async function insertCharacter(keyID, charID) {
+  const vCode = await Keys.findOne({ keyID }).vCode;
 
   console.log('>>>about to fetch from api');
   try {
-    let characterInfo = await eveFetch('eve:CharacterInfo', {keyID: keyID, vCode: vCode, characterID: charID});
+    const characterInfo = await eveFetch('eve:CharacterInfo', { keyID, vCode, characterID: charID });
     console.log('>>>fetched from api');
 
-    if (characterInfo && !(await Characters.findOne({characterID: characterInfo.characterID}))) {
+    if (characterInfo && !(await Characters.findOne({ characterID: characterInfo.characterID }))) {
       console.log('characterInfo is here');
       characterInfo.keyID = keyID;
       await Characters.insert(characterInfo);
@@ -32,7 +32,7 @@ const insertCharacter = async function insertCharacter (keyID, charID) {
   }
 };
 
-const detectPrimaryCharacter = async function detectPrimaryCharacter (keyID) {
+const detectPrimaryCharacter = async function detectPrimaryCharacter(keyID) {
   // Function Declarations
   const findOldestChar = (chars) => {
     let oldestStartDate = moment();
@@ -40,14 +40,14 @@ const detectPrimaryCharacter = async function detectPrimaryCharacter (keyID) {
 
     chars.forEach((char) => {
       for (recordID in char.employmentHistory) {
-        let record = char.employmentHistory[recordID];
+        const record = char.employmentHistory[recordID];
 
         if (record.corporationID === Meteor.settings.public.corporationID) {
           if (oldestChar == null) {
             oldestChar = char;
           }
 
-          let thisStartDate = moment(record.startDate);
+          const thisStartDate = moment(record.startDate);
 
           if (thisStartDate.isBefore(oldestStartDate)) {
             oldestStartDate = thisStartDate;
@@ -61,7 +61,7 @@ const detectPrimaryCharacter = async function detectPrimaryCharacter (keyID) {
   };
 
   // detectPrimaryCharacter Body
-  let charList = await Characters.find({keyID: keyID}).fetch();
+  let charList = await Characters.find({ keyID }).fetch();
 
   console.log(`${charList.length} characters fetched from db`);
   let primaryChar = 'no character';
@@ -69,7 +69,7 @@ const detectPrimaryCharacter = async function detectPrimaryCharacter (keyID) {
     console.warn('Account has no characters!');
   } else {
     if (charList.length > 1) {
-      let inCorpList = charList.filter((char) => char.corporationID === Meteor.settings.public.corporationID);
+      let inCorpList = charList.filter(char => char.corporationID === Meteor.settings.public.corporationID);
 
       if (inCorpList.length > 1) {
         inCorpList = [findOldestChar(inCorpList)];
@@ -78,7 +78,7 @@ const detectPrimaryCharacter = async function detectPrimaryCharacter (keyID) {
     }
 
     if (charList.length > 1) {
-      inAllianceList = charList.filter((char) => char.allianceID === Meteor.settings.public.allianceID);
+      inAllianceList = charList.filter(char => char.allianceID === Meteor.settings.public.allianceID);
       charList = inAllianceList.length != 0 ? inAllianceList : charList;
     }
 
@@ -93,29 +93,29 @@ const detectPrimaryCharacter = async function detectPrimaryCharacter (keyID) {
 
 const setPrimaryCharacter = async function (keyID, charName) {
   await Keys.update(
-    {keyID},
+    { keyID },
     {
       $set: {
-        primaryChar: charName
-      }
+        primaryChar: charName,
+      },
     }
   );
-  console.log('Primary character for key #' + keyID + ' has been set to ' + charName + '.');
+  console.log(`Primary character for key #${ keyID} has been set to ${ charName}.`);
 };
 
-const addKeyCharacters = async function addKeyCharacters (keyID) {
-  await Characters.remove({keyID: keyID});
+const addKeyCharacters = async function addKeyCharacters(keyID) {
+  await Characters.remove({ keyID });
 
-  let charactersObj = await Keys.findOne({"keyID": keyID}).resultBody.characters;
+  const charactersObj = await Keys.findOne({keyID }).resultBody.characters;
 
   console.warn('before');
-  let promises = Object.entries(charactersObj).map((character) => {
+  const promises = Object.entries(charactersObj).map((character) => {
     console.log('character:', character[1]);
     return insertCharacter(keyID, character[0]);
   });
 
   console.warn('inbetween');
-  let results = await Promise.all(promises);
+  const results = await Promise.all(promises);
 
   for (let i = 0; i < results.length; i++) {
     const result = results[i];
@@ -125,18 +125,18 @@ const addKeyCharacters = async function addKeyCharacters (keyID) {
 
   console.log('done displaying results');
 
-  let primary = await detectPrimaryCharacter(keyID);
-  //console.log('primary character: ' + primary);
+  const primary = await detectPrimaryCharacter(keyID);
+  // console.log('primary character: ' + primary);
   await setPrimaryCharacter(keyID, primary);
-  //console.log('primary character saved in db');
+  // console.log('primary character saved in db');
 };
 
 
 Meteor.methods({
-  'addKeyCharacters': async function (keyID) {
+  addKeyCharactersnction (keyID) {
     await addKeyCharacters(keyID);
   },
-  'setPrimaryCharacter': async function (keyID, charName) {
+  setPrimaryCharacternction (keyID, charName) {
     await setPrimaryCharacter(keyID, charName);
-  }
+  },
 });

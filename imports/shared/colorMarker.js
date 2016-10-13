@@ -1,4 +1,4 @@
-'use strict';
+
 
 const colorMarker = '&#9679';
 
@@ -23,8 +23,8 @@ export const insertColorMarker = function (severity) {
 
   }
 
-  let colorMarkerStyle = 'color:' + severityColor + ';margin-right:10px;font-size:250%;vertical-align:-25%;text-shadow:-1px 1px 2px #444;'
-  let colorMarkerStr = '<span title="' + titleStr + '" style="' + colorMarkerStyle + '">' + colorMarker + '</span> ';
+  const colorMarkerStyle = `color:${severityColor};margin-right:10px;font-size:250%;vertical-align:-25%;text-shadow:-1px 1px 2px #444;`;
+  const colorMarkerStr = `<span title="${titleStr}" style="${colorMarkerStyle}">${colorMarker}</span> `;
 
   return colorMarkerStr;
-}
+};

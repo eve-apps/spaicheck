@@ -1,4 +1,4 @@
-'use strict';
+
 
 import _ from 'lodash';
 
@@ -8,25 +8,25 @@ import Keys from '/imports/api/keys/Keys';
 import Characters from '/imports/api/characters/Characters';
 import Changes from '/imports/api/changes/Changes';
 
-Meteor.startup(function () {
+Meteor.startup(() => {
   // Run initial startup check on all Keys
   Meteor.call('runChecks');
   // Run validation checks on all keys every 6 minutes
-  Meteor.setInterval(function () {
+  Meteor.setInterval(() => {
     Meteor.call('runChecks');
   }, 360000);
 });
 
 Meteor.methods({
   // Wrapped to run synchronously using meteorhacks:npm's Async package
-  'validateKey': function (keyID, vCode) {
+  validateKey(keyID, vCode) {
     // "result" will be an object containing an "error" property and a "result" property
     // If there was an error, "result" will be undefined, otherwise "error" will be undefined
-    let runSyncResult = Async.runSync(function (done) {
-      eveonlinejs.fetch('account:APIKeyInfo', {keyID: keyID, vCode: vCode}, function (err, result) {
+    const runSyncResult = Async.runSync((done) => {
+      eveonlinejs.fetch('account:APIKeyInfo', { keyID, vCode }, (err, result) => {
         if (result) {
           // Even though eojs considers key valid, we still need to implement our custom checks
-          let statusFlags = [];
+          const statusFlags = [];
 
           // Handle specific corporation requirements here
           if (result.type === 'Character') statusFlags.push('SINGLECHAR');
@@ -36,10 +36,10 @@ Meteor.methods({
 
           // If no checks have failed at this point, the key is sufficient to join the corporation
           // Prepare the key info for insertion in the db
-          //console.log('statusFlags:', statusFlags);
+          // console.log('statusFlags:', statusFlags);
           if (statusFlags[0] == undefined) done(null, result);
           // According to Meteor docs, the 'error' property of a Meteor.Error object should be a string
-          else done({error: statusFlags.join(', ')}, null);
+          else done({ error: statusFlags.join(', ') }, null);
         }
         // Anything returned as an err object by the API call is returned as err to be thrown as a Meteor.Error
         if (err) {
@@ -69,8 +69,8 @@ Meteor.methods({
     if (runSyncResult.error) throw new Meteor.Error(runSyncResult.error.error);
 
     // Remove the 'factionID' and 'factionName' properties from the characters in the API result
-    let characters = {};
-    _.forOwn(runSyncResult.result.characters, function (character, characterID) {
+    const characters = {};
+    _.forOwn(runSyncResult.result.characters, (character, characterID) => {
       characters[characterID] = _.omit(character, ['factionID', 'factionName']);
     });
     runSyncResult.result.characters = characters;
@@ -79,14 +79,14 @@ Meteor.methods({
     return runSyncResult.result;
   },
 
-  'insertKey': function (doc) {
-    Meteor.call('validateKey', doc.keyID, doc.vCode, function (err, validationResult) {
+  insertKey(doc) {
+    Meteor.call('validateKey', doc.keyID, doc.vCode, (err, validationResult) => {
       console.log(`validateKey result: keyID ${doc.keyID}, vCode ${doc.vCode}`, err, validationResult);
       if (err) Meteor.call('logKeyError', doc.keyID, doc.vCode, err);
       else {
-        for (let charID in validationResult.characters) {
-          if (Characters.findOne({characterID: Number(charID)})) {
-            Meteor.call('logKeyError', doc.keyID, doc.vCode, {error: 'EXISTINGKEY'})
+        for (const charID in validationResult.characters) {
+          if (Characters.findOne({ characterID: Number(charID) })) {
+            Meteor.call('logKeyError', doc.keyID, doc.vCode, { error: 'EXISTINGKEY' });
             return false;
           }
         }
@@ -94,13 +94,13 @@ Meteor.methods({
         // FIXME: This log seems to run after some of the logs in the addKeyCharacters method,
         // even though it is called first. What's going on here?
         console.log(`--- inserting key with keyID ${doc.keyID} into db ---`);
-        Keys.insert(doc, {removeEmptyStrings: false});
+        Keys.insert(doc, { removeEmptyStrings: false });
         Meteor.call('addKeyCharacters', doc.keyID);
       }
     });
   },
 
-  'insertKeysBulk': function (csvData) {
+  insertKeysBulk(csvData) {
     const lines = csvData.split('\n');
     lines.shift(); // Discard the column headers, we make our own
 
@@ -109,29 +109,29 @@ Meteor.methods({
 
       return {
         keyID: keyPair[0],
-        vCode: keyPair[1]
-      }
+        vCode: keyPair[1],
+      };
     });
 
     let curTimeout = 0;
 
     keyObjs.forEach((keyObj) => {
       // Limit calls to 30 per second by staggering them by 1 30th of a second
-      Meteor.setTimeout(function () {
+      Meteor.setTimeout(() => {
         Meteor.call('insertKey', keyObj);
       // }, curTimeout += Math.ceil(1000/30));
-    }, curTimeout += Math.ceil(1000/5));
+      }, curTimeout += Math.ceil(1000 / 5));
     });
   },
 
-  'removeKey': function (keyID) {
-    Changes.remove({keyID: keyID});
-    Characters.remove({keyID: keyID});
-    Keys.remove({keyID: keyID});
+  removeKey(keyID) {
+    Changes.remove({ keyID });
+    Characters.remove({ keyID });
+    Keys.remove({ keyID });
   },
 
-  'acceptChanges': function (keyID) {
-    console.log('acceptChanges for ' + keyID);
-    Changes.remove({keyID: keyID});
-  }
+  acceptChanges(keyID) {
+    console.log(`acceptChanges for ${keyID}`);
+    Changes.remove({ keyID });
+  },
 });

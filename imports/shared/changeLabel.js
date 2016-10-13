@@ -1,4 +1,4 @@
-'use strict';
+
 
 export const insertChangeLabel = function (changeType, severity) {
   let severityColor = '';
@@ -19,5 +19,5 @@ export const insertChangeLabel = function (changeType, severity) {
       break;
   }
 
-  return '<div class="ui ' + severityColor + ' basic label change-label" title="' + severityTitle + '">' + changeType + '</div>';
-}
+  return `<div class="ui ${severityColor} basic label change-label" title="${severityTitle}">${changeType}</div>`;
+};

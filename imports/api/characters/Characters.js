@@ -1,86 +1,86 @@
-'use strict';
+
 
 // The Mongo collection to which our schema will be attached
-const Characters = new Mongo.Collection("characters");
+const Characters = new Mongo.Collection('characters');
 
 const ApplicationSchema = new SimpleSchema({
   applicationID: {
     type: String,
     index: true,
     unique: true,
-    sparse: true
+    sparse: true,
   },
   message: {
-    type: String
+    type: String,
   },
   submittedAt: {
-    type: Date
+    type: Date,
   },
   processedAt: {
     type: Date,
-    optional: true
-  }
+    optional: true,
+  },
 });
 
 const CharacterSchema = new SimpleSchema({
   characterID: {
     type: Number,
     index: true,
-    unique: true
+    unique: true,
   },
   characterName: {
     type: String,
-    optional: true
+    optional: true,
   },
   corporationID: {
     type: Number,
-    optional: true
+    optional: true,
   },
   corporation: {
     type: String,
-    optional: true
+    optional: true,
   },
   allianceID: {
     type: Number,
-    optional: true
+    optional: true,
   },
   allianceName: {
     type: String,
-    optional: true
+    optional: true,
   },
   skillPoints: {
     type: Number,
-    optional: true
+    optional: true,
   },
   securityStatus: {
     type: String,
-    optional: true
+    optional: true,
   },
   employmentHistory: {
     type: Object,
     blackbox: true,
-    optional: true
+    optional: true,
   },
   keyID: { // Associated API key
     type: Number,
-    optional: true
+    optional: true,
   },
   applications: { // Associated membership applications
     type: [ApplicationSchema],
-    optional: true
+    optional: true,
   },
   createdAt: { // When the character was first added to the database
     type: Date,
-    autoValue: function() {
+    autoValue() {
       if (this.isInsert) {
-        return new Date;
+        return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date};
+        return { $setOnInsert: new Date() };
       } else {
         this.unset();  // Prevent user from supplying their own value
       }
-    }
-  }
+    },
+  },
 });
 
 Characters.attachSchema(CharacterSchema);

@@ -1,18 +1,18 @@
-'use strict';
+
 
 /**
  * Page Events
  **/
 
-var eachSecond;
+let eachSecond;
 
-Template.home.onCreated(function () {
+Template.home.onCreated(() => {
   Session.set('timer', true);
-  eachSecond = Meteor.setInterval(function() {
+  eachSecond = Meteor.setInterval(() => {
     Session.set('timer', !Session.get('timer'));
   }, 1000);
 });
 
-Template.home.onDestroyed(function () {
+Template.home.onDestroyed(() => {
   Meteor.clearInterval(eachSecond);
 });

@@ -1,4 +1,4 @@
-'use strict';
+
 
 import Errors from '/imports/api/errors/Errors';
 
@@ -6,11 +6,11 @@ import Errors from '/imports/api/errors/Errors';
  * Page Events
  **/
 
-Template.errorDisplay.onRendered(function () {
+Template.errorDisplay.onRendered(() => {
   $('#error-display .ui.accordion').accordion({
     selector: {
-      trigger: '.show-err'
-    }
+      trigger: '.show-err',
+    },
   });
 });
 
@@ -19,12 +19,12 @@ Template.errorDisplay.onRendered(function () {
  **/
 
 Template.errorDisplay.helpers({
-  errors: function () {
+  errors() {
     return Errors.find({});
   },
-  keyErrorCount: function (log) {
-    return log.length > 1 ? log.length + " Errors" : log.length + " Error";
-  }
+  keyErrorCount(log) {
+    return log.length > 1 ? `${log.length} Errors` : `${log.length} Error`;
+  },
 });
 
 /**
@@ -33,12 +33,12 @@ Template.errorDisplay.helpers({
 
 Template.errorDisplay.events({
   'click .recheck': function () {
-    let doc = {};
+    const doc = {};
     doc.keyID = this.keyID;
     doc.vCode = this.vCode;
     Meteor.call('insertKey', doc);
   },
   'click .rm-err': function () {
     Meteor.call('discardError', this._id);
-  }
+  },
 });

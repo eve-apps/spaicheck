@@ -1,28 +1,28 @@
-'use strict';
+
 
 import Whitelist from '/imports/api/whitelist/Whitelist';
 
-Template.whitelist.onRendered(function () {
+Template.whitelist.onRendered(() => {
   $('#whitelist-table .ui.checkbox').checkbox({});
 });
 
 Template.whitelist.helpers({
-  whitelist: function () {
+  whitelist() {
     return Whitelist.find({});
   },
-  email: function () {
+  email() {
     const email = this.emailAddress ? this.emailAddress : 'NO EMAIL FOUND';
     return email;
   },
-  setCheckboxState: function (id, emailAddress, notify) {
-    Tracker.afterFlush(function () {
+  setCheckboxState(id, emailAddress, notify) {
+    Tracker.afterFlush(() => {
       const cb = $(`.email-notify:has(input[id="${id}"])`);
 
-      if (!emailAddress) cb.checkbox("set disabled");
-      else if (notify) cb.checkbox("set checked");
-      else cb.checkbox("set unchecked");
+      if (!emailAddress) cb.checkbox('set disabled');
+      else if (notify) cb.checkbox('set checked');
+      else cb.checkbox('set unchecked');
     });
-  }
+  },
 });
 
 Template.whitelist.events({
@@ -31,7 +31,7 @@ Template.whitelist.events({
   },
   'click .email-notify': function () {
     if (this.notify != undefined) {
-      Whitelist.update(this._id, {$set: {notify: !this.notify}});
+      Whitelist.update(this._id, { $set: { notify: !this.notify } });
     }
-  }
+  },
 });

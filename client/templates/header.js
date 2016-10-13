@@ -1,4 +1,4 @@
-'use strict';
+
 
 import { whitelistWatch } from '/client/routes';
 
@@ -6,26 +6,26 @@ import { whitelistWatch } from '/client/routes';
  * Page Events
  **/
 
-Template.header.onRendered(function () {
+Template.header.onRendered(() => {
   // Header dropdown
-  let headerDropdown = $("header .ui.dropdown").dropdown({
-    action: "nothing"
+  const headerDropdown = $('header .ui.dropdown').dropdown({
+    action: 'nothing',
   });
 
   // Settings modal
-  let settingsModal = $('#settings')
+  const settingsModal = $('#settings')
     .modal(
-      {
-        transition: 'fade up',
-        onShow: function () {
-          $('#settingsSaved').transition('hide');
-        },
-        onHidden: function () {
-          $('#settingsSaved').transition('hide');
-        }
-      })
+    {
+      transition: 'fade up',
+      onShow() {
+        $('#settingsSaved').transition('hide');
+      },
+      onHidden() {
+        $('#settingsSaved').transition('hide');
+      },
+    })
     .modal('attach events', '#settingsButton', 'show');
-  $('#settingsButton').on('click', function (e) {
+  $('#settingsButton').on('click', (e) => {
     headerDropdown.dropdown('hide');
   });
 
@@ -33,21 +33,21 @@ Template.header.onRendered(function () {
   // Fade in when settings change
   // Fade out after 2 seconds of settings not changing
   // If settings change while fading out, stop animation and fade in again
-  let settingsSavedFadeOut = function () {
+  const settingsSavedFadeOut = function () {
     if ($('#settingsSaved').transition('is visible')) {
       settingsSavedIsFadingOut = true;
       $('#settingsSaved').transition({
         animation: 'fade',
         duration: '1s',
-        onComplete: function () {
+        onComplete() {
           settingsSavedIsFadingOut = false;
-        }
+        },
       });
     }
   };
   let settingsSavedTimeout = null;
   let settingsSavedIsFadingOut = false;
-  let settingsSaved = function () {
+  const settingsSaved = function () {
     if ($('#settingsSaved').transition('is animating') && settingsSavedIsFadingOut) {
       $('#settingsSaved').transition('stop all');
       settingsSavedIsFadingOut = false;
@@ -56,10 +56,10 @@ Template.header.onRendered(function () {
       $('#settingsSaved').transition({
         animation: 'fade',
         duration: '1s',
-        onComplete: function () {
+        onComplete() {
           Meteor.clearTimeout(settingsSavedTimeout);
           settingsSavedTimeout = Meteor.setTimeout(settingsSavedFadeOut, 2000);
-        }
+        },
       });
     } else {
       Meteor.clearTimeout(settingsSavedTimeout);
@@ -69,11 +69,11 @@ Template.header.onRendered(function () {
 
 
   // Settings
-  let eveTimeBtn = $('#eveTimeBtn');
-  let friendlyTimeBtn = $('#friendlyTimeBtn');
-  let handleTimeFormat = function () {
-    let eveAlreadyActive = Session.get('useEveDurations') && eveTimeBtn.hasClass('active');
-    let friendlyAlreadyActive = !Session.get('useEveDurations') && friendlyTimeBtn.hasClass('active');
+  const eveTimeBtn = $('#eveTimeBtn');
+  const friendlyTimeBtn = $('#friendlyTimeBtn');
+  const handleTimeFormat = function () {
+    const eveAlreadyActive = Session.get('useEveDurations') && eveTimeBtn.hasClass('active');
+    const friendlyAlreadyActive = !Session.get('useEveDurations') && friendlyTimeBtn.hasClass('active');
     if (eveAlreadyActive || friendlyAlreadyActive) return null;
     if (Session.get('useEveDurations')) {
       friendlyTimeBtn.removeClass('active blue');
@@ -92,11 +92,11 @@ Template.header.onRendered(function () {
 
   handleTimeFormat();
 
-  eveTimeBtn.click(function() {
+  eveTimeBtn.click(() => {
     Session.setPersistent('useEveDurations', true);
     handleTimeFormat();
   });
-  friendlyTimeBtn.click(function() {
+  friendlyTimeBtn.click(() => {
     Session.setPersistent('useEveDurations', false);
     handleTimeFormat();
   });
@@ -107,16 +107,16 @@ Template.header.onRendered(function () {
  **/
 
 Template.header.events({
-  "click .logout-button": function() {
+  'click .logout-button': function () {
     // Log the user out and redirect them to the landing page
-    Meteor.logout(function() {
+    Meteor.logout(() => {
       // Stop watching for whitelist changes
       if (whitelistWatch) {
         // TODO: Check if this actually works
         whitelistWatch.stop();
       }
       // Redirect to landing route
-      FlowRouter.go(FlowRouter.path("landing"));
+      FlowRouter.go(FlowRouter.path('landing'));
     });
-  }
+  },
 });

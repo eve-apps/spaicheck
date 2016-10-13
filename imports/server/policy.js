@@ -1,4 +1,4 @@
-'use strict';
+
 
 // TODO: import BrowserPolicy
 
@@ -8,10 +8,10 @@ BrowserPolicy.content.allowInlineStyles();
 BrowserPolicy.content.allowFontDataUrl();
 
 const trusted = [
-  "*.google-analytics.com",
-  "fonts.googleapis.com",
-  "fonts.gstatic.com",
-  "*.eveonline.com"
+  '*.google-analytics.com',
+  'fonts.googleapis.com',
+  'fonts.gstatic.com',
+  '*.eveonline.com',
 ];
 
 for (let origin of trusted) {

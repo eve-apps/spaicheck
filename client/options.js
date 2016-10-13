@@ -1,10 +1,10 @@
-'use strict';
+
 
 // TODO: Import Session
 
-Meteor.startup(function () {
-  let defaultOptions = {
-    useEveDurations: false
+Meteor.startup(() => {
+  const defaultOptions = {
+    useEveDurations: false,
   };
 
   // Load session variables
