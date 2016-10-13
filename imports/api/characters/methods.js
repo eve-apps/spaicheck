@@ -61,49 +61,34 @@ const detectPrimaryCharacter = async function detectPrimaryCharacter (keyID) {
     return oldestChar;
   };
 
-  console.log('findOldestChar defined');
-
   // detectPrimaryCharacter Body
   let charList = await Characters.find({keyID: keyID}).fetch();
 
-  console.log('Characters fetched from db', charList);
+  console.log(`${charList.length} characters fetched from db`);
   let primaryChar = 'no character';
   if (!charList.length) {
     console.warn('Account has no characters!');
   } else {
-    console.log(`Account has ${charList.length} characters`);
     if (charList.length > 1) {
-      console.warn('000');
       let inCorpList = charList.filter((char) => char.corporationID === Meteor.settings.public.corporationID);
-      console.warn('a');
 
       if (inCorpList.length > 1) {
-        console.warn('b');
         inCorpList = [findOldestChar(inCorpList)];
-        console.warn('c');
       }
       charList = inCorpList.length != 0 ? inCorpList : charList;
-      console.warn('d');
     }
 
     if (charList.length > 1) {
-      console.warn('d');
       inAllianceList = charList.filter((char) => char.allianceID === Meteor.settings.public.allianceID);
-      console.warn('e');
       charList = inAllianceList.length != 0 ? inAllianceList : charList;
-      console.warn('f');
     }
 
     if (charList.length > 1) {
-      console.warn('g');
       charList.sort((a, b) => b.skillPoints - a.skillPoints);
-      console.warn('h');
     }
-    console.warn('i');
     primaryChar = charList[0].characterName;
-    console.warn('k');
   }
-  console.log('detectPrimaryCharacter exited');
+
   return primaryChar;
 };
 
@@ -124,25 +109,27 @@ const addKeyCharacters = async function addKeyCharacters (keyID) {
 
   let charactersObj = await Keys.findOne({"keyID": keyID}).resultBody.characters;
 
+  console.warn('before');
   let promises = Object.entries(charactersObj).map((character) => {
     console.log('character:', character[1]);
     return insertCharacter(keyID, character[0]);
   });
 
+  console.warn('inbetween');
   let results = await Promise.all(promises);
 
   for (let i = 0; i < results.length; i++) {
     const result = results[i];
     import util from 'util';
-    console.log(`result ${i} = ${util.inspect(result, false, null)}`);
+    console.log(`character #${i}: ${util.inspect(result, false, null)}`);
   }
 
   console.log('done displaying results');
 
   let primary = await detectPrimaryCharacter(keyID);
-  console.log('primary character: ' + primary);
+  //console.log('primary character: ' + primary);
   await setPrimaryCharacter(keyID, primary);
-  console.log('primary character saved in db');
+  //console.log('primary character saved in db');
 };
 
 

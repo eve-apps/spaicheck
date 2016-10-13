@@ -37,8 +37,7 @@ Meteor.methods({
 
           // If no checks have failed at this point, the key is sufficient to join the corporation
           // Prepare the key info for insertion in the db
-          console.log('statusFlags:', statusFlags);
-          console.log('statusFlags[0] == undefined?', statusFlags[0] == undefined);
+          //console.log('statusFlags:', statusFlags);
           if (statusFlags[0] == undefined) done(null, result);
           // According to Meteor docs, the 'error' property of a Meteor.Error object should be a string
           else done({error: statusFlags.join(', ')}, null);
@@ -67,7 +66,6 @@ Meteor.methods({
       });
     });
 
-    console.log('runSyncResult.error:', runSyncResult.error);
     // If Async.runSync() returned an error, throw a Meteor.Error containing the reason
     if (runSyncResult.error) throw new Meteor.Error(runSyncResult.error.error);
 
@@ -78,7 +76,6 @@ Meteor.methods({
     });
     runSyncResult.result.characters = characters;
 
-    console.log('returning result');
     // If no error was produced, return the "result" property because the API key exists
     return runSyncResult.result;
   },
@@ -95,6 +92,8 @@ Meteor.methods({
           }
         }
         doc.resultBody = validationResult;
+        // FIXME: This log seems to run after some of the logs in the addKeyCharacters method,
+        // even though it is called first. What's going on here?
         console.log(`--- inserting key with keyID ${doc.keyID} into db ---`);
         Keys.insert(doc, {removeEmptyStrings: false});
         Meteor.call('addKeyCharacters', doc.keyID);

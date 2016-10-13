@@ -167,6 +167,11 @@ Meteor.methods({
     let curTimeout = 0;
     var cachedUntil = null;
 
+    if (curKeys.length) {
+      console.log(`Checking ${curKeys.length} keys...`);
+    } else {
+      console.log('No keys to check.');
+    }
     for (let i=0; i < curKeys.length; i++) {
       // Limit calls to 30 per second by staggering them by 1 30th of a second
       Meteor.setTimeout(function () {
@@ -190,12 +195,12 @@ Meteor.methods({
             Meteor.call('handleChanges', curKeys[i].keyID, err, result);
             let fnEnd = new Date();
             let fnDelta = fnEnd - fnStart;
-            console.log("Call #" + i + " has returned in " + fnDelta + " milliseconds. ");
+            console.log("Check for key #" + curKeys[i].keyID + " finished in " + fnDelta + "ms");
           });
         }
       }, curTimeout += Math.ceil(1000/30));
 
-      console.log("Key #" + i + " set to run in " + curTimeout + " milliseconds.");
+      console.log("Will check key #" + curKeys[i].keyID + " after " + curTimeout + "ms...");
     }
   },
 
@@ -296,8 +301,9 @@ Meteor.methods({
         Meteor.call('addKeyCharacters', keyID);
       }
     }
-    console.log(newChanges);
     if (newChanges.length != 0) {
+      console.log('New changes:', newChanges);
+
       Changes.update(
         { keyID: keyID },
         {
@@ -343,6 +349,9 @@ Meteor.methods({
         let email = new ChangeNotificationEmail(newChanges, keyID, primaryChar, highestSeverity);
         email.send();
       }
+    }
+    else {
+      console.log('No new changes');
     }
   }
 });
