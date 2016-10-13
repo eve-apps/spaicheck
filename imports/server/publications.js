@@ -1,4 +1,4 @@
-
+import { Meteor } from 'meteor/meteor';
 
 import { getAuthLevel } from '/imports/api/whitelist/helpers';
 
@@ -8,7 +8,7 @@ import Errors from '/imports/api/errors/Errors';
 import Keys from '/imports/api/keys/Keys';
 import Whitelist from '/imports/api/whitelist/Whitelist';
 
-Meteor.publish('authorizedPub', function () {
+Meteor.publish('authorizedPub', () => {
   if (getAuthLevel(this.userId) === 'admin' || getAuthLevel(this.userId) === 'whitelist') {
     const cursors = [
       Changes.find({}),
@@ -20,16 +20,16 @@ Meteor.publish('authorizedPub', function () {
 
     return cursors;
   }
-  else {
-    this.ready();
-  }
+
+  this.ready();
+  return [];
 });
 
-Meteor.publish('adminPub', function () {
+Meteor.publish('adminPub', () => {
   if (getAuthLevel(this.userId) === 'admin') {
     return Whitelist.find({});
   }
-  else {
-    this.ready();
-  }
+
+  this.ready();
+  return [];
 });

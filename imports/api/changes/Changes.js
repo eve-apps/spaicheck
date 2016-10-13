@@ -1,7 +1,5 @@
-
-
-// TODO: Import SimpleSchema
-// TODO: Import Mongo
+import { Mongo } from 'meteor/mongo';
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
 // The Mongo collection to which our schema will be attached
 const Changes = new Mongo.Collection('changes');
@@ -46,14 +44,16 @@ const ChangeObjectSchema = new SimpleSchema({
   createdAt: {
     type: Date,
     // createdAt property is auto-created when an insertion to the db is made
-    autoValue() {
+    autoValue () {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
-        return new Date();
-      } else {
-        this.unset();  // Prevent user from supplying their own value
       }
+      if (this.isUpsert) {
+        return new Date();
+      }
+
+      this.unset();  // Prevent user from supplying their own value
+      return undefined;
     },
   },
   changes: {

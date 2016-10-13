@@ -2,7 +2,7 @@
 
 const colorMarker = '&#9679';
 
-export const insertColorMarker = function (severity) {
+export const insertColorMarker = (severity) => {
   let severityColor = '';
   let titleStr = '';
 

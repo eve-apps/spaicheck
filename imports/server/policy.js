@@ -1,6 +1,4 @@
-
-
-// TODO: import BrowserPolicy
+import { BrowserPolicy } from 'meteor/browser-policy-common';
 
 BrowserPolicy.framing.disallow();
 BrowserPolicy.content.disallowEval();

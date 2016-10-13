@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 
 // This implementation of denodeify, taken from
 // https://github.com/matthew-andrews/denodeify/blob/bbc334a90a4b036f491f766ce335fca7bd274109/index.js

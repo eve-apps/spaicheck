@@ -1,8 +1,7 @@
-
-
+import { Meteor } from 'meteor/meteor';
 import _ from 'lodash';
 
-import { eveonlinejs, eveFetch } from '/imports/server/eveFetch';
+import { eveFetch } from '/imports/server/eveFetch';
 
 import Keys from '/imports/api/keys/Keys';
 import Characters from '/imports/api/characters/Characters';
@@ -17,90 +16,104 @@ Meteor.startup(() => {
   }, 360000);
 });
 
+const validateKey = async (keyID, vCode) => {
+  let result;
+  try {
+    result = await eveFetch('account:APIKeyInfo', { keyID, vCode });
+  } catch (err) {
+    // Handle API errors here
+    if (err.code) {
+      switch (err.code) {
+        case '203':
+          err.error = 'MALFORMEDKEY';
+          break;
+        case '222':
+          err.error = 'INVALIDKEY';
+          break;
+        default:
+          err.error = 'UNHANDLED';
+      }
+    } else if (err.response) err.error = 'CONNERR';
+    else err.error = 'INTERNAL';
+
+    throw new Meteor.Error(err.error);
+  }
+
+  const statusFlags = [];
+
+  // Handle specific corporation requirements here
+  if (result.type === 'Character') statusFlags.push('SINGLECHAR');
+  if (result.type === 'Corporation') statusFlags.push('CORPKEY');
+  if (!(result.accessMask === '1073741823' || result.accessMask === '4294967295')) statusFlags.push('BADMASK');
+  if (result.expires !== '') statusFlags.push('EXPIRES');
+
+  if (statusFlags.length) throw new Meteor.Error(statusFlags.join(', '));
+
+  // No checks have failed at this point, the key is sufficient to join the corporation.
+  // Prepare the key info for insertion in the db
+
+  // Remove the 'factionID' and 'factionName' properties from the characters in the API result
+  const characters = {};
+  _.forOwn(result.characters, (character, characterID) => {
+    characters[characterID] = _.omit(character, ['factionID', 'factionName']);
+  });
+  result.characters = characters;
+
+  // If no error was produced, return the result because the API key exists
+  return result;
+};
+
+const keyIsDuplicate = async (keyData) => {
+  // TODO: Should only have to do a single query to determine this
+  // TODO: Maybe disable consistent-return rule
+  // eslint-disable-next-line consistent-return
+  if (keyData == null) console.error("keyData is null!");
+  const charIDs = keyData.characters.keys();
+  for (let i = 0; i < charIDs.length; i++) {
+    if (await Characters.findOne({ characterID: Number(charIDs[i]) })) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const insertKey = async (doc) => {
+  let result;
+  try {
+    result = await validateKey(doc.keyID, doc.vCode);
+  } catch (err) {
+    console.log(`validateKey result: keyID ${doc.keyID}, vCode ${doc.vCode}`, err);
+    Meteor.call('logKeyError', doc.keyID, doc.vCode, err);
+    return false;
+  }
+
+  if (await keyIsDuplicate(result)) {
+    Meteor.call('logKeyError', doc.keyID, doc.vCode, { error: 'EXISTINGKEY' });
+    return false;
+  }
+
+  console.log(`validateKey result: keyID ${doc.keyID}, vCode ${doc.vCode}`, result);
+
+
+  const modifiedDoc = _.cloneDeep(doc);
+  modifiedDoc.resultBody = result;
+  // FIXME: This log seems to run after some of the logs in the addKeyCharacters method,
+  // even though it is called first. What's going on here?
+  console.log(`--- inserting key with keyID ${modifiedDoc.keyID} into db ---`);
+  Keys.insert(modifiedDoc, { removeEmptyStrings: false });
+  Meteor.call('addKeyCharacters', modifiedDoc.keyID);
+
+  return true;
+};
+
+
 Meteor.methods({
   // Wrapped to run synchronously using meteorhacks:npm's Async package
-  validateKey(keyID, vCode) {
-    // "result" will be an object containing an "error" property and a "result" property
-    // If there was an error, "result" will be undefined, otherwise "error" will be undefined
-    const runSyncResult = Async.runSync((done) => {
-      eveonlinejs.fetch('account:APIKeyInfo', { keyID, vCode }, (err, result) => {
-        if (result) {
-          // Even though eojs considers key valid, we still need to implement our custom checks
-          const statusFlags = [];
+  validateKey: async (keyID, vCode) => await validateKey(keyID, vCode),
 
-          // Handle specific corporation requirements here
-          if (result.type === 'Character') statusFlags.push('SINGLECHAR');
-          if (result.type === 'Corporation') statusFlags.push('CORPKEY');
-          if (!(result.accessMask === '1073741823' || result.accessMask === '4294967295')) statusFlags.push('BADMASK');
-          if (result.expires !== '') statusFlags.push('EXPIRES');
+  insertKey: async doc => await insertKey(doc),
 
-          // If no checks have failed at this point, the key is sufficient to join the corporation
-          // Prepare the key info for insertion in the db
-          // console.log('statusFlags:', statusFlags);
-          if (statusFlags[0] == undefined) done(null, result);
-          // According to Meteor docs, the 'error' property of a Meteor.Error object should be a string
-          else done({ error: statusFlags.join(', ') }, null);
-        }
-        // Anything returned as an err object by the API call is returned as err to be thrown as a Meteor.Error
-        if (err) {
-          // Handle specific error codes here
-          if (err.code) {
-            switch (err.code) {
-              case '203':
-                err.error = 'MALFORMEDKEY';
-                break;
-              case '222':
-                err.error = 'INVALIDKEY';
-                break;
-              default:
-                err.error = 'UNHANDLED';
-            }
-          }
-          else if (err.response) err.error = 'CONNERR';
-          else err.error = 'INTERNAL';
-
-          // Return error object and null result object
-          done(err, null);
-        }
-      });
-    });
-
-    // If Async.runSync() returned an error, throw a Meteor.Error containing the reason
-    if (runSyncResult.error) throw new Meteor.Error(runSyncResult.error.error);
-
-    // Remove the 'factionID' and 'factionName' properties from the characters in the API result
-    const characters = {};
-    _.forOwn(runSyncResult.result.characters, (character, characterID) => {
-      characters[characterID] = _.omit(character, ['factionID', 'factionName']);
-    });
-    runSyncResult.result.characters = characters;
-
-    // If no error was produced, return the "result" property because the API key exists
-    return runSyncResult.result;
-  },
-
-  insertKey(doc) {
-    Meteor.call('validateKey', doc.keyID, doc.vCode, (err, validationResult) => {
-      console.log(`validateKey result: keyID ${doc.keyID}, vCode ${doc.vCode}`, err, validationResult);
-      if (err) Meteor.call('logKeyError', doc.keyID, doc.vCode, err);
-      else {
-        for (const charID in validationResult.characters) {
-          if (Characters.findOne({ characterID: Number(charID) })) {
-            Meteor.call('logKeyError', doc.keyID, doc.vCode, { error: 'EXISTINGKEY' });
-            return false;
-          }
-        }
-        doc.resultBody = validationResult;
-        // FIXME: This log seems to run after some of the logs in the addKeyCharacters method,
-        // even though it is called first. What's going on here?
-        console.log(`--- inserting key with keyID ${doc.keyID} into db ---`);
-        Keys.insert(doc, { removeEmptyStrings: false });
-        Meteor.call('addKeyCharacters', doc.keyID);
-      }
-    });
-  },
-
-  insertKeysBulk(csvData) {
+  insertKeysBulk: (csvData) => {
     const lines = csvData.split('\n');
     lines.shift(); // Discard the column headers, we make our own
 
@@ -124,13 +137,13 @@ Meteor.methods({
     });
   },
 
-  removeKey(keyID) {
+  removeKey: (keyID) => {
     Changes.remove({ keyID });
     Characters.remove({ keyID });
     Keys.remove({ keyID });
   },
 
-  acceptChanges(keyID) {
+  acceptChanges: (keyID) => {
     console.log(`acceptChanges for ${keyID}`);
     Changes.remove({ keyID });
   },

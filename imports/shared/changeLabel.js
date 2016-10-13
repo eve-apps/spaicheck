@@ -1,6 +1,6 @@
 
 
-export const insertChangeLabel = function (changeType, severity) {
+export const insertChangeLabel = (changeType, severity) => {
   let severityColor = '';
   let severityTitle = '';
 
@@ -17,6 +17,8 @@ export const insertChangeLabel = function (changeType, severity) {
       severityTitle = 'This change does not invalidate the key';
       severityColor = 'green';
       break;
+    default:
+      throw new Error(`Unknown severity ${severity}`);
   }
 
   return `<div class="ui ${severityColor} basic label change-label" title="${severityTitle}">${changeType}</div>`;

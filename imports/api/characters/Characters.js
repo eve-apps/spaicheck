@@ -1,4 +1,5 @@
-
+import { Mongo } from 'meteor/mongo';
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
 // The Mongo collection to which our schema will be attached
 const Characters = new Mongo.Collection('characters');
@@ -71,14 +72,16 @@ const CharacterSchema = new SimpleSchema({
   },
   createdAt: { // When the character was first added to the database
     type: Date,
-    autoValue() {
+    autoValue () {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
-        return { $setOnInsert: new Date() };
-      } else {
-        this.unset();  // Prevent user from supplying their own value
       }
+      if (this.isUpsert) {
+        return { $setOnInsert: new Date() };
+      }
+
+      this.unset();  // Prevent user from supplying their own value
+      return undefined;
     },
   },
 });

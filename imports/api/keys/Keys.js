@@ -1,4 +1,5 @@
-
+import { Mongo } from 'meteor/mongo';
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
 // The Mongo collection to which our schema will be attached
 const Keys = new Mongo.Collection('keys');
@@ -13,10 +14,11 @@ const ResultBodySchema = new SimpleSchema({
   expires: {
     type: String,
     optional: true,
-    custom() {
+    custom () {
       if (!this.operator && this.value === null) {
         return 'required';
       }
+      return undefined;
     },
   },
   characters: {
@@ -47,8 +49,9 @@ const KeySchema = new SimpleSchema({
   status: {
     type: String,
     allowedValues: ['GOOD', 'WARNING', 'ERROR'],
-    autoValue() {
+    autoValue () {
       if (this.isInsert) return 'GOOD'; // Key is verified before insertion
+      return undefined;
     },
     autoform: {
       omit: true,
@@ -57,14 +60,15 @@ const KeySchema = new SimpleSchema({
   createdAt: {
     type: Date,
     // createdAt property is auto-created when an insertion to the db is made
-    autoValue() {
+    autoValue () {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
-        return { $setOnInsert: new Date() };
-      } else {
-        this.unset();  // Prevent user from supplying their own value
       }
+      if (this.isUpsert) {
+        return { $setOnInsert: new Date() };
+      }
+      this.unset();  // Prevent user from supplying their own value
+      return undefined;
     },
     autoform: {
       omit: true, // Don't render this field on quickForms

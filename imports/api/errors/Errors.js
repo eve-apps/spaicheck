@@ -1,4 +1,5 @@
-
+import { Mongo } from 'meteor/mongo';
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
 // The Mongo collection to which our schema will be attached
 const Errors = new Mongo.Collection('errors');
@@ -7,14 +8,15 @@ const ErrorMessageSchema = new SimpleSchema({
   createdAt: {
     type: Date,
     // createdAt property is auto-created when an insertion to the db is made
-    autoValue() {
+    autoValue () {
       if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
-        return new Date();
-      } else {
-        this.unset();  // Prevent user from supplying their own value
       }
+      if (this.isUpsert) {
+        return new Date();
+      }
+      this.unset();  // Prevent user from supplying their own value
+      return undefined;
     },
   },
   error: {

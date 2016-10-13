@@ -1,15 +1,14 @@
+import { Meteor } from 'meteor/meteor';
 
+import moment from 'moment';
+import util from 'util';
 
-import _ from 'lodash';
-
-import { eveonlinejs, eveFetch } from '/imports/server/eveFetch';
+import { eveFetch } from '/imports/server/eveFetch';
 
 import Keys from '/imports/api/keys/Keys';
 import Characters from '/imports/api/characters/Characters';
 
-// TODO: Import moment
-
-const insertCharacter = async function insertCharacter(keyID, charID) {
+const insertCharacter = async (keyID, charID) => {
   const vCode = await Keys.findOne({ keyID }).vCode;
 
   console.log('>>>about to fetch from api');
@@ -23,23 +22,23 @@ const insertCharacter = async function insertCharacter(keyID, charID) {
       await Characters.insert(characterInfo);
       return characterInfo.characterName;
     }
-    else {
-      console.log('will not insert character');
-    }
-  }
-  catch (e) {
+
+    console.log('will not insert character');
+    return null;
+  } catch (e) {
     console.error(e);
+    return null;
   }
 };
 
-const detectPrimaryCharacter = async function detectPrimaryCharacter(keyID) {
+const detectPrimaryCharacter = async (keyID) => {
   // Function Declarations
   const findOldestChar = (chars) => {
     let oldestStartDate = moment();
     let oldestChar = null;
 
     chars.forEach((char) => {
-      for (recordID in char.employmentHistory) {
+      char.employmentHistory.keys().forEach((recordID) => {
         const record = char.employmentHistory[recordID];
 
         if (record.corporationID === Meteor.settings.public.corporationID) {
@@ -54,7 +53,7 @@ const detectPrimaryCharacter = async function detectPrimaryCharacter(keyID) {
             oldestChar = char;
           }
         }
-      }
+      });
     });
 
     return oldestChar;
@@ -74,12 +73,12 @@ const detectPrimaryCharacter = async function detectPrimaryCharacter(keyID) {
       if (inCorpList.length > 1) {
         inCorpList = [findOldestChar(inCorpList)];
       }
-      charList = inCorpList.length != 0 ? inCorpList : charList;
+      charList = inCorpList.length !== 0 ? inCorpList : charList;
     }
 
     if (charList.length > 1) {
-      inAllianceList = charList.filter(char => char.allianceID === Meteor.settings.public.allianceID);
-      charList = inAllianceList.length != 0 ? inAllianceList : charList;
+      const inAllianceList = charList.filter(char => char.allianceID === Meteor.settings.public.allianceID);
+      charList = inAllianceList.length !== 0 ? inAllianceList : charList;
     }
 
     if (charList.length > 1) {
@@ -91,7 +90,7 @@ const detectPrimaryCharacter = async function detectPrimaryCharacter(keyID) {
   return primaryChar;
 };
 
-const setPrimaryCharacter = async function (keyID, charName) {
+const setPrimaryCharacter = async (keyID, charName) => {
   await Keys.update(
     { keyID },
     {
@@ -100,13 +99,13 @@ const setPrimaryCharacter = async function (keyID, charName) {
       },
     }
   );
-  console.log(`Primary character for key #${ keyID} has been set to ${ charName}.`);
+  console.log(`Primary character for key #${keyID} has been set to ${charName}.`);
 };
 
-const addKeyCharacters = async function addKeyCharacters(keyID) {
+const addKeyCharacters = async (keyID) => {
   await Characters.remove({ keyID });
 
-  const charactersObj = await Keys.findOne({keyID }).resultBody.characters;
+  const charactersObj = await Keys.findOne({ keyID }).resultBody.characters;
 
   console.warn('before');
   const promises = Object.entries(charactersObj).map((character) => {
@@ -119,7 +118,7 @@ const addKeyCharacters = async function addKeyCharacters(keyID) {
 
   for (let i = 0; i < results.length; i++) {
     const result = results[i];
-    import util from 'util';
+
     console.log(`character #${i}: ${util.inspect(result, false, null)}`);
   }
 
@@ -133,10 +132,10 @@ const addKeyCharacters = async function addKeyCharacters(keyID) {
 
 
 Meteor.methods({
-  addKeyCharactersnction (keyID) {
+  addKeyCharacters: async (keyID) => {
     await addKeyCharacters(keyID);
   },
-  setPrimaryCharacternction (keyID, charName) {
+  setPrimaryCharacter: async (keyID, charName) => {
     await setPrimaryCharacter(keyID, charName);
   },
 });
