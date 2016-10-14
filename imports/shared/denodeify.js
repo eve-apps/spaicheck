@@ -4,7 +4,7 @@
 // https://github.com/matthew-andrews/denodeify/blob/bbc334a90a4b036f491f766ce335fca7bd274109/index.js
 // works in ways that Promise.denodeify does not (meteor-promise-docs shows [Object object]),
 // Probably because the Object type returned doesn't pass the test of `instanceof Promise`
-export const denodeify = function denodeify(nodeStyleFunction, filter) {
+const denodeify = function denodeify(nodeStyleFunction, filter) {
   return function () {
     const self = this;
     const functionArguments = new Array(arguments.length + 1);
@@ -42,6 +42,8 @@ export const denodeify = function denodeify(nodeStyleFunction, filter) {
     return new Promise(promiseHandler);
   };
 };
+
+export default denodeify;
 
 // One does not simply denodeify Meteor.call
 // export const callPromise = denodeify(Meteor.call.bind(Meteor));
