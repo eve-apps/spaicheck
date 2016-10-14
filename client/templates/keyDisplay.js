@@ -170,7 +170,7 @@ Template.changeDetails.helpers({
 Template.keyDisplay.events({
   'click .validate-button': function () {
     // Fetch all keys from the database and validate them
-    // TODO: Use "Async" library to process these in parallel
+    // TODO: Process these in parallel
     Meteor.call('runChecks');
   },
   'click .toggle.changesBtn': function (ev) {
