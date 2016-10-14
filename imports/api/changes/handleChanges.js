@@ -17,7 +17,7 @@ const handleChanges = async (keyID, err, result) => {
   // Build out the newChanges array
   if (err) {
     if (!err.error) {
-      console.log('unhandled error in handleChanges', err);
+      // console.log('unhandled error in handleChanges', err);
       throw err;
     }
     // Push the error, unless it's on the ignoredErrors list

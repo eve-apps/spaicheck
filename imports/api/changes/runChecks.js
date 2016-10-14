@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import Keys from '/imports/api/keys/Keys';
 
-import { validateKey } from '/imports/api/keys/methods';
+import validateKey from '/imports/api/keys/validateKey';
 import handleChanges from './handleChanges';
 
 const runChecks = async () => {
@@ -40,6 +40,7 @@ const runChecks = async () => {
           // FIXME: If handleChanges errors, handleChanges will be run again below
           await handleChanges(curKeys[i].keyID, undefined, result);
         } catch (err) {
+          // FIXME: Remove this
           await handleChanges(curKeys[i].keyID, err, undefined);
         }
         const fnEnd = new Date();

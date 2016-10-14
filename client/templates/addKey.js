@@ -49,7 +49,7 @@ Template.addKey.events({
     event.preventDefault();
 
     const csvData = event.target.csvBox.value;
-    Meteor.call('insertKeysBulk', csvData);
+    Meteor.call('bulkInsertKeys', csvData);
 
     event.target.csvBox.value = '';
   },
