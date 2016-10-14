@@ -40,7 +40,6 @@ const runChecks = async () => {
           // FIXME: If handleChanges errors, handleChanges will be run again below
           await handleChanges(curKeys[i].keyID, undefined, result);
         } catch (err) {
-          // FIXME: Remove this
           await handleChanges(curKeys[i].keyID, err, undefined);
         }
         const fnEnd = new Date();
