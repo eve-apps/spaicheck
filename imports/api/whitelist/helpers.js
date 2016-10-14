@@ -4,10 +4,10 @@ import Whitelist from '/imports/api/whitelist/Whitelist';
 export const getUserCharacter = userId => Meteor.users.findOne(userId).profile.eveOnlineCharacterId;
 
 export const characterIsAdmin = characterID => characterID === Meteor.settings.public.adminID;
-export const userIsAdmin = userId => characterIsAdmin(userCharacter(userId));
+export const userIsAdmin = userId => characterIsAdmin(getUserCharacter(userId));
 
 export const characterIsWhitelisted = characterID => Boolean(Whitelist.findOne({ characterID: String(characterID) }));
-export const userIsWhitelisted = userId => characterIsWhitelisted(userCharacter(userId));
+export const userIsWhitelisted = userId => characterIsWhitelisted(getUserCharacter(userId));
 
 export const getAuthLevel = (user) => {
   if (user) {
