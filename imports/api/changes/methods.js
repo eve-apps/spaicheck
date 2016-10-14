@@ -11,6 +11,8 @@ import Keys from '/imports/api/keys/Keys';
 import Whitelist from '/imports/api/whitelist/Whitelist';
 import Changes from '/imports/api/changes/Changes';
 
+import { validateKey } from '/imports/api/keys/methods';
+
 // Notification base class
 class Notification {
   // constructor() {}
@@ -120,7 +122,7 @@ class ChangeNotificationEmail extends NotificationEmail {
 
     const formatChange = (valueObj) => {
       let data = '';
-      valueObj.keys().forEach((fieldName) => {
+      Object.keys(valueObj).forEach((fieldName) => {
         switch (fieldName) {
           case 'characterName':
             data += `${fieldName}: ${valueObj[fieldName]} <a href="https://zkillboard.com/character/${valueObj.characterID}/">[zKillboard]</a> <a href="http://evewho.com/pilot/${valueObj.characterName.replace(/ /g, '+')}/">[EveWho]</a>\n`;
@@ -164,7 +166,7 @@ class ChangeNotificationEmail extends NotificationEmail {
 }
 
 Meteor.methods({
-  runChecks: () => {
+  async runChecks () {
     console.log('Updating keys...');
     // Fetch all keys from the database and validate them
     const curKeys = Keys.find({}).fetch();
@@ -177,35 +179,40 @@ Meteor.methods({
     }
     for (let i = 0; i < curKeys.length; i++) {
       // Limit calls to 30 per second by staggering them by 1 30th of a second
-      Meteor.setTimeout(() => {
+      Meteor.setTimeout(async () => {
         const fnStart = new Date();
 
         if (curKeys[i].status === 'ERROR') {
-          Meteor.call('validateKey', curKeys[i].keyID, curKeys[i].vCode, (err, result) => {
-            if (!err) {
-              Keys.update({ keyID: curKeys[i].keyID }, {
-                $set: {
-                  resultBody: result,
-                  status: 'GOOD',
-                },
-              });
-            }
-          });
+          try {
+            const result = await validateKey(curKeys[i].keyID, curKeys[i].vCode);
+
+            Keys.update({ keyID: curKeys[i].keyID }, {
+              $set: {
+                resultBody: result,
+                status: 'GOOD',
+              },
+            });
+          } catch (err) {
+            throw err;
+          }
         } else {
           console.log('current key:', curKeys[i]);
-          Meteor.call('validateKey', curKeys[i].keyID, curKeys[i].vCode, (err, result) => {
-            Meteor.call('handleChanges', curKeys[i].keyID, err, result);
-            const fnEnd = new Date();
-            const fnDelta = fnEnd - fnStart;
-            console.log(`Check for key #${curKeys[i].keyID} finished in ${fnDelta}ms`);
-          });
+          try {
+            const result = await validateKey(curKeys[i].keyID, curKeys[i].vCode);
+            Meteor.call('handleChanges', curKeys[i].keyID, undefined, result);
+          } catch (err) {
+            Meteor.call('handleChanges', curKeys[i].keyID, err, undefined);
+          }
+          const fnEnd = new Date();
+          const fnDelta = fnEnd - fnStart;
+          console.log(`Check for key #${curKeys[i].keyID} finished in ${fnDelta}ms`);
         }
       }, curTimeout += Math.ceil(1000 / 30));
 
       console.log(`Will check key #${curKeys[i].keyID} after ${curTimeout}ms...`);
     }
   },
-  handleChanges: (keyID, err, result) => {
+  handleChanges (keyID, err, result) {
     // Create array to hold all changes to key since last check
     const ignoredErrors = ['CONNERR', 'INTERNAL'];
     const newChanges = [];

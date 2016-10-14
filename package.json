@@ -93,7 +93,8 @@
       "space-before-function-paren": [
         "error",
         "always"
-      ]
+      ],
+      "meteor/no-session": "off"
     }
   },
   "devDependencies": {

@@ -38,7 +38,7 @@ const detectPrimaryCharacter = async (keyID) => {
     let oldestChar = null;
 
     chars.forEach((char) => {
-      char.employmentHistory.keys().forEach((recordID) => {
+      Object.keys(char.employmentHistory).forEach((recordID) => {
         const record = char.employmentHistory[recordID];
 
         if (record.corporationID === Meteor.settings.public.corporationID) {

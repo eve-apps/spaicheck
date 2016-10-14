@@ -16,7 +16,7 @@ Meteor.startup(() => {
   }, 360000);
 });
 
-const validateKey = async (keyID, vCode) => {
+export const validateKey = async (keyID, vCode) => {
   let result;
   try {
     result = await eveFetch('account:APIKeyInfo', { keyID, vCode });
@@ -67,8 +67,8 @@ const keyIsDuplicate = async (keyData) => {
   // TODO: Should only have to do a single query to determine this
   // TODO: Maybe disable consistent-return rule
   // eslint-disable-next-line consistent-return
-  if (keyData == null) console.error("keyData is null!");
-  const charIDs = keyData.characters.keys();
+  if (keyData == null) console.error('keyData is null!');
+  const charIDs = Object.keys(keyData.characters);
   for (let i = 0; i < charIDs.length; i++) {
     if (await Characters.findOne({ characterID: Number(charIDs[i]) })) {
       return true;

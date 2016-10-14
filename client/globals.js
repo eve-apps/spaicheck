@@ -1,3 +1,9 @@
+/* global window: true */
+import { Meteor } from 'meteor/meteor';
+import { Session } from 'meteor/session';
+import { Template } from 'meteor/templating';
+
+import moment from 'moment';
 
 
 // TODO: Import moment
@@ -32,8 +38,7 @@ Template.registerHelper('prettyDate', (date) => {
   return moment(date).format('M-D-YYYY h:mmA');
 });
 
-Template.registerHelper('timeAgo', (date) => {
-  date = date || settingsDate;
+Template.registerHelper('timeAgo', (date = window.settingsDate) => {
   Session.get('timer');
   if (Session.get('useEveDurations')) {
     const separator = ' ';
@@ -51,8 +56,7 @@ Template.registerHelper('timeAgo', (date) => {
     if (duration.seconds() > 0) durationArray.push(`${duration.seconds()}s`);
 
     return durationArray.join(separator) + separator + terminator;
-  }
-  else return moment(date).fromNow();
+  } else return moment(date).fromNow();
 });
 
 Template.registerHelper('logThis', function () {
