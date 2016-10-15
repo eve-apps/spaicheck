@@ -4,9 +4,7 @@ import { Session } from 'meteor/session';
 import { Template } from 'meteor/templating';
 
 import moment from 'moment';
-
-
-// TODO: Import moment
+import { getUserCharacterId, getUserCharacterName, userIsAdmin } from '/imports/api/whitelist/helpers';
 
 // Set new thresholds
 moment.relativeTimeThreshold('s', 60);
@@ -16,29 +14,21 @@ moment.relativeTimeThreshold('d', 30);
 moment.relativeTimeThreshold('M', 12);
 
 // Jade shenanigans workaround
-window.settingsDate = new Date();
+const settingsDate = new Date();
 
 /**
  * Helpers
  **/
 
 // Global helper - provide user's character name
-Template.registerHelper('currentCharName', () => {
-  let ref;
-  return (ref = Meteor.user()) != null ? ref.profile.eveOnlineCharacterName : void 0;
-});
+Template.registerHelper('currentCharName', () => getUserCharacterName(Meteor.userId()));
 
 // Global helper - provide user's character ID
-Template.registerHelper('currentCharId', () => {
-  let ref;
-  return (ref = Meteor.user()) != null ? ref.profile.eveOnlineCharacterId : void 0;
-});
+Template.registerHelper('currentCharId', () => getUserCharacterId(Meteor.userId()));
 
-Template.registerHelper('prettyDate', (date) => {
-  return moment(date).format('M-D-YYYY h:mmA');
-});
+Template.registerHelper('prettyDate', date => moment(date).format('M-D-YYYY h:mmA'));
 
-Template.registerHelper('timeAgo', (date = window.settingsDate) => {
+Template.registerHelper('timeAgo', (date = settingsDate) => {
   Session.get('timer');
   if (Session.get('useEveDurations')) {
     const separator = ' ';
@@ -56,18 +46,20 @@ Template.registerHelper('timeAgo', (date = window.settingsDate) => {
     if (duration.seconds() > 0) durationArray.push(`${duration.seconds()}s`);
 
     return durationArray.join(separator) + separator + terminator;
-  } else return moment(date).fromNow();
+  }
+
+  return moment(date).fromNow();
 });
 
-Template.registerHelper('logThis', function () {
-  console.log(this);
-});
+Template.registerHelper('logThis', () => console.log(this));
 
-Template.registerHelper('isAdmin', () => {
-  const result = Meteor.user() && Meteor.user().profile.eveOnlineCharacterId === Meteor.settings.public.adminID;
-  console.log(result);
-  return result;
-});
+Template.registerHelper('isAdmin', () => userIsAdmin(Meteor.userId()));
 
-Meteor.subscribe('authorizedPub');
-Meteor.subscribe('adminPub');
+Meteor.startup(() => {
+  const defaultOptions = {
+    useEveDurations: false,
+  };
+
+  // Load session variables
+  Session.setDefault('useEveDurations', defaultOptions.useEveDurations);
+});

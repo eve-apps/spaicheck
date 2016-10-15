@@ -1,4 +1,8 @@
+/* global window: true */
 
+import { Meteor } from 'meteor/meteor';
+import { $ } from 'meteor/jquery';
+import { Template } from 'meteor/templating';
 
 import { insertColorMarker } from '/imports/shared/colorMarker';
 import { parseChange } from '/imports/shared/parseChange';
@@ -13,19 +17,18 @@ window.Keys = Keys;
  * Shared functions
  **/
 
-const handleDetailsClick = function (evType, ev) {
+const handleDetailsClick = (evType, ev) => {
   if (typeof handleDetailsClick.detailsType === 'undefined') {
     handleDetailsClick.detailsType = 'INITVALUE';
   }
-  handleDetailsClick.swapKeyContent = function (index) {
+  handleDetailsClick.swapKeyContent = (index) => {
     const ch = $(`.changes:eq(${index})`);
     const dt = $(`.details:eq(${index})`);
 
     if (handleDetailsClick.detailsType === 'CHANGES') {
       dt.hide();
       ch.show();
-    }
-    else if (handleDetailsClick.detailsType === 'KEYINFO') {
+    } else if (handleDetailsClick.detailsType === 'KEYINFO') {
       ch.hide();
       dt.show();
     }
@@ -44,22 +47,20 @@ const handleDetailsClick = function (evType, ev) {
     handleDetailsClick.swapKeyContent(clickIndex);
     acc.accordion('open', clickIndex);
     handleDetailsClick.activeIndex = clickIndex;
-  }
-  // The same type of button as before was clicked
-  else if (evType === handleDetailsClick.detailsType) {
-    // Same button as before
+  } else if (evType === handleDetailsClick.detailsType) {
+    // The same type of button as before was clicked
+
     if (clickIndex === handleDetailsClick.activeIndex) {
+      // Same button as before
       acc.accordion('toggle', clickIndex);
-    }
-    // Corresponding button on another row
-    else {
+    } else {
+      // Corresponding button on another row
       handleDetailsClick.swapKeyContent(clickIndex);
       acc.accordion('open', clickIndex);
       handleDetailsClick.activeIndex = clickIndex;
     }
-  }
-  // The other type of button was clicked
-  else {
+  } else {
+    // The other type of button was clicked
     handleDetailsClick.detailsType = evType;
 
     // Other button on same row
@@ -69,15 +70,13 @@ const handleDetailsClick = function (evType, ev) {
         acc.accordion('close', clickIndex);
         Meteor.setTimeout(() => { handleDetailsClick.swapKeyContent(clickIndex); }, 500);
         Meteor.setTimeout(() => { acc.accordion('open', clickIndex); }, 500);
-      }
-      // Pane closed
-      else {
+      } else {
+        // Pane closed
         handleDetailsClick.swapKeyContent(clickIndex);
         acc.accordion('open', clickIndex);
       }
-    }
-    // Other button on different row
-    else {
+    } else {
+      // Other button on different row
       handleDetailsClick.swapKeyContent(clickIndex);
       acc.accordion('open', clickIndex);
       handleDetailsClick.activeIndex = clickIndex;
@@ -103,16 +102,16 @@ Template.keyDisplay.onRendered(() => {
  **/
 
 Template.keyDisplay.helpers({
-  keys() {
+  keys () {
     return Keys.find({});
   },
-  keyInfo() {
+  keyInfo () {
     return Keys.findOne({ keyID: this.keyID });
   },
-  hasChanges() {
+  hasChanges () {
     return Changes.findOne({ keyID: this.keyID }) ? 'toggle' : 'disabled';
   },
-  numChanges() {
+  numChanges () {
     let changeCount = 0;
     const allChanges = Changes.findOne({ keyID: this.keyID });
     if (allChanges) {
@@ -126,39 +125,35 @@ Template.keyDisplay.helpers({
     switch (changeCount) {
       case 0:
         return 'No Changes';
-        break;
       case 1:
         return `${changeCount} Change`;
-        break;
       default:
         return `${changeCount} Changes`;
     }
   },
-  insertColorMarkerHlp(sev) {
-    return insertColorMarker(sev, true);
-  },
+  insertColorMarkerHlp: sev => insertColorMarker(sev, true),
 });
 
 Template.keyDetails.helpers({
-  characters() {
+  characters () {
     return Characters.find({ keyID: this.keyID });
   },
-  isPrimary() {
+  isPrimary () {
     return Keys.findOne({ keyID: this.keyID }).primaryChar === this.characterName;
   },
 });
 
 Template.changeDetails.helpers({
-  keyChanges() {
+  keyChanges () {
     return Changes.find({ keyID: this.keyID });
   },
-  addBottomClass(log) {
+  addBottomClass () {
     Meteor.setTimeout(() => {
       $('.changeDetail:last-child').removeClass('attached')
       .addClass('bottom attached');
     }, 1);
   },
-  parseChangeHlp(changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx, email) {
+  parseChangeHlp (changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx, email) {
     return parseChange(changeType, sev, oldValStr, newValStr, oldValObj, newValObj, ctx, email);
   },
 });
@@ -168,25 +163,25 @@ Template.changeDetails.helpers({
  **/
 
 Template.keyDisplay.events({
-  'click .validate-button': function () {
+  'click .validate-button': () => {
     // Fetch all keys from the database and validate them
     // TODO: Process these in parallel
     Meteor.call('runChecks');
   },
-  'click .toggle.changesBtn': function (ev) {
-    handleDetailsClick('CHANGES', ev);
+  'click .toggle.changesBtn': (event) => {
+    handleDetailsClick('CHANGES', event);
   },
-  'click .toggle.detailsBtn': function (ev) {
-    handleDetailsClick('KEYINFO', ev);
+  'click .toggle.detailsBtn': (event) => {
+    handleDetailsClick('KEYINFO', event);
   },
-  'click .rm-key': function () {
+  'click .rm-key': () => {
     Meteor.call('removeKey', this.keyID);
   },
-  'click .set-primary': function () {
+  'click .set-primary': () => {
     Meteor.call('setPrimaryCharacter', this.keyID, this.characterName);
   },
-  'click .button.reviewed': function (ev) {
-    const keyID = parseInt($(ev.currentTarget).attr('keyid'), 10);
+  'click .button.reviewed': (event) => {
+    const keyID = parseInt($(event.currentTarget).attr('keyid'), 10);
     Meteor.call('acceptChanges', keyID);
   },
 });

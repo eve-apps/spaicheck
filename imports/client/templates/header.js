@@ -1,6 +1,11 @@
+import { Meteor } from 'meteor/meteor';
 
+import { Session } from 'meteor/session';
+import { $ } from 'meteor/jquery';
+import { Template } from 'meteor/templating';
+import { FlowRouter } from 'meteor/kadira:flow-router';
 
-import { whitelistWatch } from '/client/routes';
+import { whitelistWatch } from '/imports/client/whitelistWatch';
 
 /**
  * Page Events
@@ -13,19 +18,19 @@ Template.header.onRendered(() => {
   });
 
   // Settings modal
-  const settingsModal = $('#settings')
+  $('#settings')
     .modal(
     {
       transition: 'fade up',
-      onShow() {
+      onShow () {
         $('#settingsSaved').transition('hide');
       },
-      onHidden() {
+      onHidden () {
         $('#settingsSaved').transition('hide');
       },
     })
     .modal('attach events', '#settingsButton', 'show');
-  $('#settingsButton').on('click', (e) => {
+  $('#settingsButton').on('click', () => {
     headerDropdown.dropdown('hide');
   });
 
@@ -33,21 +38,23 @@ Template.header.onRendered(() => {
   // Fade in when settings change
   // Fade out after 2 seconds of settings not changing
   // If settings change while fading out, stop animation and fade in again
-  const settingsSavedFadeOut = function () {
+  let settingsSavedTimeout = null;
+  let settingsSavedIsFadingOut = false;
+
+  const settingsSavedFadeOut = () => {
     if ($('#settingsSaved').transition('is visible')) {
       settingsSavedIsFadingOut = true;
       $('#settingsSaved').transition({
         animation: 'fade',
         duration: '1s',
-        onComplete() {
+        onComplete () {
           settingsSavedIsFadingOut = false;
         },
       });
     }
   };
-  let settingsSavedTimeout = null;
-  let settingsSavedIsFadingOut = false;
-  const settingsSaved = function () {
+
+  const settingsSaved = () => {
     if ($('#settingsSaved').transition('is animating') && settingsSavedIsFadingOut) {
       $('#settingsSaved').transition('stop all');
       settingsSavedIsFadingOut = false;
@@ -56,7 +63,7 @@ Template.header.onRendered(() => {
       $('#settingsSaved').transition({
         animation: 'fade',
         duration: '1s',
-        onComplete() {
+        onComplete () {
           Meteor.clearTimeout(settingsSavedTimeout);
           settingsSavedTimeout = Meteor.setTimeout(settingsSavedFadeOut, 2000);
         },
@@ -71,17 +78,16 @@ Template.header.onRendered(() => {
   // Settings
   const eveTimeBtn = $('#eveTimeBtn');
   const friendlyTimeBtn = $('#friendlyTimeBtn');
-  const handleTimeFormat = function () {
+  const handleTimeFormat = () => {
     const eveAlreadyActive = Session.get('useEveDurations') && eveTimeBtn.hasClass('active');
     const friendlyAlreadyActive = !Session.get('useEveDurations') && friendlyTimeBtn.hasClass('active');
-    if (eveAlreadyActive || friendlyAlreadyActive) return null;
+    if (eveAlreadyActive || friendlyAlreadyActive) return;
     if (Session.get('useEveDurations')) {
       friendlyTimeBtn.removeClass('active blue');
       friendlyTimeBtn.focusout();
       eveTimeBtn.focus();
       eveTimeBtn.addClass('active blue');
-    }
-    else if (!Session.get('useEveDurations')) {
+    } else if (!Session.get('useEveDurations')) {
       eveTimeBtn.removeClass('active blue');
       eveTimeBtn.focusout();
       friendlyTimeBtn.focus();
@@ -107,7 +113,7 @@ Template.header.onRendered(() => {
  **/
 
 Template.header.events({
-  'click .logout-button': function () {
+  'click .logout-button': () => {
     // Log the user out and redirect them to the landing page
     Meteor.logout(() => {
       // Stop watching for whitelist changes

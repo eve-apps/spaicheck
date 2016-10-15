@@ -1,4 +1,7 @@
+import { Meteor } from 'meteor/meteor';
 
+import { $ } from 'meteor/jquery';
+import { Template } from 'meteor/templating';
 
 import Errors from '/imports/api/errors/Errors';
 
@@ -19,10 +22,10 @@ Template.errorDisplay.onRendered(() => {
  **/
 
 Template.errorDisplay.helpers({
-  errors() {
+  errors () {
     return Errors.find({});
   },
-  keyErrorCount(log) {
+  keyErrorCount (log) {
     return log.length > 1 ? `${log.length} Errors` : `${log.length} Error`;
   },
 });
@@ -32,13 +35,13 @@ Template.errorDisplay.helpers({
  **/
 
 Template.errorDisplay.events({
-  'click .recheck': function () {
+  'click .recheck': () => {
     const doc = {};
     doc.keyID = this.keyID;
     doc.vCode = this.vCode;
     Meteor.call('insertKey', doc);
   },
-  'click .rm-err': function () {
+  'click .rm-err': () => {
     Meteor.call('discardError', this._id);
   },
 });

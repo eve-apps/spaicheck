@@ -1,4 +1,6 @@
-
+import { Tracker } from 'meteor/tracker';
+import { Template } from 'meteor/templating';
+import { $ } from 'meteor/jquery';
 
 import Whitelist from '/imports/api/whitelist/Whitelist';
 
@@ -7,14 +9,14 @@ Template.whitelist.onRendered(() => {
 });
 
 Template.whitelist.helpers({
-  whitelist() {
+  whitelist () {
     return Whitelist.find({});
   },
-  email() {
+  email () {
     const email = this.emailAddress ? this.emailAddress : 'NO EMAIL FOUND';
     return email;
   },
-  setCheckboxState(id, emailAddress, notify) {
+  setCheckboxState (id, emailAddress, notify) {
     Tracker.afterFlush(() => {
       const cb = $(`.email-notify:has(input[id="${id}"])`);
 
@@ -26,11 +28,11 @@ Template.whitelist.helpers({
 });
 
 Template.whitelist.events({
-  'click .rm-member': function () {
+  'click .rm-member': () => {
     Whitelist.remove(this._id);
   },
-  'click .email-notify': function () {
-    if (this.notify != undefined) {
+  'click .email-notify': () => {
+    if (this.notify !== null && this.notify !== undefined) {
       Whitelist.update(this._id, { $set: { notify: !this.notify } });
     }
   },

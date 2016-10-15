@@ -1,4 +1,9 @@
+/* global window: true */
 
+import { Meteor } from 'meteor/meteor';
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { AutoForm } from 'meteor/aldeed:autoform';
+import { Template } from 'meteor/templating';
 
 /* AddKeyFormSchema is for prevalidation only, to determine if it's worth making an API call.
   KeySchema can't be used because during prevalidation, some required properties don't exist
@@ -24,7 +29,7 @@ AutoForm.hooks({
   insertKeyForm: {
     // "before" hook is run before the form is submitted, before db insertion
     before: {
-      method(doc) {
+      method (doc) {
         // Prevent the page from reloading on submission
         this.event.preventDefault();
 
@@ -45,12 +50,13 @@ AutoForm.hooks({
  **/
 
 Template.addKey.events({
-  'submit .csv': function (event) {
+  'submit .csv': (event) => {
     event.preventDefault();
 
     const csvData = event.target.csvBox.value;
     Meteor.call('bulkInsertKeys', csvData);
 
+    // eslint-disable-next-line no-param-reassign
     event.target.csvBox.value = '';
   },
 });
