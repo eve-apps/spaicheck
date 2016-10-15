@@ -2,8 +2,6 @@ import { Meteor } from 'meteor/meteor';
 
 import _ from 'lodash';
 
-import process from 'process';
-
 Meteor.startup(() => {
   // TODO: Don't assume settings are defined
   process.env.ROOT_URL = Meteor.settings.private.rootUrl;
