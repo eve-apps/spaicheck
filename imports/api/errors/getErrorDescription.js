@@ -1,5 +1,5 @@
 const getErrorDescription = (error) => {
-  switch (error.error) {
+  switch (error) {
     case 'INTERNAL':
       return 'Internal error.';
     case 'CONNERR':
@@ -19,6 +19,7 @@ const getErrorDescription = (error) => {
     case 'EXPIRES':
       return 'Key is set to expire.';
     case 'UNHANDLED':
+      // FIXME: Need to pass API error code in somehow
       return `Unhandled API error code ${error.errCode}.`;
     default:
       return 'Unknown error type.';

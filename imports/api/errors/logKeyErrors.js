@@ -19,7 +19,7 @@ const logKeyErrors = (keyID, vCode, error) => {
         },
         $addToSet: {
           log: {
-            error: singleError.error,
+            error: singleError,
             reason,
           },
         },
@@ -43,7 +43,7 @@ const logKeyErrors = (keyID, vCode, error) => {
     );
 
     console.log(`Key ${keyID} with vCode ${vCode} threw the following error:`);
-    console.log(`[${singleError.error}] ${reason}`);
+    console.log(`[${singleError}] ${reason}`);
   });
 };
 
