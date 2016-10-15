@@ -174,7 +174,7 @@ Template.keyDisplay.events({
   'click .toggle.detailsBtn': (event) => {
     handleDetailsClick('KEYINFO', event);
   },
-  'click .rm-key': () => {
+  'click .rm-key': function removeKey () {
     Meteor.call('removeKey', this.keyID);
   },
   'click .set-primary': () => {
