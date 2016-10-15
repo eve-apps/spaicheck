@@ -4,20 +4,8 @@ import Keys from '/imports/api/keys/Keys';
 import Characters from '/imports/api/characters/Characters';
 import Changes from '/imports/api/changes/Changes';
 
-import runChecks from '/imports/api/changes/runChecks';
 import insertKey from './insertKey';
 import bulkInsertKeys from './bulkInsertKeys';
-
-
-Meteor.startup(async () => {
-  // Run initial startup check on all Keys
-  await runChecks();
-  // Run validation checks on all keys every 6 minutes
-  Meteor.setInterval(async () => {
-    await runChecks();
-  }, 360000);
-});
-
 
 Meteor.methods({
   insertKey: async doc => await insertKey(doc),
