@@ -177,7 +177,7 @@ Template.keyDisplay.events({
   'click .rm-key': function removeKey () {
     Meteor.call('removeKey', this.keyID);
   },
-  'click .set-primary': () => {
+  'click .set-primary': function setPrimaryCharacter () {
     Meteor.call('setPrimaryCharacter', this.keyID, this.characterName);
   },
   'click .button.reviewed': (event) => {
