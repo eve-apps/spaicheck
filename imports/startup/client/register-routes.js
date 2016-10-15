@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
-import { AccountsCommon } from 'meteor/accounts-base';
+import { Accounts } from 'meteor/accounts-base';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { BlazeLayout } from 'meteor/kadira:blaze-layout';
 
@@ -14,7 +14,7 @@ import { enableWhitelistWatch } from '/imports/client/whitelistWatch';
 
 // TODO: Rewrite this
 // Redirect to home route on login
-AccountsCommon.onLogin(() => {
+Accounts.onLogin(() => {
   if (!Session.get('loginRedirected')) {
     // Go to the app's home page
     FlowRouter.go(FlowRouter.path('home'));
