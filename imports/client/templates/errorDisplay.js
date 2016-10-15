@@ -35,13 +35,13 @@ Template.errorDisplay.helpers({
  **/
 
 Template.errorDisplay.events({
-  'click .recheck': () => {
+  'click .recheck': function recheckKey () {
     const doc = {};
     doc.keyID = this.keyID;
     doc.vCode = this.vCode;
     Meteor.call('insertKey', doc);
   },
-  'click .rm-err': () => {
+  'click .rm-err': function removeError () {
     Meteor.call('discardError', this._id);
   },
 });

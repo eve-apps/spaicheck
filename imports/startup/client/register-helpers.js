@@ -51,7 +51,7 @@ Template.registerHelper('timeAgo', (date = settingsDate) => {
   return moment(date).fromNow();
 });
 
-Template.registerHelper('logThis', () => console.log(this));
+Template.registerHelper('logThis', function logThis () { console.log(this); });
 
 Template.registerHelper('isAdmin', () => userIsAdmin(Meteor.userId()));
 
