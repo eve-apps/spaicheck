@@ -55,11 +55,9 @@ Template.registerHelper('logThis', function logThis () { console.log(this); });
 
 Template.registerHelper('isAdmin', () => userIsAdmin(Meteor.userId()));
 
-Meteor.startup(() => {
-  const defaultOptions = {
-    useEveDurations: false,
-  };
+const defaultOptions = {
+  useEveDurations: false,
+};
 
-  // Load session variables
-  Session.setDefault('useEveDurations', defaultOptions.useEveDurations);
-});
+// Load session variables
+Session.setDefault('useEveDurations', defaultOptions.useEveDurations);

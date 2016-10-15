@@ -1,9 +1,8 @@
-import { Meteor } from 'meteor/meteor';
 import { Email } from 'meteor/email';
 import { JobCollection } from 'meteor/vsivsi:job-collection';
 
 export const emailJobs = new JobCollection('emailJobs');
-Meteor.startup(() => emailJobs.startJobServer());
+emailJobs.startJobServer();
 
 export const emailQueue = emailJobs.processJobs('sendEmail', { workTimeout: 60 * 60 * 1000 }, (job, cb) => {
   const email = job.data;
