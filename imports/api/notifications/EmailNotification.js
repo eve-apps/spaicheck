@@ -33,6 +33,7 @@ export default class EmailNotification extends Notification {
     console.log(target);
 
     _.forEach(target, (address) => {
+      console.log(`---\nSending email notification to ${address} with subject "${this.subject}" and body:\n\n${this.body}\n\n---`);
       new Job(emailJobs, 'sendEmail', {
         to: address,
         subject: this.subject,

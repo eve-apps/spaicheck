@@ -9,26 +9,26 @@ import ChangeEmailNotification from '/imports/api/notifications/ChangeEmailNotif
 import addKeyCharacters from '/imports/api/characters/addKeyCharacters';
 
 // TODO: Break this up further
-const handleChanges = async (keyID, err, result) => {
+const handleChanges = async (keyID, error, result) => {
   // Create array to hold all changes to key since last check
   const ignoredErrors = ['CONNERR', 'INTERNAL'];
   const newChanges = [];
 
   // Build out the newChanges array
-  if (err) {
-    if (!err.error) {
-      // console.log('unhandled error in handleChanges', err);
-      throw err;
-    }
-    // Push the error, unless it's on the ignoredErrors list
-    if (ignoredErrors.indexOf(err.error) > -1) console.log(err); // Connection errors etc are logged to console and ignored
-    // Handle corporation check failures; all failed checks are iterated over and each represents a separate change
-    else if (err.error.indexOf(',') > -1) {
-      for (const flag of err.error.split(', ')) {
-        newChanges.push({ changeType: flag, severity: 'ERROR' });
+  if (error) {
+    if (error.apiError) {
+      console.log(`${error.code}: ${error.apiError}`);
+
+      // TODO: Give feedback to user for ignored errors
+      // FIXME: This doesn't actually ignore the error
+      // Connection errors etc are logged to console and ignored
+      // Push the error if it's not on the ignoredErrors list
+      if (!(ignoredErrors.indexOf(error.apiError) > -1)) {
+        newChanges.push({ changeType: error.apiError, severity: 'ERROR' });
       }
     } else {
-      newChanges.push({ changeType: err.error, severity: 'ERROR' });
+      // Handle corporation check failures; all failed checks are iterated over and each represents a separate change
+      error.flags.forEach(flag => newChanges.push({ changeType: flag, severity: 'ERROR' }));
     }
   } else {
     // Handle changes that don't invalidate the key
@@ -109,7 +109,7 @@ const handleChanges = async (keyID, err, result) => {
       await addKeyCharacters(keyID);
     }
   }
-  if (newChanges.length !== 0) {
+  if (newChanges.length) {
     console.log('New changes:', newChanges);
 
     Changes.update(

@@ -1,14 +1,19 @@
 import Errors from '/imports/api/errors/Errors';
+import humanize from 'humanize-plus';
+import chalk from 'chalk';
+
+import { capVCode } from '/imports/shared/vCodeHelpers';
 
 import getErrorDescription from './getErrorDescription';
 
-const logKeyErrors = (keyID, vCode, error) => {
+chalk.enabled = true;
+
+const logKeyErrors = (keyID, vCode, errors) => {
   // Handle failed corp checks, which need to be logged as separate errors
 
-  const errors = (error.error.indexOf(', ') > -1) ? error.error.split(', ') : [error.error];
-
-  errors.forEach((singleError) => {
-    const reason = getErrorDescription(singleError);
+  console.log(`Key ${keyID} with vCode ${capVCode(vCode)} has ${chalk.yellow(errors.length)} ${chalk.yellow(humanize.pluralize(errors.length, 'issue'))}:`);
+  errors.forEach((error) => {
+    const reason = getErrorDescription(error);
 
     Errors.update(
       { keyID },
@@ -19,7 +24,7 @@ const logKeyErrors = (keyID, vCode, error) => {
         },
         $addToSet: {
           log: {
-            error: singleError,
+            error,
             reason,
           },
         },
@@ -42,8 +47,7 @@ const logKeyErrors = (keyID, vCode, error) => {
       }
     );
 
-    console.log(`Key ${keyID} with vCode ${vCode} threw the following error:`);
-    console.log(`[${singleError}] ${reason}`);
+    console.log(chalk.yellow(`- [${error}] ${reason}`));
   });
 };
 

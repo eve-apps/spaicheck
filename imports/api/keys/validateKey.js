@@ -1,5 +1,3 @@
-import { Meteor } from 'meteor/meteor';
-
 import _ from 'lodash';
 
 import { eveFetch } from '/imports/server/eveFetch';
@@ -9,22 +7,24 @@ const validateKey = async (keyID, vCode) => {
   try {
     result = await eveFetch('account:APIKeyInfo', { keyID, vCode });
   } catch (err) {
+    // FIXME: I don't think err.code is ever defined, which causes MALFORMEDKEY, etc. to be reported as CONNERR
     // Handle API errors here
+    let apiError;
     if (err.code) {
       switch (err.code) {
         case '203':
-          err.error = 'MALFORMEDKEY';
+          apiError = 'MALFORMEDKEY';
           break;
         case '222':
-          err.error = 'INVALIDKEY';
+          apiError = 'INVALIDKEY';
           break;
         default:
-          err.error = 'UNHANDLED';
+          apiError = 'UNHANDLED';
       }
-    } else if (err.response) err.error = 'CONNERR';
-    else err.error = 'INTERNAL';
+    } else if (err.response) apiError = 'CONNERR';
+    else apiError = 'INTERNAL';
 
-    throw new Meteor.Error(err.error);
+    return { apiError, apiErrorCode: err.code };
   }
 
   const statusFlags = [];
@@ -32,10 +32,11 @@ const validateKey = async (keyID, vCode) => {
   // Handle specific corporation requirements here
   if (result.type === 'Character') statusFlags.push('SINGLECHAR');
   if (result.type === 'Corporation') statusFlags.push('CORPKEY');
-  if (!(result.accessMask === '1073741823' || result.accessMask === '4294967295')) statusFlags.push('BADMASK');
+  if (!(result.accessMask === '1073741823' ||
+    result.accessMask === '4294967295')) statusFlags.push('BADMASK');
   if (result.expires !== '') statusFlags.push('EXPIRES');
 
-  if (statusFlags.length) throw new Meteor.Error(statusFlags.join(', '));
+  if (statusFlags.length) return { flags: statusFlags };
 
   // No checks have failed at this point, the key is sufficient to join the corporation.
   // Prepare the key info for insertion in the db
@@ -48,7 +49,7 @@ const validateKey = async (keyID, vCode) => {
   result.characters = characters;
 
   // If no error was produced, return the result because the API key exists
-  return result;
+  return { result };
 };
 
 export default validateKey;
