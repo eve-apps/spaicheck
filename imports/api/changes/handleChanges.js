@@ -7,6 +7,7 @@ import Changes from '/imports/api/changes/Changes';
 import ChangeEmailNotification from '/imports/api/notifications/ChangeEmailNotification';
 
 import addKeyCharacters from '/imports/api/characters/addKeyCharacters';
+import describeKey from '/imports/api/keys/describeKey';
 
 const getLastChanges = async (keyID) => {
   const c = await Changes.findOne({ keyID });
@@ -179,7 +180,7 @@ const handleChanges = async (keyID, error, result) => {
       email.send();
     }
   } else {
-    console.log('No new changes');
+    console.log(`No new changes for ${describeKey(Keys.findOne({ keyID }))}`);
   }
 };
 

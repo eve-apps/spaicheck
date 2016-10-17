@@ -1,6 +1,7 @@
 import Keys from '/imports/api/keys/Keys';
 
 import validateKey from '/imports/api/keys/validateKey';
+import describeKey from '/imports/api/keys/describeKey';
 import handleChanges from './handleChanges';
 
 // Sets the status of a key to GOOD
@@ -17,7 +18,7 @@ const checkKey = async (key) => {
   try {
     const fnStart = new Date();
 
-    console.log('current key:', key);
+    console.log(`Checking ${describeKey(key)}...`);
 
     const { result, ...error } = await validateKey(key.keyID, key.vCode);
     if (result) {
@@ -29,7 +30,7 @@ const checkKey = async (key) => {
     }
     const fnEnd = new Date();
     const fnDelta = fnEnd - fnStart;
-    console.log(`Check for key #${key.keyID} finished in ${fnDelta}ms`);
+    console.log(`Check for ${describeKey(key)} finished in ${fnDelta}ms`);
   } catch (err) {
     console.error(`Error in checkKey: ${err.stack}`);
   }
