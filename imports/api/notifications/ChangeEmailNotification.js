@@ -2,7 +2,6 @@ import { Meteor } from 'meteor/meteor';
 
 import _ from 'lodash';
 import humanize from 'humanize-plus';
-import util from 'util';
 
 import ttp from '/imports/shared/trimTrailingPunctuation';
 import getIssueDesc from '/imports/shared/getIssueDescription';
