@@ -24,8 +24,6 @@ const handleChanges = async (keyID, error, result) => {
   if (error) {
     const lastChanges = await getLastChanges(keyID);
     if (error.apiError) {
-      console.log(`${error.code}: ${error.apiError}`);
-
       // TODO: Give feedback to user for ignored errors
       // Connection errors etc are logged to console and ignored
       // Push the error if it's not on the ignoredErrors list
@@ -35,6 +33,12 @@ const handleChanges = async (keyID, error, result) => {
         if (!_.some(lastChanges, newChange)) {
           newChanges.push(newChange);
         }
+      } else if (error.code != null) {
+        // MALFORMEDKEY, INVALIDKEY, or UNHANDLED
+        console.log(`${error.code}: ${error.apiError} APIERROR`);
+      } else {
+        // INTERNAL or CONNERR
+        console.warn(`${error.apiError} APIERROR`);
       }
     } else {
       // Handle corporation check failures; all failed checks are iterated over and each represents a separate change
