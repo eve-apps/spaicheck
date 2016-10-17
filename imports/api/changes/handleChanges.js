@@ -8,6 +8,12 @@ import ChangeEmailNotification from '/imports/api/notifications/ChangeEmailNotif
 
 import addKeyCharacters from '/imports/api/characters/addKeyCharacters';
 
+const getLastChanges = async (keyID) => {
+  const c = await Changes.findOne({ keyID });
+  if (c == null || !c.log.length) return [];
+  return c.log[c.log.length - 1].changes;
+};
+
 // TODO: Break this up further
 const handleChanges = async (keyID, error, result) => {
   // Create array to hold all changes to key since last check
@@ -16,19 +22,29 @@ const handleChanges = async (keyID, error, result) => {
 
   // Build out the newChanges array
   if (error) {
+    const lastChanges = await getLastChanges(keyID);
     if (error.apiError) {
       console.log(`${error.code}: ${error.apiError}`);
 
       // TODO: Give feedback to user for ignored errors
-      // FIXME: This doesn't actually ignore the error
       // Connection errors etc are logged to console and ignored
       // Push the error if it's not on the ignoredErrors list
       if (!(ignoredErrors.indexOf(error.apiError) > -1)) {
-        newChanges.push({ changeType: error.apiError, severity: 'ERROR' });
+        const newChange = { changeType: error.apiError, severity: 'ERROR' };
+        // Push the change if it's new
+        if (!_.some(lastChanges, newChange)) {
+          newChanges.push(newChange);
+        }
       }
     } else {
       // Handle corporation check failures; all failed checks are iterated over and each represents a separate change
-      error.flags.forEach(flag => newChanges.push({ changeType: flag, severity: 'ERROR' }));
+      error.flags.forEach((flag) => {
+        const newChange = { changeType: flag, severity: 'ERROR' };
+        // Push the change if it's new
+        if (!_.some(lastChanges, newChange)) {
+          newChanges.push(newChange);
+        }
+      });
     }
   } else {
     // Handle changes that don't invalidate the key
