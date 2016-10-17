@@ -40,7 +40,7 @@ rules:
   meteor/audit-argument-checks: 'off'
   # Set max line length to 100 and just a warning
   max-len:
-  - warn
+  - off
   - code: 100
     tabWidth: 2
   # Require a space before function parenthesis
