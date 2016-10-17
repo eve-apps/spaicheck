@@ -26,14 +26,13 @@ export default class EmailNotification extends Notification {
     }
 
     if (!target.length) {
-      console.warn('No recipients for notification!');
+      console.warn('No recipients for email notification.');
       return;
     }
 
-    console.log(target);
+    console.log(`Sending email notification to: ${target}`);
 
     _.forEach(target, (address) => {
-      console.log(`---\nSending email notification to ${address} with subject "${this.subject}" and body:\n\n${this.body}\n\n---`);
       new Job(emailJobs, 'sendEmail', {
         to: address,
         subject: this.subject,

@@ -145,7 +145,7 @@ const handleChanges = async (keyID, error, result) => {
       },
     });
 
-    let shouldNotify = null;
+    let shouldNotify = false;
     for (const change of newChanges) {
       if (!_.includes(['leaveAlliance', 'joinAlliance', 'switchAlliance'], change.changeType)) {
         shouldNotify = true;

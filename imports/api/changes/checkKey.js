@@ -14,21 +14,25 @@ const markGood = async (keyID, resultBody) => {
 };
 
 const checkKey = async (key) => {
-  const fnStart = new Date();
+  try {
+    const fnStart = new Date();
 
-  console.log('current key:', key);
+    console.log('current key:', key);
 
-  const { result, ...error } = await validateKey(key.keyID, key.vCode);
-  if (result) {
-    if (key.status === 'ERROR') await markGood(key.keyID, result);
+    const { result, ...error } = await validateKey(key.keyID, key.vCode);
+    if (result) {
+      if (key.status === 'ERROR') await markGood(key.keyID, result);
 
-    await handleChanges(key.keyID, null, result);
-  } else {
-    await handleChanges(key.keyID, error, null);
+      await handleChanges(key.keyID, null, result);
+    } else {
+      await handleChanges(key.keyID, error, null);
+    }
+    const fnEnd = new Date();
+    const fnDelta = fnEnd - fnStart;
+    console.log(`Check for key #${key.keyID} finished in ${fnDelta}ms`);
+  } catch (err) {
+    console.error(`Error in checkKey: ${err.stack}`);
   }
-  const fnEnd = new Date();
-  const fnDelta = fnEnd - fnStart;
-  console.log(`Check for key #${key.keyID} finished in ${fnDelta}ms`);
 };
 
 export default checkKey;

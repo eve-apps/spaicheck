@@ -4,7 +4,7 @@ import chalk from 'chalk';
 
 import { capVCode } from '/imports/shared/vCodeHelpers';
 
-import getErrorDescription from './getErrorDescription';
+import getIssueDesc from '/imports/shared/getIssueDescription';
 
 chalk.enabled = true;
 
@@ -13,7 +13,7 @@ const logKeyErrors = (keyID, vCode, errors) => {
 
   console.log(`Key ${keyID} with vCode ${capVCode(vCode)} has ${chalk.yellow(errors.length)} ${chalk.yellow(humanize.pluralize(errors.length, 'issue'))}:`);
   errors.forEach((error) => {
-    const reason = getErrorDescription(error);
+    const reason = getIssueDesc(error, true);
 
     Errors.update(
       { keyID },

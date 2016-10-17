@@ -2,7 +2,10 @@ import { Meteor } from 'meteor/meteor';
 
 import _ from 'lodash';
 import humanize from 'humanize-plus';
+import util from 'util';
 
+import ttp from '/imports/shared/trimTrailingPunctuation';
+import getIssueDesc from '/imports/shared/getIssueDescription';
 import EmailNotification from './EmailNotification';
 
 export default class ChangeEmailNotification extends EmailNotification {
@@ -35,58 +38,48 @@ export default class ChangeEmailNotification extends EmailNotification {
 
     let result = invalidating ? `${primaryChar}'s key is no longer valid: ` : `Update on ${primaryChar}'s account: `;
 
-    let noTail = false;
-    switch (mainChange.changeType) {
-      case 'addCharacter':
-        result += `Character "${mainChange.newValueObj.characterName}" has been created`;
-        break;
-      case 'removeCharacter':
-        result += `Character "${mainChange.oldValueObj.characterName}" has been removed`;
-        break;
-      case 'joinCorp':
-        result += `Character "${mainChange.newValueObj.characterName}" has joined the "${mainChange.newValueObj.corporationName}" corporation`;
-        break;
-      case 'leaveCorp':
-        result += `Character "${mainChange.oldValueObj.characterName}" has left the "${mainChange.oldValueObj.corporationName}" corporation`;
-        break;
-      case 'switchCorp':
-        result += `Character "${mainChange.oldValueObj.characterName}" has left the "${mainChange.oldValueObj.corporationName}" corporation to join "${mainChange.newValueObj.corporationName}"`;
-        break;
-      case 'INVALIDKEY':
-        result += 'Key has expired or been deleted';
-        break;
-      case 'SINGLECHAR':
-        result += 'Key now only provides info about a single character';
-        break;
-      case 'BADMASK':
-        result += 'Key no longer provides all permissions';
-        break;
-      case 'EXPIRES':
-        result += 'Key has been set to expire';
-        break;
-      case 'MALFORMEDKEY':
-        result += 'Key\'s verification code has changed';
-        break;
-      case 'CORPKEY':
-        result += 'Key is now a corporation key, not a player key';
-        break;
-      default:
-        result += `${changes.length} ${humanize.pluralize(changes.length, 'change')}`;
-        noTail = true;
-    }
+    result += ttp(ChangeEmailNotification.getChangeDesc(mainChange));
 
-    if (!noTail && changes.length > 1) {
+    if (changes.length > 1) {
       result += `, and ${changes.length - 1} more ${humanize.pluralize(changes.length - 1, 'change')}`;
     }
-    // 'leaveAlliance'
-    // 'joinAlliance'
-    // 'switchAlliance'
 
     return result;
   }
 
-  static formatChange (valueObj) {
-    let data = '';
+  // A thin wrapper around getIssueDesc that passes along the issue data
+  static getChangeDesc (change) {
+    switch (change.changeType) {
+      case 'addCharacter':
+      case 'removeCharacter':
+        return getIssueDesc(change.changeType, false, {
+          characterName: change.newValueObj.characterName,
+        });
+      case 'joinCorp':
+      case 'leaveCorp':
+        return getIssueDesc(change.changeType, false, {
+          characterName: change.newValueObj.characterName,
+          corporationName: change.newValueObj.corporationName,
+        });
+      case 'switchCorp':
+        return getIssueDesc(change.changeType, false, {
+          characterName: change.newValueObj.characterName,
+          oldCorporationName: change.oldValueObj.corporationName,
+          newCorporationName: change.newValueObj.corporationName,
+        });
+      default:
+        return getIssueDesc(change.changeType, false);
+    }
+  }
+
+  static formatChangeDetails (change) {
+    // Used to print additional information about a change
+    const valueObj = change.newValueObj || change.oldValueObj;
+
+    // Just return an empty string if there are no details to format
+    if (!valueObj) return '';
+
+    let data = '\n------------------------------\n';
     Object.keys(valueObj).forEach((fieldName) => {
       switch (fieldName) {
         case 'characterName':
@@ -107,18 +100,13 @@ export default class ChangeEmailNotification extends EmailNotification {
 
   static constructBody (changes, primaryChar) {
     const divider = '\n______________________________\n';
-    const softDivider = '\n------------------------------\n';
 
     let content = '';
-    let data = '';
 
     for (const change of changes) {
-      const valueObj = change.newValueObj || change.oldValueObj;
+      const changeData = ChangeEmailNotification.formatChangeDetails(change);
 
-      data += ChangeEmailNotification.formatChange(valueObj);
-
-      content += `${divider}Change Type: ${change.changeType}${softDivider}${data}`;
-      data = '';
+      content += `${divider}${change.changeType}: ${ChangeEmailNotification.getChangeDesc(change)} ${changeData}`;
     }
 
     content += `\n\n<a href="${Meteor.absoluteUrl('app/home')}">Visit Spaicheck for more information.</a>`;
