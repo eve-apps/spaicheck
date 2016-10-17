@@ -1,9 +1,7 @@
-
-
 import { insertChangeLabel } from '/imports/shared/changeLabel';
 import { insertColorMarker } from '/imports/shared/colorMarker';
 
-export const parseChange = (changeType, severity, oldValStr, newValStr, oldValObj, newValObj, ctx, forEmail) => {
+const parseChange = (changeType, severity, oldValStr, newValStr, oldValObj, newValObj, ctx, forEmail) => {
   const newVal = newValStr || newValObj || null;
   const oldVal = oldValStr || oldValObj || null;
 
@@ -61,3 +59,5 @@ export const parseChange = (changeType, severity, oldValStr, newValStr, oldValOb
   const dispStr = `${forEmail ? insertColorMarker(severity) : insertChangeLabel(changeType, severity)}<span class="change-text">${contentStr}</span>`;
   return dispStr;
 };
+
+export default parseChange;

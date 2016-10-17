@@ -1,6 +1,4 @@
-
-
-export const insertChangeLabel = (changeType, severity) => {
+const insertChangeLabel = (changeType, severity) => {
   let severityColor = '';
   let severityTitle = '';
 
@@ -23,3 +21,5 @@ export const insertChangeLabel = (changeType, severity) => {
 
   return `<div class="ui ${severityColor} basic label change-label" title="${severityTitle}">${changeType}</div>`;
 };
+
+export default insertChangeLabel;

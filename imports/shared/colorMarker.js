@@ -2,7 +2,7 @@
 
 const colorMarker = '&#9679';
 
-export const insertColorMarker = (severity) => {
+const insertColorMarker = (severity) => {
   let severityColor = '';
   let titleStr = '';
 
@@ -28,3 +28,5 @@ export const insertColorMarker = (severity) => {
 
   return colorMarkerStr;
 };
+
+export default insertColorMarker;
