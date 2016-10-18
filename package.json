@@ -4,6 +4,7 @@
   "description": "EVE Online companion app to help corporations detect spais ",
   "main": "index.js",
   "scripts": {
+    "start": "meteor --settings settings.json",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "pretest": "npm run lint --silent"
