@@ -12,7 +12,7 @@ const insertKey = async (doc) => {
   const { result, ...error } = await validateKey(doc.keyID, doc.vCode);
   if (result) {
     if (await keyIsDuplicate(result)) {
-      await logKeyErrors(doc.keyID, doc.vCode, ['EXISTINGKEY']);
+      await logKeyErrors(doc.keyID, doc.vCode, { type: 'EXISTINGKEY' });
       return false;
     }
 
@@ -27,14 +27,8 @@ const insertKey = async (doc) => {
     return true;
   }
 
-  // API error
-  if (error.apiError) {
-    await logKeyErrors(doc.keyID, doc.vCode, [error.apiError]);
-    return false;
-  }
-
-  // Corp requirement failed
-  await logKeyErrors(doc.keyID, doc.vCode, error.flags);
+  // API error or corp requirement failed
+  await logKeyErrors(doc.keyID, doc.vCode, error);
   return false;
 };
 

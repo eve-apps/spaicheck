@@ -30,11 +30,18 @@ const validateKey = async (keyID, vCode) => {
   const statusFlags = [];
 
   // Handle specific corporation requirements here
-  if (result.type === 'Character') statusFlags.push('SINGLECHAR');
-  if (result.type === 'Corporation') statusFlags.push('CORPKEY');
+  if (result.type === 'Character') statusFlags.push({ type: 'SINGLECHAR' });
+  if (result.type === 'Corporation') statusFlags.push({ type: 'CORPKEY' });
   if (!(result.accessMask === '1073741823' ||
-    result.accessMask === '4294967295')) statusFlags.push('BADMASK');
-  if (result.expires !== '') statusFlags.push('EXPIRES');
+    result.accessMask === '4294967295')) statusFlags.push({ type: 'BADMASK' });
+  if (result.expires !== '') {
+    statusFlags.push({
+      type: 'EXPIRES',
+      data: {
+        expirationDate: result.expires,
+      },
+    });
+  }
 
   if (statusFlags.length) return { flags: statusFlags };
 
