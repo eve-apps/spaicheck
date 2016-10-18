@@ -143,6 +143,7 @@ const handleChanges = async (keyID, error, result) => {
           log: {
             changes: newChanges,
             createdAt: new Date(),
+            reviewed: false,
           },
         },
       },

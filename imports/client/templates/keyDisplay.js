@@ -4,10 +4,12 @@ import { Meteor } from 'meteor/meteor';
 import { $ } from 'meteor/jquery';
 import { Template } from 'meteor/templating';
 
+import _ from 'lodash';
+
 import insertColorMarker from '/imports/shared/colorMarker';
 import parseChange from '/imports/shared/parseChange';
 
-import Changes from '/imports/api/changes/Changes';
+import getUnreviewedChanges from '/imports/api/changes/getUnreviewedChanges';
 import Characters from '/imports/api/characters/Characters';
 import Keys from '/imports/api/keys/Keys';
 
@@ -109,18 +111,14 @@ Template.keyDisplay.helpers({
     return Keys.findOne({ keyID: this.keyID });
   },
   hasChanges () {
-    return Changes.findOne({ keyID: this.keyID }) ? 'toggle' : 'disabled';
+    return getUnreviewedChanges(this.keyID).length ? 'toggle' : 'disabled';
   },
   numChanges () {
     let changeCount = 0;
-    const allChanges = Changes.findOne({ keyID: this.keyID });
-    if (allChanges) {
-      const changeLog = allChanges.log;
-      changeLog.forEach((changesObj) => {
-        changesObj.changes.forEach(() => {
-          changeCount++;
-        });
-      });
+    const c = getUnreviewedChanges(this.keyID);
+    // TODO: Fix summing
+    if (c.length) {
+      changeCount = _.sum(c[0].log.map(logObj => logObj.changes.length));
     }
     switch (changeCount) {
       case 0:
@@ -145,7 +143,7 @@ Template.keyDetails.helpers({
 
 Template.changeDetails.helpers({
   keyChanges () {
-    return Changes.find({ keyID: this.keyID });
+    return getUnreviewedChanges(this.keyID);
   },
   addBottomClass () {
     Meteor.setTimeout(() => {

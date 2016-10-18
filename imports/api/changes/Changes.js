@@ -59,6 +59,9 @@ const ChangeObjectSchema = new SimpleSchema({
   changes: {
     type: [SingleChangeSchema],
   },
+  reviewed: {
+    type: Boolean,
+  },
 });
 
 const ChangeSchema = new SimpleSchema({
