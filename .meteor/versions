@@ -42,7 +42,6 @@ ecmascript@0.5.8_1
 ecmascript-runtime@0.3.14_1
 ejson@1.0.12
 email@1.1.17_1
-erasaur:meteor-lodash@3.10.1_1
 es5-shim@4.6.14_1
 fastclick@1.0.12
 geojson-utils@1.0.9
@@ -64,7 +63,6 @@ logging@1.1.15_1
 mdg:validation-error@0.2.0
 meteor@1.2.17_1
 meteor-base@1.0.4
-meteorhacks:async@1.0.0
 minifier-css@1.1.13
 minifier-js@1.2.14_1
 minifiers@1.1.7

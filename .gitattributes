@@ -1,2 +1,2 @@
 # Perform LF normalization on all text files
-* text=auto
+* text eol=lf

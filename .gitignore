@@ -5,3 +5,8 @@ cache
 packages
 settings.json
 .deploy
+
+# Logs
+logs
+*.log
+npm-debug.log*

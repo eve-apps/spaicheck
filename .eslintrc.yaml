@@ -1,0 +1,59 @@
+---
+parser: babel-eslint
+parserOptions:
+  allowImportExportEverywhere: true
+plugins:
+- meteor
+extends:
+- airbnb
+- plugin:meteor/recommended
+settings:
+  import/resolver: meteor
+rules:
+  # Require UNIX line endings
+  linebreak-style:
+  - error
+  - unix
+  # Allow absolute import paths
+  import/no-absolute-path: 'off'
+  # Require function expressions to have a name
+  func-names:
+  - error
+  - always
+  # Allow the use of console.log/warn/error, etc.
+  no-console: 'off'
+  # Allow the use of unary operators
+  no-plusplus: 'off'
+  # Disallow dangling underscore, except for mongodb's _id
+  no-underscore-dangle:
+  - error
+  - allow:
+    - _id
+  # https://github.com/clayne11/eslint-import-resolver-meteor/issues/11
+  import/no-extraneous-dependencies: 'off'
+  # Require file extensions for imports, except for .js files
+  import/extensions:
+  - error
+  - js: never
+  # Disable the requirement of using 'check' in Meteor methods/publish functions
+  # TODO: Use https://github.com/meteor/validated-method instead
+  meteor/audit-argument-checks: 'off'
+  # Set max line length to 100 and just a warning
+  max-len:
+  - off
+  - code: 100
+    tabWidth: 2
+  # Require a space before function parenthesis
+  space-before-function-paren:
+  - error
+  - always
+  # Allow the use of Session
+  meteor/no-session: 'off'
+  # Disallow unresolved imports
+  # We have to ignore these paths because for whatever
+  # reason they are not resolved, even though they work.
+  import/no-unresolved:
+  - error
+  - ignore:
+    - '^/imports/server/jobs$'
+    - '^/imports/server/eveFetch$'

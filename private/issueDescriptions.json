@@ -1,0 +1,32 @@
+{
+  "INTERNAL": "Internal server error.",
+  "CONNERR": "API connection error.",
+  "UNHANDLED": "Unhandled API error code: ${apiErrorCode}.",
+  "MALFORMEDKEY": {
+    "first": "The key's keyID and/or vCode is invalid.",
+    "change": "The key's verification code has changed."
+  },
+  "INVALIDKEY": "The key has expired or been deleted.",
+  "EXISTINGKEY": "This or another key already exists for this player.",
+  "CORPKEY": {
+    "first": "The key is a corporation key, not a character key.",
+    "change": "The key has been changed to a corporation key."
+  },
+  "SINGLECHAR": {
+    "first": "The key only provides info about a single character.",
+    "change": "The key now only provides info about a single character."
+  },
+  "BADMASK": {
+    "first": "The key does not provide all permissions.",
+    "change": "The key no longer provides all permissions."
+  },
+  "EXPIRES": {
+    "first": "The key is set to expire on ${expirationDate}.",
+    "change": "The key has been set to expire on ${expirationDate}."
+  },
+  "addCharacter": "Character \"${characterName}\" has been created.",
+  "removeCharacter": "Character \"${characterName}\" has been deleted.",
+  "joinCorp": "Character \"${characterName}\" has joined the \"${corporationName}\" corporation",
+  "leaveCorp": "Character \"${characterName}\" has left the \"${corporationName}\" corporation",
+  "switchCorp": "Character \"${characterName}\" has left the \"${oldCorporationName}\" corporation to join the \"${newCorporationName}\" corporation."
+}

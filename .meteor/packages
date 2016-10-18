@@ -19,6 +19,8 @@ accounts-ui@1.1.9
 standard-minifier-js@1.2.0_1
 email@1.1.17_1
 less@2.7.5_1
+shell-server
+promise
 
 # 3rd-party server-side packages
 
@@ -41,7 +43,4 @@ juliancwirko:postcss
 # To be removed/replaced
 
 dalgard:jade
-erasaur:meteor-lodash
-momentjs:moment
-meteorhacks:async
-shell-server
+aldeed:simple-schema

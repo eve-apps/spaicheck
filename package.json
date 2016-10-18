@@ -4,7 +4,9 @@
   "description": "EVE Online companion app to help corporations detect spais ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "pretest": "npm run lint --silent"
   },
   "repository": {
     "type": "git",
@@ -17,13 +19,17 @@
   },
   "homepage": "https://github.com/eve-apps/spaicheck#readme",
   "dependencies": {
-    "autoprefixer": "^6.5.0",
-    "postcss-cli": "^2.6.0",
     "async": "^1.5.0",
+    "autoprefixer": "^6.5.0",
+    "chalk": "^1.1.3",
+    "es6-denodeify": "^0.1.5",
     "eveonlinejs": "https://github.com/eve-apps/eveonlinejs/archive/ad7377b2dca7dd609e5bcb134b0284402b92ae9c.tar.gz",
-    "serialize-error": "^1.0.0",
     "fast-json-patch": "^0.5.4",
-    "humanize-plus": "^1.8.2"
+    "humanize-plus": "^1.8.2",
+    "lodash": "^4.16.4",
+    "moment": "^2.15.1",
+    "postcss-cli": "^2.6.0",
+    "serialize-error": "^1.0.0"
   },
   "postcss": {
     "plugins": {
@@ -33,5 +39,15 @@
         ]
       }
     }
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.0.0",
+    "eslint": "^3.7.1",
+    "eslint-config-airbnb": "^12.0.0",
+    "eslint-import-resolver-meteor": "^0.3.3",
+    "eslint-plugin-import": "^2.0.1",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-meteor": "^4.0.1",
+    "eslint-plugin-react": "^6.4.1"
   }
 }
