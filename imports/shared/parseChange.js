@@ -1,5 +1,5 @@
-import { insertChangeLabel } from '/imports/shared/changeLabel';
-import { insertColorMarker } from '/imports/shared/colorMarker';
+import insertChangeLabel from '/imports/shared/changeLabel';
+import insertColorMarker from '/imports/shared/colorMarker';
 
 const parseChange = (changeType, severity, oldValStr, newValStr, oldValObj, newValObj, ctx, forEmail) => {
   const newVal = newValStr || newValObj || null;

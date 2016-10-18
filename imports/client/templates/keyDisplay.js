@@ -4,8 +4,8 @@ import { Meteor } from 'meteor/meteor';
 import { $ } from 'meteor/jquery';
 import { Template } from 'meteor/templating';
 
-import { insertColorMarker } from '/imports/shared/colorMarker';
-import { parseChange } from '/imports/shared/parseChange';
+import insertColorMarker from '/imports/shared/colorMarker';
+import parseChange from '/imports/shared/parseChange';
 
 import Changes from '/imports/api/changes/Changes';
 import Characters from '/imports/api/characters/Characters';

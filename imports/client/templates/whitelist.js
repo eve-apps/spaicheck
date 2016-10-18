@@ -1,8 +1,11 @@
+/* global window: true */
 import { Tracker } from 'meteor/tracker';
 import { Template } from 'meteor/templating';
 import { $ } from 'meteor/jquery';
 
 import Whitelist from '/imports/api/whitelist/Whitelist';
+
+window.Whitelist = Whitelist;
 
 Template.whitelist.onRendered(() => {
   $('#whitelist-table .ui.checkbox').checkbox({});
