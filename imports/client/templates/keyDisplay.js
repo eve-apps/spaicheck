@@ -103,6 +103,16 @@ Template.keyDisplay.onRendered(() => {
  * Helpers
  **/
 
+const getChangeCount = (keyID) => {
+  let changeCount = 0;
+  const c = getUnreviewedChanges(keyID);
+  // TODO: Fix summing
+  if (c.length) {
+    changeCount = _.sum(c[0].log.map(logObj => logObj.changes.length));
+  }
+  return changeCount;
+};
+
 Template.keyDisplay.helpers({
   keys () {
     return Keys.find({});
@@ -111,15 +121,10 @@ Template.keyDisplay.helpers({
     return Keys.findOne({ keyID: this.keyID });
   },
   hasChanges () {
-    return getUnreviewedChanges(this.keyID).length ? 'toggle' : 'disabled';
+    return getChangeCount(this.keyID) ? 'toggle' : 'disabled';
   },
   numChanges () {
-    let changeCount = 0;
-    const c = getUnreviewedChanges(this.keyID);
-    // TODO: Fix summing
-    if (c.length) {
-      changeCount = _.sum(c[0].log.map(logObj => logObj.changes.length));
-    }
+    const changeCount = getChangeCount(this.keyID);
     switch (changeCount) {
       case 0:
         return 'No Changes';
