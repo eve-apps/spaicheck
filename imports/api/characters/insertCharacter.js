@@ -18,10 +18,10 @@ const insertCharacter = async (keyID, charID) => {
       return characterInfo.characterName;
     }
 
-    console.log('will not insert character');
+    console.error('will not insert character');
     return null;
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error.stack);
     return null;
   }
 };

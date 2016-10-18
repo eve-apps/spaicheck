@@ -6,12 +6,12 @@ const validateKey = async (keyID, vCode) => {
   let result;
   try {
     result = await eveFetch('account:APIKeyInfo', { keyID, vCode });
-  } catch (err) {
-    // FIXME: I don't think err.code is ever defined, which causes MALFORMEDKEY, etc. to be reported as CONNERR
+  } catch (error) {
+    // FIXME: I don't think error.code is ever defined, which causes MALFORMEDKEY, etc. to be reported as CONNERR
     // Handle API errors here
     let apiError;
-    if (err.code) {
-      switch (err.code) {
+    if (error.code) {
+      switch (error.code) {
         case '203':
           apiError = 'MALFORMEDKEY';
           break;
@@ -21,10 +21,10 @@ const validateKey = async (keyID, vCode) => {
         default:
           apiError = 'UNHANDLED';
       }
-    } else if (err.response) apiError = 'CONNERR';
+    } else if (error.response) apiError = 'CONNERR';
     else apiError = 'INTERNAL';
 
-    return { apiError, apiErrorCode: err.code };
+    return { apiError, apiErrorCode: error.code };
   }
 
   const statusFlags = [];

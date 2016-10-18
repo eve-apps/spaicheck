@@ -13,10 +13,10 @@ export const emailQueue = emailJobs.processJobs('sendEmail', { workTimeout: 60 *
       subject: email.subject,
       html: email.body,
     });
-  } catch (err) {
+  } catch (error) {
     // Failure
-    job.log(`sendEmail job failed! ${err}`, { level: 'warning', data: email, echo: true });
-    job.fail(`${err}`);
+    job.log(`sendEmail job failed!\n${error.stack}`, { level: 'warning', data: email, echo: true });
+    job.fail(`${error}`);
     return cb();
   }
   // Success

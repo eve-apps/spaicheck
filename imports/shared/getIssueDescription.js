@@ -8,8 +8,8 @@ const issueDescsPath = 'issueDescriptions.json';
 const issueDescs = (() => {
   try {
     return JSON.parse(Assets.getText(issueDescsPath));
-  } catch (err) {
-    console.error(`Error parsing issue descriptions:\n${err.stack}`);
+  } catch (error) {
+    console.error(`Error parsing issue descriptions:\n${error.stack}`);
     return {};
   }
 })();
