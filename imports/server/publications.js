@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 
-import { getAuthLevel } from '/imports/api/whitelist/helpers';
+import { getAuthLevel, getUserCharacterId } from '/imports/api/whitelist/helpers';
 
 import Changes from '/imports/api/changes/Changes';
 import Characters from '/imports/api/characters/Characters';
@@ -27,6 +27,16 @@ Meteor.publish('authorizedPub', function authorizedPub () {
 Meteor.publish('adminPub', function adminPub () {
   if (getAuthLevel(this.userId) === 'admin') {
     return Whitelist.find({});
+  }
+
+  return [];
+});
+
+Meteor.publish('userPub', function userPub () {
+  if (this.userId) {
+    return [Whitelist.find({
+      characterID: getUserCharacterId(this.userId),
+    })];
   }
 
   return [];

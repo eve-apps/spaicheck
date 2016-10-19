@@ -1,16 +1,28 @@
 import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
+import { Tracker } from 'meteor/tracker';
 import { Accounts } from 'meteor/accounts-base';
 import { FlowRouter } from 'meteor/kadira:flow-router';
 import { BlazeLayout } from 'meteor/kadira:blaze-layout';
 
-import Whitelist from '/imports/api/whitelist/Whitelist';
-
 import { enableWhitelistWatch } from '/imports/client/whitelistWatch';
+import { getAuthLevel } from '/imports/api/whitelist/helpers';
 
 /**
  * Auth
  **/
+
+// Ensure the Meteor user and Whitelist collection is available before routing starts
+const userSub = Meteor.subscribe('userPub');
+FlowRouter.wait();
+Tracker.autorun(() => {
+  if (!Meteor.loggingIn() &&
+    userSub.ready() &&
+    !FlowRouter._initialized) { // eslint-disable-line no-underscore-dangle
+    FlowRouter.initialize();
+  }
+});
+
 
 // TODO: Rewrite this
 // Redirect to home route on login
@@ -37,16 +49,9 @@ const requireAuth = (context, redirect) => {
 
 // Redirect to home page if user is not admin and not on whitelist
 const requireWhitelist = (context, redirect) => {
-  if (Meteor.user()) {
-    if (Meteor.user().profile.eveOnlineCharacterId !== Meteor.settings.public.adminID &&
-      !Whitelist.findOne({ characterID: String(Meteor.user().profile.eveOnlineCharacterId) })) {
-      redirect(FlowRouter.path('landing'));
-    }
-  } else {
-    // HACK: Wtf
-    Meteor.setTimeout(() => {
-      requireWhitelist(context, redirect);
-    }, 50);
+  const authLevel = getAuthLevel(Meteor.user());
+  if (authLevel !== 'admin' && authLevel !== 'whitelist') {
+    redirect(FlowRouter.path('landing'));
   }
 };
 
