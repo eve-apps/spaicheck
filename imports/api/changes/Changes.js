@@ -7,9 +7,22 @@ const Changes = new Mongo.Collection('changes');
 const SingleChangeSchema = new SimpleSchema({
   changeType: {
     type: String,
-    allowedValues: ['INVALIDKEY', 'SINGLECHAR', 'BADMASK', 'EXPIRES', 'MALFORMEDKEY', 'CORPKEY',
-      'leaveCorp', 'joinCorp', 'switchCorp', 'leaveAlliance', 'joinAlliance',
-      'switchAlliance', 'addCharacter', 'removeCharacter'],
+    allowedValues: [
+      'INVALIDKEY',
+      'SINGLECHAR',
+      'BADMASK',
+      'EXPIRES',
+      'MALFORMEDKEY',
+      'CORPKEY',
+      'leaveCorp',
+      'joinCorp',
+      'switchCorp',
+      'leaveAlliance',
+      'joinAlliance',
+      'switchAlliance',
+      'addCharacter',
+      'removeCharacter',
+    ],
   },
   severity: {
     type: String,
