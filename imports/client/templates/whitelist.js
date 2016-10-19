@@ -31,10 +31,10 @@ Template.whitelist.helpers({
 });
 
 Template.whitelist.events({
-  'click .rm-member': () => {
+  'click .rm-member' () {
     Whitelist.remove(this._id);
   },
-  'click .email-notify': () => {
+  'click .email-notify' () {
     if (this.notify !== null && this.notify !== undefined) {
       Whitelist.update(this._id, { $set: { notify: !this.notify } });
     }
