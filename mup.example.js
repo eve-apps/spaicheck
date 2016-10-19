@@ -33,6 +33,7 @@ module.exports = {
     },
 
     // Use abernix's docker image for Meteor 1.4 compatiblity
+    // https://github.com/kadirahq/meteor-up/issues/172#issuecomment-235569968
     dockerImage: 'abernix/meteord:base',
     deployCheckWaitTime: 60,
   },
