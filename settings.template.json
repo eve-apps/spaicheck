@@ -1,10 +1,4 @@
 {
-  "private": {
-    "mailUser": "postmaster@blah.mailgun.org",
-    "mailPass": "b4da55",
-    "mailServer": "smtp.mailgun.org",
-    "mailPort": "587"
-  },
   "public": {
     "adminID": 123456789,
     "corporationID": 123456789,
