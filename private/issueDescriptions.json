@@ -26,7 +26,10 @@
   },
   "addCharacter": "Character \"${characterName}\" has been created.",
   "removeCharacter": "Character \"${characterName}\" has been deleted.",
-  "joinCorp": "Character \"${characterName}\" has joined the \"${corporationName}\" corporation",
-  "leaveCorp": "Character \"${characterName}\" has left the \"${corporationName}\" corporation",
-  "switchCorp": "Character \"${characterName}\" has left the \"${oldCorporationName}\" corporation to join the \"${newCorporationName}\" corporation."
+  "joinCorp": "Character \"${characterName}\" has joined the \"${corporationName}\" corporation.",
+  "leaveCorp": "Character \"${characterName}\" has left the \"${corporationName}\" corporation.",
+  "switchCorp": "Character \"${characterName}\" has left the \"${oldCorporationName}\" corporation to join the \"${newCorporationName}\" corporation.",
+  "joinAlliance": "Character \"${characterName}\" has joined the \"${allianceName}\" alliance.",
+  "leaveAlliance": "Character \"${characterName}\" has left the \"${allianceName}\" alliance.",
+  "switchAlliance": "Character \"${characterName}\" has left the \"${oldAllianceName}\" alliance to join the \"${newAllianceName}\" alliance."
 }

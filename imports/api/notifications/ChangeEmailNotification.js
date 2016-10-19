@@ -66,6 +66,18 @@ export default class ChangeEmailNotification extends EmailNotification {
           oldCorporationName: change.oldValueObj.corporationName,
           newCorporationName: change.newValueObj.corporationName,
         });
+      case 'joinAlliance':
+      case 'leaveAlliance':
+        return getIssueDesc(change.changeType, false, {
+          characterName: change.newValueObj.characterName,
+          allianceName: change.newValueObj.allianceName,
+        });
+      case 'switchAlliance':
+        return getIssueDesc(change.changeType, false, {
+          characterName: change.newValueObj.characterName,
+          oldAllianceName: change.oldValueObj.allianceName,
+          newAllianceName: change.newValueObj.allianceName,
+        });
       default:
         return getIssueDesc(change.changeType, false);
     }
