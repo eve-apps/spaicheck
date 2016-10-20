@@ -54,7 +54,9 @@ johnantoni:meteor-normalize@0.0.1
 jquery@1.11.9
 juliancwirko:postcss@1.1.1
 kadira:blaze-layout@2.3.0
+kadira:debug@3.2.2
 kadira:flow-router@2.12.1
+kadira:runtime-dev@0.0.1
 launch-screen@1.0.12
 less@2.7.5_1
 livedata@1.0.18
@@ -63,6 +65,10 @@ logging@1.1.15_1
 mdg:validation-error@0.2.0
 meteor@1.2.17_1
 meteor-base@1.0.4
+meteorhacks:inject-initial@1.0.4
+meteorhacks:kadira@2.30.2
+meteorhacks:meteorx@1.4.1
+meteorhacks:zones@1.6.0
 minifier-css@1.1.13
 minifier-js@1.2.14_1
 minifiers@1.1.7
@@ -74,6 +80,7 @@ modules-runtime@0.7.6_1
 momentjs:moment@2.15.1
 mongo@1.1.12_5
 mongo-id@1.0.5
+mongo-livedata@1.0.12
 mrt:later@1.6.1
 npm-mongo@2.2.10_1
 oauth@1.1.11

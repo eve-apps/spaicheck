@@ -30,6 +30,9 @@ module.exports = {
       MONGO_URL: 'mongodb://localhost/meteor',
       METEOR_ENV: 'production',
       MAIL_URL: `smtp://${mailUser}:${mailPass}@${mailServer}:${mailPort}`,
+      // Kadira integration
+      KADIRA_APP_ID: 'ABC',
+      KADIRA_APP_SECRET: 'S3CR3T',
     },
 
     // Use abernix's docker image for Meteor 1.4 compatiblity
